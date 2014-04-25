@@ -10,6 +10,79 @@ Q = Quintus({development: true, audioSupported: ['mp3', 'ogg'] })
 Q.gravityX = 0;
 Q.gravityY = 0;
 
+//Custom controls
+Q.component("customControls", {
+
+  added: function() {
+    var p = this.entity.p;
+
+    if(!p.stepDistance) { p.stepDistance = 32; }
+    if(!p.stepDelay) { p.stepDelay = 0.2; }
+
+    p.stepWait = 0;
+    this.entity.on("step",this,"step");
+    this.entity.on("hit", this,"collision");
+  },
+
+  collision: function(col) {
+    var p = this.entity.p;
+
+    if(p.stepping) {
+      p.stepping = false;
+      p.x = p.origX;
+      p.y = p.origY;
+    }
+
+  },
+
+  step: function(dt) {
+    var p = this.entity.p,
+    moved = false;
+    p.stepWait -= dt;
+
+    if(p.stepping) {
+      p.x += p.diffX * dt / p.stepDelay;
+      p.y += p.diffY * dt / p.stepDelay;
+    }
+
+    if(p.stepWait > 0) { return; }
+    if(p.stepping) {
+      p.x = p.destX;
+      p.y = p.destY;
+    }
+    p.stepping = false;
+
+    p.diffX = 0;
+    p.diffY = 0;
+
+    if(Q.inputs['left']) {
+      p.pressed='left';
+      p.diffX = -p.stepDistance;
+    } else if(Q.inputs['right']) {
+      p.pressed='right';
+      p.diffX = p.stepDistance;
+    }
+
+    if(Q.inputs['up']) {
+      p.pressed='up';
+      p.diffY = -p.stepDistance;
+    } else if(Q.inputs['down']) {
+      p.pressed='down';
+      p.diffY = p.stepDistance;
+    }
+    if(p.diffY || p.diffX ) { 
+      p.stepping = true;
+      p.origX = p.x;
+      p.origY = p.y;
+      p.destX = p.x + p.diffX;
+      p.destY = p.y + p.diffY;
+      p.stepWait = p.stepDelay; 
+    }
+
+  }
+
+});
+
 Q.Sprite.extend("Player", {
 	init: function(p) {
   	this._super(p, { 	
@@ -20,7 +93,7 @@ Q.Sprite.extend("Player", {
       dead: false, 
       type: Q.SPRITE_ACTIVE
   	});
-  	this.add('2d, stepControls, animation, tween');
+  	this.add('2d, customControls, animation, tween');
 
     this.on("hit", function(collision) {
         console.log("collision: "+collision.obj)
@@ -31,20 +104,18 @@ Q.Sprite.extend("Player", {
   step: function(dt){
     
     //Animación de movimiento
-    /*
+    //console.log(this.p.pressed);
     if(!this.p.dead)
-      if(this.p.vx > 0) {
+      if(this.p.pressed==='right') {
         this.play("bolaRight");
-        console.log(">0 "+ this.p.x)
-      } else if(this.p.vx < 0) {
+      } else if(this.p.pressed==='left') {
         this.play("bolaLeft");
-        console.log("<0 "+ this.p.x)
-      } else if(this.p.vy > 0) {
-        this.play("rogueDown");
-      } else if(this.p.vy < 0) {
-        this.play("rogueUp");
+      } else if(this.p.pressed==='down') {
+        this.play("bolaDown");
+      } else if(this.p.pressed==='up') {
+        this.play("bolaUp");
       } 
-    */
+    
 	}
 });
 
@@ -67,10 +138,10 @@ Q.loadTMX("level1OK.tmx, rogue.png, rogue.json, bola.png, bola.json", function()
    Q.compileSheets("bola.png","bola.json");
 
   Q.animations("bolaAnim", {
-    bolaUp: {frames: [0], rate: 1/7, loop: false},
-    bolaDown: {frames: [2], rate: 1/7, loop: false},
-    bolaRight: {frames: [1], rate: 1/7, loop: false},
-    bolaLeft: {frames: [3], rate: 1/7, loop: false},
+    bolaUp: {frames: [3], rate: 1/7, loop: false},
+    bolaDown: {frames: [0], rate: 1/7, loop: false},
+    bolaRight: {frames: [2], rate: 1/7, loop: false},
+    bolaLeft: {frames: [1], rate: 1/7, loop: false},
   });
   
   Q.stageScene("level1", 0);
