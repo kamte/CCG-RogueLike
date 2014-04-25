@@ -1,0 +1,6 @@
+{
+	"bolaUp":{"sx":0,"sy":0,"tileW":30,"tileH":30,"frames":1},
+	"bolaRight":{"sx":30,"sy":0,"tileW":30,"tileH":30,"frames":1},
+	"bolaDown":{"sx":60,"sy":0,"tileW":30,"tileH":30,"frames":1},
+	"bolaLeft":{"sx":90,"sy":0,"tileW":30,"tileH":30,"frames":1}
+}

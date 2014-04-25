@@ -1,0 +1,6 @@
+{
+	"rogueUp":{"sx":0,"sy":0,"tileW":18,"tileH":18,"frames":3},
+	"rogueRight":{"sx":54,"sy":0,"tileW":18,"tileH":18,"frames":3},
+	"rogueDown":{"sx":108,"sy":0,"tileW":18,"tileH":18,"frames":3},
+	"rogueLeft":{"sx":162,"sy":0,"tileW":18,"tileH":18,"frames":3}
+}
