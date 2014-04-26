@@ -6,7 +6,7 @@ Q = Quintus({development: true, audioSupported: ['mp3', 'ogg'] })
         .controls()
         .touch()
         .enableSound();
-        
+
 Q.gravityX = 0;
 Q.gravityY = 0;
 
@@ -82,66 +82,65 @@ Q.component("customControls", {
   }
 
 });
-
+        
 Q.Sprite.extend("Player", {
-	init: function(p) {
-  	this._super(p, { 	
-  		sheet: "bolaDown", 
+  init: function(p) {
+    this._super(p, {  
+      sheet: "bolaDown", 
       sprite: "bolaAnim", 
       x: 60, 
-      y: 70,
+      y: 70, 
       dead: false, 
       type: Q.SPRITE_ACTIVE
-  	});
-  	this.add('2d, customControls, animation, tween');
+    });
+    this.add('2d, customControls, animation, tween');
 
     this.on("hit", function(collision) {
         console.log("collision: "+collision.obj)
     });
 
-   },
+  },
 
   step: function(dt){
-    
     //Animación de movimiento
-    //console.log(this.p.pressed);
     if(!this.p.dead)
       if(this.p.pressed==='right') {
-        this.play("bolaRight");
+        this.play("bolaR");
       } else if(this.p.pressed==='left') {
-        this.play("bolaLeft");
+        this.play("bolaL");
       } else if(this.p.pressed==='down') {
-        this.play("bolaDown");
+        this.play("bolaD");
       } else if(this.p.pressed==='up') {
-        this.play("bolaUp");
+        this.play("bolaU");
       } 
-    
-	}
+  },
+
 });
 
 
 //Nivel1
 Q.scene("level1", function(stage) {
 
-	Q.stageTMX("level1OK.tmx", stage);
+  Q.stageTMX("level1OK.tmx", stage);
 
-	var player = stage.insert(new Q.Player());
-  
-	stage.add("viewport").centerOn(150, 368); 
-	stage.follow(player, { x: true, y: true });
+  var player = stage.insert(new Q.Player());
+
+  stage.add("viewport").centerOn(150, 368); 
+  stage.follow(player, { x: true, y: true });
+  stage.viewport.offsetX = -100;
 });
 
-//Carga de recursos
-Q.loadTMX("level1OK.tmx, rogue.png, rogue.json, bola.png, bola.json", function() {
-  
-  Q.compileSheets("rogue.png","rogue.json");
-   Q.compileSheets("bola.png","bola.json");
 
+//Carga de recursos
+Q.loadTMX("level1OK.tmx, bola.png, bola.json", function() {
+
+  Q.compileSheets("bola.png", "bola.json");
+  
   Q.animations("bolaAnim", {
-    bolaUp: {frames: [3], rate: 1/7, loop: false},
-    bolaDown: {frames: [0], rate: 1/7, loop: false},
-    bolaRight: {frames: [2], rate: 1/7, loop: false},
-    bolaLeft: {frames: [1], rate: 1/7, loop: false},
+    bolaD: {frames: [0]},
+    bolaL: {frames: [1]},
+    bolaR: {frames: [2]},
+    bolaU: {frames: [3]}
   });
   
   Q.stageScene("level1", 0);
