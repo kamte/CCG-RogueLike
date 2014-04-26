@@ -78,9 +78,31 @@ Q.component("customControls", {
       p.destY = p.y + p.diffY;
       p.stepWait = p.stepDelay; 
     }
-
   }
+});
 
+Q.component("character", {
+    
+    live: function(HP, ATK, DEF) {
+      this.entity.p.hitPoints = HP;
+      this.entity.p.attack = ATK;
+      this.entity.p.defense = DEF
+    },
+
+    extend: {
+      dead: function(){
+        if (this.p.hitPoints <= 0){
+          return true;
+        } else {
+          return false;
+        }
+      },
+
+      hit: function(aggressor) {
+          this.p.hitPoints -= aggressor.p.attack-this.p.defense;
+          console.log("vida "+this.p.hitPoints);
+      }
+    } 
 });
         
 Q.Sprite.extend("Player", {
@@ -89,21 +111,26 @@ Q.Sprite.extend("Player", {
       sheet: "bolaDown", 
       sprite: "bolaAnim", 
       x: 60, 
-      y: 70, 
-      dead: false, 
-      type: Q.SPRITE_ACTIVE
+      y: 70
     });
-    this.add('2d, customControls, animation, tween');
+    this.add('2d, customControls, animation, character');
+
+    this.character.live(100, 20, 1);
 
     this.on("hit", function(collision) {
-        console.log("collision: "+collision.obj)
+        if(collision.obj.p.type === Q.SPRITE_ENEMY){
+          console.log("ataque");
+          collision.obj.hit(this);
+        } else {
+          console.log("no enemigo");
+        }
     });
 
   },
 
   step: function(dt){
     //Animación de movimiento
-    if(!this.p.dead)
+    if(!this.dead()){
       if(this.p.pressed==='right') {
         this.play("bolaR");
       } else if(this.p.pressed==='left') {
@@ -113,6 +140,38 @@ Q.Sprite.extend("Player", {
       } else if(this.p.pressed==='up') {
         this.play("bolaU");
       } 
+    } else {
+      console.log("dead "+this.p.hitPoints+" "+this.dead());
+      this.destroy();
+    }
+  },
+
+});
+
+Q.Sprite.extend("BadBall", {
+  init: function(p) {
+    this._super(p, {  
+      sheet: "bolaMDown", 
+      sprite: "bolaMalaAnim", 
+      x: 200, 
+      y: 60,  
+      type: Q.SPRITE_ENEMY  
+    });
+    this.add('2d, animation, character');
+
+    this.character.live(100, 20, 1);
+
+    this.on("hit", function(collision) {
+        console.log("collision bola mala: "+collision.obj)
+    });
+
+  },
+
+  step: function(dt){
+    if(this.dead()){
+      console.log("dead "+this.p.hitPoints+" "+this.dead());
+      this.destroy();
+    }
   },
 
 });
@@ -124,23 +183,36 @@ Q.scene("level1", function(stage) {
   Q.stageTMX("level1OK.tmx", stage);
 
   var player = stage.insert(new Q.Player());
+  stage.insert(new Q.BadBall())
 
   stage.add("viewport").centerOn(150, 368); 
   stage.follow(player, { x: true, y: true });
-  stage.viewport.offsetX = -100;
 });
 
 
 //Carga de recursos
-Q.loadTMX("level1OK.tmx, bola.png, bola.json", function() {
+Q.loadTMX("level1OK.tmx, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json", function() {
 
   Q.compileSheets("bola.png", "bola.json");
+  Q.compileSheets("bolaMala.png", "bolaMala.json");
+  Q.compileSheets("bombi.png", "bombi.json");
   
   Q.animations("bolaAnim", {
     bolaD: {frames: [0]},
     bolaL: {frames: [1]},
     bolaR: {frames: [2]},
     bolaU: {frames: [3]}
+  });
+
+  Q.animations("bolaMalaAnim", {
+    bolaMD: {frames: [0]},
+    bolaML: {frames: [1]},
+    bolaMR: {frames: [2]},
+    bolaMU: {frames: [3]}
+  });
+
+  Q.animations("bombiAnim", {
+    bolaD: {frames: [0, 1], rate: 1/12, loop: true}
   });
   
   Q.stageScene("level1", 0);
