@@ -70,6 +70,10 @@ Q.component("customControls", {
       p.pressed='down';
       p.diffY = p.stepDistance;
     }
+
+    if(!Q.inputs['up'] && !Q.inputs['down'] && !Q.inputs['left'] && !Q.inputs['right'])
+      p.pressed='none';
+
     if(p.diffY || p.diffX ) { 
       p.stepping = true;
       p.origX = p.x;
