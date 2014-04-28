@@ -10,6 +10,25 @@ Q = Quintus({development: true, audioSupported: ['mp3', 'ogg'] })
 Q.gravityX = 0;
 Q.gravityY = 0;
 
+var matrix =[
+[1,1,1,1,1,1,1,1,1,1],
+[1,0,0,0,0,0,0,0,0,1],
+[1,0,0,0,0,0,0,0,0,1],
+[1,0,1,0,0,0,0,1,0,1],
+[1,0,0,0,0,0,0,0,0,1],
+[1,0,0,0,0,0,0,0,0,1],
+[1,0,0,0,1,1,0,0,0,1],
+[1,0,0,0,1,1,0,0,0,1],
+[1,0,0,0,0,0,0,0,0,1],
+[1,0,0,0,0,0,0,0,0,1],
+[1,0,1,0,0,0,0,1,0,1],
+[1,0,0,0,0,0,0,0,0,1],
+[1,0,0,0,0,0,0,0,0,1],
+[1,1,1,1,1,1,1,1,1,1],
+];
+var gridPrimigenio = new PF.Grid(10, 14, matrix);
+var finder = new PF.AStarFinder();
+
 //Custom controls
 Q.component("customControls", {
 
@@ -108,14 +127,16 @@ Q.component("character", {
       }
     } 
 });
-        
+
+var  xB = 16+32*2, 
+      yB = 16+32*2  
 Q.Sprite.extend("Player", {
   init: function(p) {
     this._super(p, {  
       sheet: "bolaDown", 
       sprite: "bolaAnim", 
-      x: 60, 
-      y: 70
+      x: 16+32*2, 
+      y: 16+32*2
     });
     this.add('2d, customControls, animation, character');
 
@@ -135,6 +156,8 @@ Q.Sprite.extend("Player", {
   step: function(dt){
     //Animación de movimiento
     if(!this.dead()){
+      xB = this.p.x;
+      xY = this.p.y;
       if(this.p.pressed==='right') {
         this.play("bolaR");
       } else if(this.p.pressed==='left') {
@@ -157,13 +180,14 @@ Q.Sprite.extend("BadBall", {
     this._super(p, {  
       sheet: "bolaMDown", 
       sprite: "bolaMalaAnim", 
-      x: 200, 
-      y: 60,  
+      x: 16+32*9, 
+      y: 16+32*5,  
       type: Q.SPRITE_ENEMY  
     });
     this.add('2d, animation, character');
 
     this.character.live(100, 20, 1);
+    //console.log("",(this.p.x - 16)/32-1," ",(this.p.y - 16)/32-1," ",(xB - 16)/32-1," ",(yB - 16)/32-1);
 
     this.on("hit", function(collision) {
         console.log("collision bola mala: "+collision.obj)
@@ -176,6 +200,11 @@ Q.Sprite.extend("BadBall", {
       console.log("dead "+this.p.hitPoints+" "+this.dead());
       this.destroy();
     }
+    var path = finder.findPath((this.p.x - 16)/32-1, (this.p.y - 16)/32-1, (xB - 16)/32-1, (yB - 16)/32-1, gridPrimigenio.clone());
+    var nextMove = path[0];
+    this.p.x = (nextMove[0] + 1) * 32 + 16;
+    this.p.x = (nextMove[1] + 1) * 32 + 16;
+
   },
 
 });
