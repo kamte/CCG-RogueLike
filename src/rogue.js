@@ -1,11 +1,11 @@
 var Q = Quintus();
 
 Q = Quintus({development: true, audioSupported: ['mp3', 'ogg'] })
-        .include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio")
-        .setup("canvas")
-        .controls()
-        .touch()
-        .enableSound();
+.include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio")
+.setup("canvas")
+.controls()
+.touch()
+.enableSound();
 
 Q.gravityX = 0;
 Q.gravityY = 0;
@@ -27,7 +27,43 @@ var matrix =[
 [1,1,1,1,1,1,1,1,1,1],
 ];
 var gridPrimigenio = new PF.Grid(10, 14, matrix);
-var finder = new PF.AStarFinder();
+var finder = new PF.AStarFinder({
+  allowDiagonal: false
+});
+
+var toMatrix = function(x) {
+  return (x-16)/32-1;
+};
+
+var fromMatrix = function(x) {
+  return (x+1)*32+16;
+};
+
+var muestraCoordenadas = function(x,y) {
+  console.log("canvas: ",x,y)
+  console.log("tablero: ",toMatrix(x),toMatrix(y));
+};
+
+var nextToPlayer = function(x,y) {
+  var is = false;
+  xB = Q("Player").first().p.x;
+  yB = Q("Player").first().p.y;
+
+  if((x-32 == xB) || (x+32 == xB))
+    if((y-32 == yB) || (y+32 == yB))
+      is = true;
+  return is;
+};
+
+var findNext = function(x,y) {
+  var grid= gridPrimigenio.clone();
+  console.log(toMatrix(x), toMatrix(y));
+  xB = Q("Player").first().p.x;
+  yB = Q("Player").first().p.y;
+  var path = finder.findPath(toMatrix(x), toMatrix(y), toMatrix(xB), toMatrix(yB), grid);
+  console.log(path);
+  return path[1];
+};
 
 //Custom controls
 Q.component("customControls", {
@@ -105,31 +141,31 @@ Q.component("customControls", {
 });
 
 Q.component("character", {
-    
-    live: function(HP, ATK, DEF) {
-      this.entity.p.hitPoints = HP;
-      this.entity.p.attack = ATK;
-      this.entity.p.defense = DEF
+
+  live: function(HP, ATK, DEF) {
+    this.entity.p.hitPoints = HP;
+    this.entity.p.attack = ATK;
+    this.entity.p.defense = DEF
+  },
+
+  extend: {
+    dead: function(){
+      if (this.p.hitPoints <= 0){
+        return true;
+      } else {
+        return false;
+      }
     },
 
-    extend: {
-      dead: function(){
-        if (this.p.hitPoints <= 0){
-          return true;
-        } else {
-          return false;
-        }
-      },
-
-      hit: function(aggressor) {
-          this.p.hitPoints -= aggressor.p.attack-this.p.defense;
-          console.log("vida "+this.p.hitPoints);
-      }
-    } 
+    hit: function(aggressor) {
+      this.p.hitPoints -= aggressor.p.attack-this.p.defense;
+      console.log("vida "+this.p.hitPoints);
+    }
+  } 
 });
 
-var  xB = 16+32*2, 
-      yB = 16+32*2  
+var prd = false;
+
 Q.Sprite.extend("Player", {
   init: function(p) {
     this._super(p, {  
@@ -143,12 +179,12 @@ Q.Sprite.extend("Player", {
     this.character.live(100, 20, 1);
 
     this.on("hit", function(collision) {
-        if(collision.obj.p.type === Q.SPRITE_ENEMY){
-          console.log("ataque");
-          collision.obj.hit(this);
-        } else {
-          console.log("no enemigo");
-        }
+      if(collision.obj.p.type === Q.SPRITE_ENEMY){
+        console.log("ataque");
+        collision.obj.hit(this);
+      } else {
+        console.log("no enemigo");
+      }
     });
 
   },
@@ -156,8 +192,6 @@ Q.Sprite.extend("Player", {
   step: function(dt){
     //Animación de movimiento
     if(!this.dead()){
-      xB = this.p.x;
-      xY = this.p.y;
       if(this.p.pressed==='right') {
         this.play("bolaR");
       } else if(this.p.pressed==='left') {
@@ -165,8 +199,11 @@ Q.Sprite.extend("Player", {
       } else if(this.p.pressed==='down') {
         this.play("bolaD");
       } else if(this.p.pressed==='up') {
+        prd = true;
         this.play("bolaU");
-      } 
+      } else if(this.p.pressed=='none') {
+        prd = false;
+      }
     } else {
       console.log("dead "+this.p.hitPoints+" "+this.dead());
       this.destroy();
@@ -180,7 +217,7 @@ Q.Sprite.extend("BadBall", {
     this._super(p, {  
       sheet: "bolaMDown", 
       sprite: "bolaMalaAnim", 
-      x: 16+32*9, 
+      x: 16+32*7, 
       y: 16+32*5,  
       type: Q.SPRITE_ENEMY  
     });
@@ -188,9 +225,8 @@ Q.Sprite.extend("BadBall", {
 
     this.character.live(100, 20, 1);
     //console.log("",(this.p.x - 16)/32-1," ",(this.p.y - 16)/32-1," ",(xB - 16)/32-1," ",(yB - 16)/32-1);
-
     this.on("hit", function(collision) {
-        console.log("collision bola mala: "+collision.obj)
+      console.log("collision bola mala: "+collision.obj)
     });
 
   },
@@ -199,11 +235,20 @@ Q.Sprite.extend("BadBall", {
     if(this.dead()){
       console.log("dead "+this.p.hitPoints+" "+this.dead());
       this.destroy();
+    } 
+    else if(prd===true && !nextToPlayer(this.p.x,this.p.y)) {
+      prd = false;
+      var nextMove = findNext(this.p.x,this.p.y);
+      console.log(nextMove[0],fromMatrix(nextMove[0]));
+      console.log(nextMove[1],fromMatrix(nextMove[1]));
+
+      this.p.x = fromMatrix(nextMove[0]);
+      this.p.y = fromMatrix(nextMove[1]);
+
+      muestraCoordenadas(this.p.x,this.p.y);
+      console.log(prd);
+
     }
-    var path = finder.findPath((this.p.x - 16)/32-1, (this.p.y - 16)/32-1, (xB - 16)/32-1, (yB - 16)/32-1, gridPrimigenio.clone());
-    var nextMove = path[0];
-    this.p.x = (nextMove[0] + 1) * 32 + 16;
-    this.p.x = (nextMove[1] + 1) * 32 + 16;
 
   },
 
@@ -250,3 +295,4 @@ Q.loadTMX("level1OK.tmx, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi
   
   Q.stageScene("level1", 0);
 });
+
