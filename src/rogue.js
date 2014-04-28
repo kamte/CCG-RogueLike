@@ -26,10 +26,17 @@ var matrix =[
 [1,0,0,0,0,0,0,0,0,1],
 [1,1,1,1,1,1,1,1,1,1],
 ];
+
 var gridPrimigenio = new PF.Grid(10, 14, matrix);
 var finder = new PF.AStarFinder({
   allowDiagonal: false
 });
+
+var enemiesMoved = 0;
+
+var findPlayer = function() {
+  return Q("Player").first();
+}
 
 var toMatrix = function(x) {
   return (x-16)/32-1;
@@ -46,22 +53,24 @@ var muestraCoordenadas = function(x,y) {
 
 var nextToPlayer = function(x,y) {
   var is = false;
-  xB = Q("Player").first().p.x;
-  yB = Q("Player").first().p.y;
+  xB = player.p.x;
+  yB = player.p.y;
 
-  if((x-32 == xB) || (x+32 == xB))
-    if((y-32 == yB) || (y+32 == yB))
+  if((x-32 == xB) || (x+32 == xB)) {
+    if((y-32 == yB) || (y+32 == yB)) {
       is = true;
+    }
+  }
   return is;
 };
 
 var findNext = function(x,y) {
   var grid= gridPrimigenio.clone();
-  console.log(toMatrix(x), toMatrix(y));
-  xB = Q("Player").first().p.x;
-  yB = Q("Player").first().p.y;
+  console.log("toMatrix ",x," ",y," ",toMatrix(x), toMatrix(y));
+  xB = player.p.x;
+  yB = player.p.y;
   var path = finder.findPath(toMatrix(x), toMatrix(y), toMatrix(xB), toMatrix(yB), grid);
-  console.log(path);
+  console.log("path "+path);
   return path[1];
 };
 
@@ -164,8 +173,6 @@ Q.component("character", {
   } 
 });
 
-var prd = false;
-
 Q.Sprite.extend("Player", {
   init: function(p) {
     this._super(p, {  
@@ -186,25 +193,25 @@ Q.Sprite.extend("Player", {
         console.log("no enemigo");
       }
     });
-
   },
 
   step: function(dt){
     //Animación de movimiento
-    if(!this.dead()){
+    if(!this.dead() && Q.state.get("enemies")==enemiesMoved){
       if(this.p.pressed==='right') {
+        enemiesMoved=0;
         this.play("bolaR");
       } else if(this.p.pressed==='left') {
+        enemiesMoved=0;
         this.play("bolaL");
       } else if(this.p.pressed==='down') {
+        enemiesMoved=0;
         this.play("bolaD");
       } else if(this.p.pressed==='up') {
-        prd = true;
+        enemiesMoved=0;
         this.play("bolaU");
-      } else if(this.p.pressed=='none') {
-        prd = false;
-      }
-    } else {
+      } else {};
+    } else if(this.dead()){
       console.log("dead "+this.p.hitPoints+" "+this.dead());
       this.destroy();
     }
@@ -219,6 +226,7 @@ Q.Sprite.extend("BadBall", {
       sprite: "bolaMalaAnim", 
       x: 16+32*7, 
       y: 16+32*5,  
+      moved: false,
       type: Q.SPRITE_ENEMY  
     });
     this.add('2d, animation, character');
@@ -232,12 +240,18 @@ Q.Sprite.extend("BadBall", {
   },
 
   step: function(dt){
+    if(enemiesMoved==0){
+      this.p.moved=false;
+    }
+
     if(this.dead()){
       console.log("dead "+this.p.hitPoints+" "+this.dead());
       this.destroy();
+      Q.state.dec("enemies", 1);
     } 
-    else if(prd===true && !nextToPlayer(this.p.x,this.p.y)) {
-      prd = false;
+    else if(!this.p.moved && !nextToPlayer(this.p.x,this.p.y)) {
+      this.p.moved=true;
+      enemiesMoved++;
       var nextMove = findNext(this.p.x,this.p.y);
       console.log(nextMove[0],fromMatrix(nextMove[0]));
       console.log(nextMove[1],fromMatrix(nextMove[1]));
@@ -247,9 +261,7 @@ Q.Sprite.extend("BadBall", {
 
       muestraCoordenadas(this.p.x,this.p.y);
       console.log(prd);
-
     }
-
   },
 
 });
@@ -260,11 +272,16 @@ Q.scene("level1", function(stage) {
 
   Q.stageTMX("level1OK.tmx", stage);
 
-  var player = stage.insert(new Q.Player());
+  Q.state.reset({ enemies: 0 });
+
+  var p = stage.insert(new Q.Player());
+  player = findPlayer();
+
   stage.insert(new Q.BadBall())
+  Q.state.inc("enemies",1);
 
   stage.add("viewport").centerOn(150, 368); 
-  stage.follow(player, { x: true, y: true });
+  stage.follow(p, { x: true, y: true });
 });
 
 
