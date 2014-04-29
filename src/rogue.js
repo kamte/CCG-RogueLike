@@ -52,25 +52,29 @@ var muestraCoordenadas = function(x,y) {
 };
 
 var nextToPlayer = function(x,y) {
-  var is = false;
+  var near = false;
   xB = player.p.x;
   yB = player.p.y;
 
-  if((x-32 == xB) || (x+32 == xB)) {
-    if((y-32 == yB) || (y+32 == yB)) {
-      is = true;
-    }
+  var distX = x-xB;
+  if(distX < 0) distX = -distX;
+  var distY = y-yB;
+  if(distY < 0) distY = -distY;
+
+  if((distX <= 32) && (distY <= 32)) {
+    near = true;
+    console.log("x: ", distX, "y: ",distY);
   }
-  return is;
+  return near;
 };
 
 var findNext = function(x,y) {
   var grid= gridPrimigenio.clone();
-  console.log("toMatrix ",x," ",y," ",toMatrix(x), toMatrix(y));
+  //console.log("toMatrix ",x," ",y," ",toMatrix(x), toMatrix(y));
   xB = player.p.x;
   yB = player.p.y;
   var path = finder.findPath(toMatrix(x), toMatrix(y), toMatrix(xB), toMatrix(yB), grid);
-  console.log("path "+path);
+  //console.log("path "+path);
   return path[1];
 };
 
@@ -168,7 +172,7 @@ Q.component("character", {
 
     hit: function(aggressor) {
       this.p.hitPoints -= aggressor.p.attack-this.p.defense;
-      console.log("vida "+this.p.hitPoints);
+      console.log("vida defensor "+this.p.hitPoints);
     }
   } 
 });
@@ -232,7 +236,6 @@ Q.Sprite.extend("BadBall", {
     this.add('2d, animation, character');
 
     this.character.live(100, 20, 1);
-    //console.log("",(this.p.x - 16)/32-1," ",(this.p.y - 16)/32-1," ",(xB - 16)/32-1," ",(yB - 16)/32-1);
     this.on("hit", function(collision) {
       console.log("collision bola mala: "+collision.obj)
     });
@@ -253,15 +256,26 @@ Q.Sprite.extend("BadBall", {
       this.p.moved=true;
       enemiesMoved++;
       var nextMove = findNext(this.p.x,this.p.y);
-      console.log(nextMove[0],fromMatrix(nextMove[0]));
-      console.log(nextMove[1],fromMatrix(nextMove[1]));
+      //console.log(nextMove[0],fromMatrix(nextMove[0]));
+      //console.log(nextMove[1],fromMatrix(nextMove[1]));
 
       this.p.x = fromMatrix(nextMove[0]);
       this.p.y = fromMatrix(nextMove[1]);
 
-      muestraCoordenadas(this.p.x,this.p.y);
-      console.log(prd);
+      //muestraCoordenadas(this.p.x,this.p.y);
     }
+    else if(!this.p.moved && nextToPlayer(this.p.x,this.p.y)) {
+      //Attack player
+      this.attack();
+    }
+  },
+
+  attack: function(){
+    this.p.moved=true;
+    enemiesMoved++;
+    player = findPlayer();
+    player.hit(this);
+    Q.state.set("health",player.p.hitPoints);
   },
 
 });
@@ -272,13 +286,14 @@ Q.scene("level1", function(stage) {
 
   Q.stageTMX("level1OK.tmx", stage);
 
-  Q.state.reset({ enemies: 0 });
-
   var p = stage.insert(new Q.Player());
   player = findPlayer();
 
+  Q.state.reset({ enemies: 0, health: p.p.hitPoints});
+
   stage.insert(new Q.BadBall())
   Q.state.inc("enemies",1);
+
 
   stage.add("viewport").centerOn(150, 368); 
   stage.follow(p, { x: true, y: true });
@@ -311,5 +326,29 @@ Q.loadTMX("level1OK.tmx, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi
   });
   
   Q.stageScene("level1", 0);
+  Q.stageScene("hud",1);
+});
+
+Q.UI.Text.extend("Stats",{
+  init: function(p) {
+    this._super({
+      label: "Health: 100",
+      x: 0,
+      y: 10,
+      color: "white"
+    });
+    Q.state.on("change.health",this,"hp");
+  },
+  hp: function(hitP) {
+    this.p.label = "Health: " + hitP;
+  }
+});
+
+Q.scene('hud',function(stage) {
+  var container = stage.insert(new Q.UI.Container({
+    x: 60, y: 0
+  }));
+  var label = container.insert(new Q.Stats());
+  container.fit(20);
 });
 
