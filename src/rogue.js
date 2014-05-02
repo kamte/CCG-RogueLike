@@ -52,20 +52,17 @@ var muestraCoordenadas = function(x,y) {
 };
 
 var nextToPlayer = function(x,y) {
-  var near = false;
   xB = player.p.x;
   yB = player.p.y;
 
-  var distX = x-xB;
-  if(distX < 0) distX = -distX;
-  var distY = y-yB;
-  if(distY < 0) distY = -distY;
+  var distX = Math.abs(x-xB);
+  var distY = Math.abs(y-yB);
 
   if((distX <= 32) && (distY <= 32)) {
-    near = true;
-    console.log("x: ", distX, "y: ",distY);
+    return true;
+  } else {
+    return false;
   }
-  return near;
 };
 
 var findNext = function(x,y) {
@@ -80,18 +77,26 @@ var findNext = function(x,y) {
 
 //Versión LightWeight del pathfinder, hay que refinar (PAREDES!)
 var findNextLW = function(x,y) {
-  var next;
+  var next = new Array(2);
   var player = findPlayer();
-  //console.log("actuales: ", x, " ",y);
-  if (x < player.p.x)
-    next = [x+32,y];
-  else if (x > player.p.x)
-    next = [x -32,y];
-  else if (y < player.p.y)
-    next = [x,y+32];
-  else if (y > player.p.y)
-    next = [x,y-32];
-  //console.log("prox movimiento: ", next[0], " ",next[1]);
+
+  if (x < player.p.x && matrix[toMatrix(x+32)][toMatrix(y)]==0) {
+    next[0] = x+32;
+    next[1] = y;
+  } else if (x > player.p.x && matrix[toMatrix(x-32)][toMatrix(y)]==0) {
+    next[0] = x-32;
+    next[1] = y;
+  } else if (y < player.p.y && matrix[toMatrix(x)][toMatrix(y+32)]==0) {
+    next[0] = x;
+    next[1] = y+32;
+  } else if (y > player.p.y && matrix[toMatrix(x)][toMatrix(y-32)]==0) {
+    next[0] = x;
+    next[1] = y-32;
+  } else {
+    next[0] = x;
+    next[1] = y;
+  }
+  console.log("nextx ", next[0], " nexty ", next[1])
   return next;
 }
 
