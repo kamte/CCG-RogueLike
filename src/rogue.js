@@ -218,25 +218,27 @@ Q.Sprite.extend("Player", {
 
   step: function(dt) {
 
+
+    if(this.p.moving && ((this.p.x-16)%32) == 0 && ((this.p.y-16)%32)==0){
+      this.p.moving=false;
+      Q.state.dec("pTurn",1);
+      Q("BadBall").trigger("mTurn",Q.state.get("enemies"));
+    } 
     //Animación de movimiento
     if(!this.dead() && (Q.state.get("pTurn")==1 || Q.state.get("enemies")==0)){
       
       if(this.p.pressed==='right') {
         this.play("bolaR");
-        Q.state.dec("pTurn",1);
-        Q("BadBall").trigger("mTurn",Q.state.get("enemies"));
+        this.p.moving=true;
       } else if(this.p.pressed==='left') {
         this.play("bolaL");
-        Q.state.dec("pTurn",1);
-        Q("BadBall").trigger("mTurn",Q.state.get("enemies"));
+        this.p.moving=true;
       } else if(this.p.pressed==='down') {
         this.play("bolaD");
-        Q.state.dec("pTurn",1);
-        Q("BadBall").trigger("mTurn",Q.state.get("enemies"));
+        this.p.moving=true;
       } else if(this.p.pressed==='up') {
         this.play("bolaU");
-        Q.state.dec("pTurn",1);
-        Q("BadBall").trigger("mTurn",Q.state.get("enemies"));
+        this.p.moving=true;
       } else {};
 
     } else if(this.dead()){
