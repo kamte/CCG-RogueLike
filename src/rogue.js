@@ -108,6 +108,7 @@ Q.component("customControls", {
 
     if(!p.stepDistance) { p.stepDistance = 32; }
     if(!p.stepDelay) { p.stepDelay = 0.2; }
+    if(!p.inTurn) {p.inTurn = true; }
 
     p.stepWait = 0;
     this.entity.on("step",this,"step");
@@ -145,32 +146,35 @@ Q.component("customControls", {
     p.diffX = 0;
     p.diffY = 0;
 
-    if(Q.inputs['left']) {
-      p.pressed='left';
-      p.diffX = -p.stepDistance;
-    } else if(Q.inputs['right']) {
-      p.pressed='right';
-      p.diffX = p.stepDistance;
-    }
+    if(p.inTurn) { //Move only when in turn
 
-    if(Q.inputs['up']) {
-      p.pressed='up';
-      p.diffY = -p.stepDistance;
-    } else if(Q.inputs['down']) {
-      p.pressed='down';
-      p.diffY = p.stepDistance;
-    }
+      if(Q.inputs['left']) {
+        p.pressed='left';
+        p.diffX = -p.stepDistance;
+      } else if(Q.inputs['right']) {
+        p.pressed='right';
+        p.diffX = p.stepDistance;
+      }
 
-    if(!Q.inputs['up'] && !Q.inputs['down'] && !Q.inputs['left'] && !Q.inputs['right'])
-      p.pressed='none';
+      if(Q.inputs['up']) {
+        p.pressed='up';
+        p.diffY = -p.stepDistance;
+      } else if(Q.inputs['down']) {
+        p.pressed='down';
+        p.diffY = p.stepDistance;
+      }
 
-    if(p.diffY || p.diffX ) { 
-      p.stepping = true;
-      p.origX = p.x;
-      p.origY = p.y;
-      p.destX = p.x + p.diffX;
-      p.destY = p.y + p.diffY;
-      p.stepWait = p.stepDelay; 
+      if(!Q.inputs['up'] && !Q.inputs['down'] && !Q.inputs['left'] && !Q.inputs['right'])
+        p.pressed='none';
+
+      if(p.diffY || p.diffX ) { 
+        p.stepping = true;
+        p.origX = p.x;
+        p.origY = p.y;
+        p.destX = p.x + p.diffX;
+        p.destY = p.y + p.diffY;
+        p.stepWait = p.stepDelay; 
+      }
     }
   }
 });
@@ -226,12 +230,14 @@ Q.Sprite.extend("Player", {
 
     if(this.p.moving && ((this.p.x-16)%32) == 0 && ((this.p.y-16)%32)==0){
       this.p.moving=false;
+      this.p.inTurn=false;
       Q.state.dec("pTurn",1);
       Q("BadBall").trigger("mTurn",Q.state.get("enemies"));
     } 
     //Animación de movimiento
     if(!this.dead() && (Q.state.get("pTurn")==1 || Q.state.get("enemies")==0)){
-      
+
+      this.p.inTurn=true;
       if(this.p.pressed==='right') {
         this.play("bolaR");
         this.p.moving=true;
@@ -290,6 +296,9 @@ Q.Sprite.extend("BadBall", {
       }
 
       Q("BadBall").trigger("mTurn",turn-1);
+    }
+    else if(turn > 0 && this.p.moved) {
+      Q("BadBall").trigger("mTurn",turn);
     }
     if(turn === 0)
       setTimeout(function() {
