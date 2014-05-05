@@ -27,6 +27,8 @@ var matrix =[
 [1,1,1,1,1,1,1,1,1,1],
 ];
 
+var enemiesArray = new Array();
+
 var gridPrimigenio = new PF.Grid(10, 14, matrix);
 var finder = new PF.AStarFinder({
   allowDiagonal: false
@@ -127,8 +129,7 @@ Q.component("customControls", {
   },
 
   step: function(dt) {
-    var p = this.entity.p,
-    moved = false;
+    var p = this.entity.p;
     p.stepWait -= dt;
 
     if(p.stepping) {
@@ -198,6 +199,7 @@ Q.component("character", {
 
     hit: function(aggressor) {
       this.p.hitPoints -= aggressor.p.attack-this.p.defense;
+      //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
       console.log("vida defensor "+this.p.hitPoints);
     }
   } 
@@ -238,6 +240,7 @@ Q.Sprite.extend("Player", {
     if(!this.dead() && (Q.state.get("pTurn")==1 || Q.state.get("enemies")==0)){
 
       this.p.inTurn=true;
+
       if(this.p.pressed==='right') {
         this.play("bolaR");
         this.p.moving=true;
@@ -290,15 +293,16 @@ Q.Sprite.extend("BadBall", {
         // var nextMove = findNextLW(this.p.x,this.p.y);
         // this.p.x = nextMove[0];
         // this.p.y = nextMove[1];
+        if((this.p.x-16)%32 != 0 || (this.p.y-16)%32 != 0 ){
+          this.p.x = fromMatrix(Math.round(toMatrix(this.p.x)));
+          this.p.y = fromMatrix(Math.round(toMatrix(this.p.y)));
+        }
         var nextMove = findNext(this.p.x,this.p.y);
         this.p.x = fromMatrix(nextMove[0]);
         this.p.y = fromMatrix(nextMove[1]);
       }
 
       Q("BadBall").trigger("mTurn",turn-1);
-    }
-    else if(turn > 0 && this.p.moved) {
-      Q("BadBall").trigger("mTurn",turn);
     }
     if(turn === 0)
       setTimeout(function() {
@@ -338,8 +342,10 @@ Q.scene("level1", function(stage) {
 
   Q.state.reset({ enemies: 0, health: p.p.hitPoints, pTurn: 1, mTurn: 1});
 
-  stage.insert(new Q.BadBall())
+  stage.insert(new Q.BadBall());
   Q.state.inc("enemies",1);
+  //stage.insert(new Q.BadBall({x: 16+32*5, y: 16+32*2}));
+  //Q.state.inc("enemies",1);
 
 
   stage.add("viewport").centerOn(150, 368); 
