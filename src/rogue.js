@@ -77,7 +77,7 @@ var findNext = function(x,y) {
   return path[1];
 };
 
-//Versión LightWeight del pathfinder, hay que refinar (PAREDES!)
+//Versión LightWeight del pathfinder
 var findNextLW = function(x,y) {
   var next = new Array(2);
   var player = findPlayer();
@@ -85,20 +85,25 @@ var findNextLW = function(x,y) {
   if (x < player.p.x && matrix[toMatrix(x+32)][toMatrix(y)]==0) {
     next[0] = x+32;
     next[1] = y;
+    console.log(">>muevo DRCH<<");
   } else if (x > player.p.x && matrix[toMatrix(x-32)][toMatrix(y)]==0) {
     next[0] = x-32;
     next[1] = y;
+    console.log(">>muevo IZQ<<");
   } else if (y < player.p.y && matrix[toMatrix(x)][toMatrix(y+32)]==0) {
     next[0] = x;
     next[1] = y+32;
-  } else if (y > player.p.y && matrix[toMatrix(x)][toMatrix(y-32)]==0) {
+    console.log(">>muevo ABAJO<<");
+  } else if (y > player.p.y && matrix[toMatrix(x)][toMatrix(y-32)]===0) {
     next[0] = x;
     next[1] = y-32;
+    console.log(">>muevo ARRIBA<<")
   } else {
     next[0] = x;
     next[1] = y;
+    console.log(">>no muevo<<");
   }
-  console.log("nextx ", next[0], " nexty ", next[1])
+  //console.log("nextx ", next[0], " nexty ", next[1])
   return next;
 }
 
@@ -121,11 +126,13 @@ Q.component("customControls", {
     var p = this.entity.p;
 
     if(p.stepping) {
+      if(col.obj.p.type == Q.SPRITE_DEFAULT){
+        p.moving=false;
+      } 
       p.stepping = false;
       p.x = p.origX;
       p.y = p.origY;
     }
-
   },
 
   step: function(dt) {
@@ -152,21 +159,26 @@ Q.component("customControls", {
       if(Q.inputs['left']) {
         p.pressed='left';
         p.diffX = -p.stepDistance;
+        p.moving = true;
       } else if(Q.inputs['right']) {
         p.pressed='right';
         p.diffX = p.stepDistance;
+        p.moving = true;
       }
 
       if(Q.inputs['up']) {
         p.pressed='up';
         p.diffY = -p.stepDistance;
+        p.moving = true;
       } else if(Q.inputs['down']) {
         p.pressed='down';
         p.diffY = p.stepDistance;
+        p.moving = true;
       }
 
-      if(!Q.inputs['up'] && !Q.inputs['down'] && !Q.inputs['left'] && !Q.inputs['right'])
+      if(!Q.inputs['up'] && !Q.inputs['down'] && !Q.inputs['left'] && !Q.inputs['right']) {
         p.pressed='none';
+      }
 
       if(p.diffY || p.diffX ) { 
         p.stepping = true;
@@ -229,8 +241,7 @@ Q.Sprite.extend("Player", {
 
   step: function(dt) {
 
-
-    if(this.p.moving && ((this.p.x-16)%32) == 0 && ((this.p.y-16)%32)==0){
+    if(this.p.moving && this.p.moved && ((this.p.x-16)%32) == 0 && ((this.p.y-16)%32)==0){
       this.p.moving=false;
       this.p.inTurn=false;
       Q.state.dec("pTurn",1);
@@ -238,28 +249,28 @@ Q.Sprite.extend("Player", {
     } 
     //Animación de movimiento
     if(!this.dead() && (Q.state.get("pTurn")==1 || Q.state.get("enemies")==0)){
-
+      this.p.moved=false;
       this.p.inTurn=true;
 
       if(this.p.pressed==='right') {
         this.play("bolaR");
-        this.p.moving=true;
+        this.p.moved=true;
       } else if(this.p.pressed==='left') {
         this.play("bolaL");
-        this.p.moving=true;
+        this.p.moved=true;
       } else if(this.p.pressed==='down') {
         this.play("bolaD");
-        this.p.moving=true;
+        this.p.moved=true;
       } else if(this.p.pressed==='up') {
         this.play("bolaU");
-        this.p.moving=true;
+        this.p.moved=true;
       } else {};
 
     } else if(this.dead()){
       console.log("dead "+this.p.hitPoints+" "+this.dead());
       this.destroy();
     }
-  },
+  }
 });
 
 Q.Sprite.extend("BadBall", {
@@ -275,41 +286,48 @@ Q.Sprite.extend("BadBall", {
     this.add('2d, animation, character');
 
     this.character.live(100, 20, 1);
+    
     this.on("hit", function(collision) {
       console.log("collision bola mala: "+collision.obj);
     });
-    this.on("mTurn",this,"action");
-    this.on("fmTurn",this,function(){this.p.moved=false;});
+    this.on("mTurn", this, "action");
+    this.on("fmTurn", this, function() { 
+      this.p.moved=false; 
+    });
 
   },
 
-  action: function(turn) {
-    if (turn > 0 && !this.p.moved) {
+  action: function() {
+    if (Q.state.get("turn") > 0 && !this.p.moved) {
       console.log("turno bicho!");
       this.p.moved = true;
       if(nextToPlayer(this.p.x,this.p.y))
         this.attack();
       else {
-        // var nextMove = findNextLW(this.p.x,this.p.y);
-        // this.p.x = nextMove[0];
-        // this.p.y = nextMove[1];
         if((this.p.x-16)%32 != 0 || (this.p.y-16)%32 != 0 ){
           this.p.x = fromMatrix(Math.round(toMatrix(this.p.x)));
           this.p.y = fromMatrix(Math.round(toMatrix(this.p.y)));
         }
+        var nextMove = findNextLW(this.p.x,this.p.y);
+        this.p.x = nextMove[0];
+        this.p.y = nextMove[1];
+        /*
         var nextMove = findNext(this.p.x,this.p.y);
         this.p.x = fromMatrix(nextMove[0]);
         this.p.y = fromMatrix(nextMove[1]);
+        */
       }
-
-      Q("BadBall").trigger("mTurn",turn-1);
+      Q.state.dec("turn",1);
+      //Q("BadBall").trigger("mTurn",turn-1);
     }
-    if(turn === 0)
+    if(Q.state.get("turn")==0)
       setTimeout(function() {
+
+        Q.state.set("turn", Q.state.get("enemies"));
         Q.state.inc("pTurn",1);
         Q("BadBall").trigger("fmTurn");
         console.log("turno jugador")
-      }, 200);
+      }, 100);
   },
 
   step: function(dt){
@@ -340,13 +358,14 @@ Q.scene("level1", function(stage) {
   var p = stage.insert(new Q.Player());
   player = findPlayer();
 
-  Q.state.reset({ enemies: 0, health: p.p.hitPoints, pTurn: 1, mTurn: 1});
+  Q.state.reset({ enemies: 0, health: p.p.hitPoints, pTurn: 1, mTurn: 1, turn: 0});
 
   stage.insert(new Q.BadBall());
   Q.state.inc("enemies",1);
-  //stage.insert(new Q.BadBall({x: 16+32*5, y: 16+32*2}));
-  //Q.state.inc("enemies",1);
-
+  stage.insert(new Q.BadBall({x: 16+32*5, y: 16+32*2}));
+  Q.state.inc("enemies",1);
+ 
+  Q.state.set("turn", Q.state.get("enemies"));
 
   stage.add("viewport").centerOn(150, 368); 
   stage.follow(p, { x: true, y: true });
