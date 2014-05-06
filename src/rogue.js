@@ -41,7 +41,7 @@ var findPlayer = function() {
 }
 
 var toMatrix = function(x) {
-  return (x-16)/32-1;
+  return Math.round((x-16)/32-1);
 };
 
 var fromMatrix = function(x) {
@@ -60,7 +60,10 @@ var nextToPlayer = function(x,y) {
   var distX = Math.abs(x-xB);
   var distY = Math.abs(y-yB);
 
-  if((distX <= 32) && (distY <= 32)) {
+  if((distX == 32) && (distY == 32)) {
+    console.log(distX, distY, "DISTANCIA");
+    return false;
+  } else if((distX <= 32) && (distY <= 32)) {
     return true;
   } else {
     return false;
@@ -107,116 +110,7 @@ var findNextLW = function(x,y) {
   return next;
 }
 
-//Custom controls
-Q.component("customControls", {
-
-  added: function() {
-    var p = this.entity.p;
-
-    if(!p.stepDistance) { p.stepDistance = 32; }
-    if(!p.stepDelay) { p.stepDelay = 0.2; }
-    if(!p.inTurn) {p.inTurn = true; }
-
-    p.stepWait = 0;
-    this.entity.on("step",this,"step");
-    this.entity.on("hit", this,"collision");
-  },
-
-  collision: function(col) {
-    var p = this.entity.p;
-
-    if(p.stepping) {
-      if(col.obj.p.type == Q.SPRITE_DEFAULT){
-        p.moving=false;
-      } 
-      p.stepping = false;
-      p.x = p.origX;
-      p.y = p.origY;
-    }
-  },
-
-  step: function(dt) {
-    var p = this.entity.p;
-    p.stepWait -= dt;
-
-    if(p.stepping) {
-      p.x += p.diffX * dt / p.stepDelay;
-      p.y += p.diffY * dt / p.stepDelay;
-    }
-
-    if(p.stepWait > 0) { return; }
-    if(p.stepping) {
-      p.x = p.destX;
-      p.y = p.destY;
-    }
-    p.stepping = false;
-
-    p.diffX = 0;
-    p.diffY = 0;
-
-    if(p.inTurn) { //Move only when in turn
-
-      if(Q.inputs['left']) {
-        p.pressed='left';
-        p.diffX = -p.stepDistance;
-        p.moving = true;
-      } else if(Q.inputs['right']) {
-        p.pressed='right';
-        p.diffX = p.stepDistance;
-        p.moving = true;
-      }
-
-      if(Q.inputs['up']) {
-        p.pressed='up';
-        p.diffY = -p.stepDistance;
-        p.moving = true;
-      } else if(Q.inputs['down']) {
-        p.pressed='down';
-        p.diffY = p.stepDistance;
-        p.moving = true;
-      }
-
-      if(!Q.inputs['up'] && !Q.inputs['down'] && !Q.inputs['left'] && !Q.inputs['right']) {
-        p.pressed='none';
-      }
-
-      if(p.diffY || p.diffX ) { 
-        p.stepping = true;
-        p.origX = p.x;
-        p.origY = p.y;
-        p.destX = p.x + p.diffX;
-        p.destY = p.y + p.diffY;
-        p.stepWait = p.stepDelay; 
-      }
-    }
-  }
-});
-
-Q.component("character", {
-
-  live: function(HP, ATK, DEF) {
-    this.entity.p.hitPoints = HP;
-    this.entity.p.attack = ATK;
-    this.entity.p.defense = DEF
-  },
-
-  extend: {
-    dead: function(){
-      if (this.p.hitPoints <= 0){
-        return true;
-      } else {
-        return false;
-      }
-    },
-
-    hit: function(aggressor) {
-      this.p.hitPoints -= aggressor.p.attack-this.p.defense;
-      //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
-      console.log("vida defensor "+this.p.hitPoints);
-    }
-  } 
-});
-
+//Jugador
 Q.Sprite.extend("Player", {
   init: function(p) {
     this._super(p, {  
@@ -244,11 +138,11 @@ Q.Sprite.extend("Player", {
     if(this.p.moving && this.p.moved && ((this.p.x-16)%32) == 0 && ((this.p.y-16)%32)==0){
       this.p.moving=false;
       this.p.inTurn=false;
-      Q.state.dec("pTurn",1);
-      Q("BadBall").trigger("mTurn",Q.state.get("enemies"));
+      Q.state.dec("playerTurn",1);
+      Q("BadBall").trigger("monsterTurn",Q.state.get("enemies"));
     } 
     //Animación de movimiento
-    if(!this.dead() && (Q.state.get("pTurn")==1 || Q.state.get("enemies")==0)){
+    if(!this.dead() && (Q.state.get("playerTurn")==1 || Q.state.get("enemies")==0)){
       this.p.moved=false;
       this.p.inTurn=true;
 
@@ -273,83 +167,6 @@ Q.Sprite.extend("Player", {
   }
 });
 
-Q.Sprite.extend("BadBall", {
-  init: function(p) {
-    this._super(p, {  
-      sheet: "bolaMDown", 
-      sprite: "bolaMalaAnim", 
-      x: 16+32*7, 
-      y: 16+32*5,  
-      moved: false,
-      type: Q.SPRITE_ENEMY  
-    });
-    this.add('2d, animation, character');
-
-    this.character.live(100, 20, 1);
-    
-    this.on("hit", function(collision) {
-      console.log("collision bola mala: "+collision.obj);
-    });
-    this.on("mTurn", this, "action");
-    this.on("fmTurn", this, function() { 
-      this.p.moved=false; 
-    });
-
-  },
-
-  action: function() {
-    if (Q.state.get("turn") > 0 && !this.p.moved) {
-      console.log("turno bicho!");
-      this.p.moved = true;
-      if(nextToPlayer(this.p.x,this.p.y))
-        this.attack();
-      else {
-        if((this.p.x-16)%32 != 0 || (this.p.y-16)%32 != 0 ){
-          this.p.x = fromMatrix(Math.round(toMatrix(this.p.x)));
-          this.p.y = fromMatrix(Math.round(toMatrix(this.p.y)));
-        }
-        var nextMove = findNextLW(this.p.x,this.p.y);
-        this.p.x = nextMove[0];
-        this.p.y = nextMove[1];
-        /*
-        var nextMove = findNext(this.p.x,this.p.y);
-        this.p.x = fromMatrix(nextMove[0]);
-        this.p.y = fromMatrix(nextMove[1]);
-        */
-      }
-      Q.state.dec("turn",1);
-      //Q("BadBall").trigger("mTurn",turn-1);
-    }
-    if(Q.state.get("turn")==0)
-      setTimeout(function() {
-
-        Q.state.set("turn", Q.state.get("enemies"));
-        Q.state.inc("pTurn",1);
-        Q("BadBall").trigger("fmTurn");
-        console.log("turno jugador")
-      }, 100);
-  },
-
-  step: function(dt){
-
-    if(this.dead()){
-      console.log("dead "+this.p.hitPoints+" "+this.dead());
-      this.destroy();
-      Q.state.dec("enemies", 1);
-    } 
-  },
-
-  attack: function(){
-    this.p.moved=true;
-    enemiesMoved++;
-    player = findPlayer();
-    player.hit(this);
-    Q.state.set("health",player.p.hitPoints);
-  },
-
-});
-
-
 //Nivel1
 Q.scene("level1", function(stage) {
 
@@ -358,11 +175,15 @@ Q.scene("level1", function(stage) {
   var p = stage.insert(new Q.Player());
   player = findPlayer();
 
-  Q.state.reset({ enemies: 0, health: p.p.hitPoints, pTurn: 1, mTurn: 1, turn: 0});
+  Q.state.reset({ enemies: 0, health: p.p.hitPoints, playerTurn: 1, monsterTurn: 1, turn: 0});
 
   stage.insert(new Q.BadBall());
   Q.state.inc("enemies",1);
   stage.insert(new Q.BadBall({x: 16+32*5, y: 16+32*2}));
+  Q.state.inc("enemies",1);
+  stage.insert(new Q.BadBall({x: 16+32*6, y: 16+32*6}));
+  Q.state.inc("enemies",1);
+  stage.insert(new Q.BadBall({x: 16+32*2, y: 16+32*7}));
   Q.state.inc("enemies",1);
  
   Q.state.set("turn", Q.state.get("enemies"));
