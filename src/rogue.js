@@ -72,11 +72,14 @@ var nextToPlayer = function(x,y) {
 
 var findNext = function(x,y) {
   var grid= gridPrimigenio.clone();
-  //console.log("toMatrix ",x," ",y," ",toMatrix(x), toMatrix(y));
+  console.log("toMatrix ",x," ",y," ",toMatrix(x), toMatrix(y));
   xB = player.p.x;
   yB = player.p.y;
   var path = finder.findPath(toMatrix(x), toMatrix(y), toMatrix(xB), toMatrix(yB), grid);
-  //console.log("path "+path);
+  console.log("path "+path);
+  console.log("path[1] "+path[1]);
+  console.log("nextMove", path[1][0], path[1][1], matrix[path[1][0]][path[1][1]]);
+
   return path[1];
 };
 
@@ -179,13 +182,14 @@ Q.scene("level1", function(stage) {
 
   stage.insert(new Q.BadBall());
   Q.state.inc("enemies",1);
+  /*
   stage.insert(new Q.BadBall({x: 16+32*5, y: 16+32*2}));
   Q.state.inc("enemies",1);
   stage.insert(new Q.BadBall({x: 16+32*6, y: 16+32*6}));
   Q.state.inc("enemies",1);
   stage.insert(new Q.BadBall({x: 16+32*2, y: 16+32*7}));
   Q.state.inc("enemies",1);
- 
+  */
   Q.state.set("turn", Q.state.get("enemies"));
 
   stage.add("viewport").centerOn(150, 368); 

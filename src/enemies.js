@@ -25,27 +25,32 @@ Q.Sprite.extend("BadBall", {
   action: function() {
     if (Q.state.get("turn") > 0 && !this.p.moved) {
       console.log("turno bicho!");
+      if((this.p.x-16)%32 != 0 || (this.p.y-16)%32 != 0 ){
+          this.p.x = fromMatrix(Math.round(toMatrix(this.p.x)));
+          this.p.y = fromMatrix(Math.round(toMatrix(this.p.y)));
+      }
       matrix[toMatrix(this.p.x)][toMatrix(this.p.y)] = 0;
 
       this.p.moved = true;
       if(nextToPlayer(this.p.x,this.p.y))
         this.attack();
       else {
-        if((this.p.x-16)%32 != 0 || (this.p.y-16)%32 != 0 ){
-          this.p.x = fromMatrix(Math.round(toMatrix(this.p.x)));
-          this.p.y = fromMatrix(Math.round(toMatrix(this.p.y)));
-        }
+        
         /*
         var nextMove = findNextLW(this.p.x,this.p.y);
-        this.p.x = nextMove[0];
-        this.p.y = nextMove[1];
+        console.log("nextMove", toMatrix(nextMove[0]), toMatrix(nextMove[1]), matrix[toMatrix(nextMove[0])][toMatrix(nextMove[1])]);
+        if(matrix[toMatrix(nextMove[0])][toMatrix(nextMove[1])]==0) {
+          this.p.x = nextMove[0];
+          this.p.y = nextMove[1];
+        }
         */
+        
         var nextMove = findNext(this.p.x,this.p.y);
+        console.log("nextMove", nextMove[0], nextMove[1], matrix[nextMove[0]][nextMove[1]]);
         if(matrix[nextMove[0]][nextMove[1]]==0) {
           this.p.x = fromMatrix(nextMove[0]);
           this.p.y = fromMatrix(nextMove[1]);
-        } 
-        
+        }         
       }
 
       matrix[toMatrix(this.p.x)][toMatrix(this.p.y)] = 1;
