@@ -16,10 +16,7 @@ Q.component("customControls", {
   collision: function(col) {
     var p = this.entity.p;
 
-    if(p.stepping) {
-      if(col.obj.p.type == Q.SPRITE_DEFAULT){
-        p.moving=false;
-      } 
+    if(p.stepping) { 
       p.stepping = false;
       p.x = p.origX;
       p.y = p.origY;
@@ -45,31 +42,42 @@ Q.component("customControls", {
     p.diffX = 0;
     p.diffY = 0;
 
-    if(p.inTurn) { //Move only when in turn
+    this.matrixX = toMatrix(p.x);
+    this.matrixY = toMatrix(p.y);
 
-      if(Q.inputs['left']) {
+    var arriba = new Array();
+    var centro = new Array();
+    var abajo = new Array();
+
+    var i=0;
+    for(j=this.matrixX-1; j<=this.matrixX+1; j++){
+      if(i>=0 && j>=0){
+        arriba[i]=Dungeon.map[this.matrixY-1][j];
+        centro[i]=Dungeon.map[this.matrixY][j];
+        abajo[i]=Dungeon.map[this.matrixY+1][j];
+      }
+      i++;
+    }
+
+    if(p.inTurn) { //Move only when in turn
+      p.pressed='none';
+      if(Q.inputs['left'] && centro[0]==2) {
         p.pressed='left';
         p.diffX = -p.stepDistance;
         p.moving = true;
-      } else if(Q.inputs['right']) {
+      } else if(Q.inputs['right'] && centro[2]==2) {
         p.pressed='right';
         p.diffX = p.stepDistance;
         p.moving = true;
-      }
-
-      if(Q.inputs['up']) {
+      } else if(Q.inputs['up'] && arriba[1]==2) {
         p.pressed='up';
         p.diffY = -p.stepDistance;
         p.moving = true;
-      } else if(Q.inputs['down']) {
+      } else if(Q.inputs['down'] && abajo[1]==2) {
         p.pressed='down';
         p.diffY = p.stepDistance;
         p.moving = true;
-      }
-
-      if(!Q.inputs['up'] && !Q.inputs['down'] && !Q.inputs['left'] && !Q.inputs['right']) {
-        p.pressed='none';
-      }
+      } 
 
       if(p.diffY || p.diffX ) { 
         p.stepping = true;
@@ -78,6 +86,7 @@ Q.component("customControls", {
         p.destX = p.x + p.diffX;
         p.destY = p.y + p.diffY;
         p.stepWait = p.stepDelay; 
+        this.entity.trigger("end_move");
       }
     }
   }
@@ -106,4 +115,25 @@ Q.component("character", {
       console.log("vida defensor "+this.p.hitPoints);
     }
   } 
+});
+
+Q.component("turn_component", {
+
+  init_turn: function(pos) {
+    enemiesArray.push(this.entity);
+    if(pos==null || pos==undefined)
+      this.entity.p.position = Q.state.get("enemies");
+    else
+      this.entity.p.position = pos;
+  },
+
+  extend: {
+    act_turn: function(dead) {
+      this.p.position -= dead;
+    },
+
+    pass_turn: function(){
+      Q.state.inc("nextMove",1);
+    }
+  }
 });

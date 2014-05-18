@@ -10,42 +10,28 @@ Q = Quintus({development: true, audioSupported: ['mp3', 'ogg'] })
 Q.gravityX = 0;
 Q.gravityY = 0;
 
-var matrix =[
-[1,1,1,1,1,1,1,1,1,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,1,0,0,0,0,1,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,1,1,0,0,0,1],
-[1,0,0,0,1,1,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,1,0,0,0,0,1,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1],
-];
-
+var matrix;
 var enemiesArray = new Array();
 
-var gridPrimigenio = new PF.Grid(10, 14, matrix);
-var finder = new PF.AStarFinder({
-  allowDiagonal: false
-});
+var act_turnEnemies = function(pos) {
+  var aux = new Array();
+  for(var i=pos; i<Q.state.get("enemies")-1; i++){
+    enemiesArray[i]=enemiesArray[i+1]; 
+  }
 
-var enemiesMoved = 0;
+  Q.state.dec("enemies", 1);
+}
 
 var findPlayer = function() {
   return Q("Player").first();
 }
 
 var toMatrix = function(x) {
-  return Math.round((x-16)/32-1);
+  return Math.round((x-16)/32);
 };
 
 var fromMatrix = function(x) {
-  return (x+1)*32+16;
+  return ((x*32)+16);
 };
 
 var muestraCoordenadas = function(x,y) {
@@ -70,139 +56,88 @@ var nextToPlayer = function(x,y) {
   }
 };
 
-var findNext = function(x,y) {
-  var grid= gridPrimigenio.clone();
-  console.log("toMatrix ",x," ",y," ",toMatrix(x), toMatrix(y));
-  xB = player.p.x;
-  yB = player.p.y;
-  var path = finder.findPath(toMatrix(x), toMatrix(y), toMatrix(xB), toMatrix(yB), grid);
-  console.log("path "+path);
-  console.log("path[1] "+path[1]);
-  console.log("nextMove", path[1][0], path[1][1], matrix[path[1][0]][path[1][1]]);
-
-  return path[1];
-};
-
 //Versión LightWeight del pathfinder
 var findNextLW = function(x,y) {
+  console.log(x,y);
   var next = new Array(2);
+  next[0]=x; next[1]=y;
   var player = findPlayer();
 
-  if (x < player.p.x && matrix[toMatrix(x+32)][toMatrix(y)]==0) {
+  this.matrixX = toMatrix(x);
+  this.matrixY = toMatrix(y);
+
+  var arriba = new Array();
+  var centro = new Array();
+  var abajo = new Array();
+
+  var i=0;
+  for(j=this.matrixX-1; j<=this.matrixX+1; j++){
+    if(i>=0 && j>=0){
+      arriba[i]=matrix[this.matrixY-1][j];
+      centro[i]=matrix[this.matrixY][j];
+      abajo[i]=matrix[this.matrixY+1][j];
+    }
+    i++;
+  }
+
+  if(centro[2]==0 && x < player.p.x){
     next[0] = x+32;
     next[1] = y;
-    console.log(">>muevo DRCH<<");
-  } else if (x > player.p.x && matrix[toMatrix(x-32)][toMatrix(y)]==0) {
+  }
+
+  if(centro[0]==0 && x > player.p.x){
     next[0] = x-32;
     next[1] = y;
-    console.log(">>muevo IZQ<<");
-  } else if (y < player.p.y && matrix[toMatrix(x)][toMatrix(y+32)]==0) {
+  }
+
+  if(abajo[1]==0 && y < player.p.y){
     next[0] = x;
     next[1] = y+32;
-    console.log(">>muevo ABAJO<<");
-  } else if (y > player.p.y && matrix[toMatrix(x)][toMatrix(y-32)]===0) {
+  }
+
+  if(arriba[1]==0 && y > player.p.y){
     next[0] = x;
     next[1] = y-32;
-    console.log(">>muevo ARRIBA<<")
-  } else {
-    next[0] = x;
-    next[1] = y;
-    console.log(">>no muevo<<");
   }
-  //console.log("nextx ", next[0], " nexty ", next[1])
+
   return next;
 }
 
-//Jugador
-Q.Sprite.extend("Player", {
-  init: function(p) {
-    this._super(p, {  
-      sheet: "bolaDown", 
-      sprite: "bolaAnim", 
-      x: 16+32*2, 
-      y: 16+32*2
-    });
-    this.add('2d, customControls, animation, character');
+function setupLevel(stage) {
+   
+    Dungeon.generate();
+    matrix = Dungeon.pathMap;
 
-    this.character.live(100, 20, 1);
+    stage.insert(new Q.Repeater({ asset: "azteca.png", speedX: 0.5, speedY: 0.5 }));
+    stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
+  
+    var p = stage.insert(new Q.Player());
 
-    this.on("hit", function(collision) {
-      if(collision.obj.p.type === Q.SPRITE_ENEMY){
-        console.log("ataque");
-        collision.obj.hit(this);
-      } else {
-        console.log("no enemigo");
-      }
-    });
-  },
+    player = findPlayer();
 
-  step: function(dt) {
+    Q.state.reset({ enemies: 0, health: p.p.hitPoints, enemies_dead: 0, nextMove: 0});
+   
+    stage.insert(new Q.BadBall());
+    //Q.state.inc("enemies",1);
 
-    if(this.p.moving && this.p.moved && ((this.p.x-16)%32) == 0 && ((this.p.y-16)%32)==0){
-      this.p.moving=false;
-      this.p.inTurn=false;
-      Q.state.dec("playerTurn",1);
-      Q("BadBall").trigger("monsterTurn",Q.state.get("enemies"));
-    } 
-    //Animación de movimiento
-    if(!this.dead() && (Q.state.get("playerTurn")==1 || Q.state.get("enemies")==0)){
-      this.p.moved=false;
-      this.p.inTurn=true;
-
-      if(this.p.pressed==='right') {
-        this.play("bolaR");
-        this.p.moved=true;
-      } else if(this.p.pressed==='left') {
-        this.play("bolaL");
-        this.p.moved=true;
-      } else if(this.p.pressed==='down') {
-        this.play("bolaD");
-        this.p.moved=true;
-      } else if(this.p.pressed==='up') {
-        this.play("bolaU");
-        this.p.moved=true;
-      } else {};
-
-    } else if(this.dead()){
-      console.log("dead "+this.p.hitPoints+" "+this.dead());
-      this.destroy();
-    }
+    stage.add("viewport").centerOn(150, 368); 
+    stage.follow(p, { x: true, y: true });
   }
-});
 
-//Nivel1
-Q.scene("level1", function(stage) {
-
-  Q.stageTMX("level1OK.tmx", stage);
-
-  var p = stage.insert(new Q.Player());
-  player = findPlayer();
-
-  Q.state.reset({ enemies: 0, health: p.p.hitPoints, playerTurn: 1, monsterTurn: 1, turn: 0});
-
-  stage.insert(new Q.BadBall());
-  Q.state.inc("enemies",1);
-  /*
-  stage.insert(new Q.BadBall({x: 16+32*5, y: 16+32*2}));
-  Q.state.inc("enemies",1);
-  stage.insert(new Q.BadBall({x: 16+32*6, y: 16+32*6}));
-  Q.state.inc("enemies",1);
-  stage.insert(new Q.BadBall({x: 16+32*2, y: 16+32*7}));
-  Q.state.inc("enemies",1);
-  */
-  Q.state.set("turn", Q.state.get("enemies"));
-
-  stage.add("viewport").centerOn(150, 368); 
-  stage.follow(p, { x: true, y: true });
-});
+  Q.scene("level1",function(stage) {
+    // Call the helper methods to get the 
+    // level all set up with blocks, a ball and a paddle
+    setupLevel(stage);
+  });
 
 
 //Carga de recursos
-Q.loadTMX("level1OK.tmx, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json", function() {
+Q.load("texturas.png, texturas.json, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
 
   Q.compileSheets("bola.png", "bola.json");
   Q.compileSheets("bolaMala.png", "bolaMala.json");
   Q.compileSheets("bombi.png", "bombi.json");
+  Q.compileSheets("texturas.png","texturas.json");
   
   Q.animations("bolaAnim", {
     bolaD: {frames: [0]},
