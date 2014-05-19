@@ -15,7 +15,6 @@ Q.component("customControls", {
 
   collision: function(col) {
     var p = this.entity.p;
-
     if(p.stepping) { 
       p.stepping = false;
       p.x = p.origX;
@@ -61,19 +60,19 @@ Q.component("customControls", {
 
     if(p.inTurn) { //Move only when in turn
       p.pressed='none';
-      if(Q.inputs['left'] && centro[0]==2) {
+      if(Q.inputs['left'] && centro[0]%2==0) {
         p.pressed='left';
         p.diffX = -p.stepDistance;
         p.moving = true;
-      } else if(Q.inputs['right'] && centro[2]==2) {
+      } else if(Q.inputs['right'] && centro[2]%2==0) {
         p.pressed='right';
         p.diffX = p.stepDistance;
         p.moving = true;
-      } else if(Q.inputs['up'] && arriba[1]==2) {
+      } else if(Q.inputs['up'] && arriba[1]%2==0) {
         p.pressed='up';
         p.diffY = -p.stepDistance;
         p.moving = true;
-      } else if(Q.inputs['down'] && abajo[1]==2) {
+      } else if(Q.inputs['down'] && abajo[1]%2==0) {
         p.pressed='down';
         p.diffY = p.stepDistance;
         p.moving = true;
@@ -112,7 +111,7 @@ Q.component("character", {
     hit: function(aggressor) {
       this.p.hitPoints -= aggressor.p.attack-this.p.defense;
       //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
-      console.log("vida defensor "+this.p.hitPoints);
+      console.log(this.p.x, this.p.y, "vida defensor "+this.p.hitPoints);
     }
   } 
 });
@@ -128,10 +127,6 @@ Q.component("turn_component", {
   },
 
   extend: {
-    act_turn: function(dead) {
-      this.p.position -= dead;
-    },
-
     pass_turn: function(){
       Q.state.inc("nextMove",1);
     }

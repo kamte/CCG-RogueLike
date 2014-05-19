@@ -16,11 +16,11 @@ Q.Sprite.extend("Player", {
     this.on("end_move", this, function(){
       this.p.inTurn=false;
       this.p.moving=false;
-      this.p.moved=false;
-
+      that.p.moved=false;
+      
       setTimeout(function() {
         Q.state.inc("nextMove",1);
-      }, 200);
+      }, 500);
       
     });
 
@@ -72,7 +72,8 @@ Q.Sprite.extend("BadBall", {
       x: 16+32*7, 
       y: 16+32*5,  
       moved: false,
-      type: Q.SPRITE_ENEMY  
+      type: Q.SPRITE_ENEMY,
+      sensor: true  
     });
     this.add('2d, animation, character, turn_component');
 
@@ -99,24 +100,26 @@ Q.Sprite.extend("BadBall", {
       this.p.moved = true;
       console.log("turno bicho!");
       
-      matrix[toMatrix(this.p.x)][toMatrix(this.p.y)] = 0;
+      Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 666;
 
-      if(nextToPlayer(this.p.x,this.p.y))
-        this.attack();
-      else {
-        if((this.p.x-16)%32 != 0 || (this.p.y-16)%32 != 0 ){
+      if((this.p.x-16)%32 != 0 || (this.p.y-16)%32 != 0 ){
           this.p.x = fromMatrix(Math.round(toMatrix(this.p.x)));
           this.p.y = fromMatrix(Math.round(toMatrix(this.p.y)));
+          console.log(this.p.x, this.p.y);
         }
+      if(nextToPlayer(this.p.x,this.p.y)){
+        this.attack();
+      } else {
+        console.log(this.p.x, this.p.y);
         
         var nextMove = findNextLW(this.p.x,this.p.y);
         this.p.x = nextMove[0];
         this.p.y = nextMove[1];
       }
 
-      matrix[toMatrix(this.p.x)][toMatrix(this.p.y)] = 1;
+      Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 2;
 
-      Q.state.inc("nextMove",1);
+      this.pass_turn();
       this.p.moved=false;
     }
   },

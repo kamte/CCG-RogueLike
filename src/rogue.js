@@ -18,7 +18,6 @@ var act_turnEnemies = function(pos) {
   for(var i=pos; i<Q.state.get("enemies")-1; i++){
     enemiesArray[i]=enemiesArray[i+1]; 
   }
-
   Q.state.dec("enemies", 1);
 }
 
@@ -58,7 +57,6 @@ var nextToPlayer = function(x,y) {
 
 //Versión LightWeight del pathfinder
 var findNextLW = function(x,y) {
-  console.log(x,y);
   var next = new Array(2);
   next[0]=x; next[1]=y;
   var player = findPlayer();
@@ -70,32 +68,35 @@ var findNextLW = function(x,y) {
   var centro = new Array();
   var abajo = new Array();
 
+  var m = this.matrixY - 1;
+  var n = this.matrixY + 1;
+
   var i=0;
   for(j=this.matrixX-1; j<=this.matrixX+1; j++){
     if(i>=0 && j>=0){
-      arriba[i]=matrix[this.matrixY-1][j];
-      centro[i]=matrix[this.matrixY][j];
-      abajo[i]=matrix[this.matrixY+1][j];
+      arriba[i]=Dungeon.map[m][j];
+      centro[i]=Dungeon.map[this.matrixY][j];
+      abajo[i]=Dungeon.map[n][j];
     }
     i++;
   }
 
-  if(centro[2]==0 && x < player.p.x){
+  if(centro[2]==2 && x < player.p.x){
     next[0] = x+32;
     next[1] = y;
   }
 
-  if(centro[0]==0 && x > player.p.x){
+  if(centro[0]==2 && x > player.p.x){
     next[0] = x-32;
     next[1] = y;
   }
 
-  if(abajo[1]==0 && y < player.p.y){
+  if(abajo[1]==2 && y < player.p.y){
     next[0] = x;
     next[1] = y+32;
   }
 
-  if(arriba[1]==0 && y > player.p.y){
+  if(arriba[1]==2 && y > player.p.y){
     next[0] = x;
     next[1] = y-32;
   }

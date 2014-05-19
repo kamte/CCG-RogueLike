@@ -1,0 +1,5 @@
+{
+	"floor3":{"sx":0,"sy":32,"tileW":32,"tileH":32,"frames":1},
+	"floor2":{"sx":32,"sy":64,"tileW":32,"tileH":32,"frames":1},
+	"floor1":{"sx":64,"sy":96,"tileW":32,"tileH":32,"frames":1}
+}
