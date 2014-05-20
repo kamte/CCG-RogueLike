@@ -19,7 +19,7 @@ var Dungeon = {
         var min_size = 6;
         var max_size = 10;
 
-        //Generate the rooms
+        //Genera las habitaciones
         for (var i = 0; i < room_count; i++) {
             var room = {};
 
@@ -40,7 +40,7 @@ var Dungeon = {
 
         this.joinRooms();
 
-        //Create corridors:
+        //Crea los pasillos
 
         for (i = 0; i < room_count-1; i++) {
             var roomA = this.rooms[i];
@@ -68,7 +68,7 @@ var Dungeon = {
             }
         }
            
-        //Set the floor tiles to 0
+        //Pone los tiles de suelo a un número par (2 en este caso)
         for (i = 0; i < room_count; i++) {
             var room = this.rooms[i];
             for (var x = room.x; x < room.x + room.w; x++) {
@@ -78,7 +78,7 @@ var Dungeon = {
                 }
             }
         }
-        //Set the wall tiles to 1
+        //Pone los tiles de pared a un número par (2 en este caso)
         for (var x = 0; x < this.map_size; x++) {
             for (var y = 0; y < this.map_size; y++) {
                 if (this.map[x][y] == 2) {
@@ -94,7 +94,7 @@ var Dungeon = {
         Q.assets['level_dungeon'] = this.map;
     },
 
-    //Find the closest room to the one given
+    //Encuentra la habitación más cercana a la dada
     closestRoom: function (room) {
         var mid = {
             x: room.x + (room.w / 2),
@@ -118,7 +118,7 @@ var Dungeon = {
         return closest;
     },
 
-    //Move rooms closer to one another:
+    //Mueve las habitaciones mas cerca unas de otras
     joinRooms: function () {
         for (var i = 0; i < 2; i++) {
             for (var j = 0; j < this.rooms.length; j++) {
@@ -141,7 +141,7 @@ var Dungeon = {
         }
     },
 
-    //Checks if two rooms collide
+    //Comprueba si dos habitaciones colisionan
     collides: function (room, ignore) {
         for (var i = 0; i < this.rooms.length; i++) {
             if (i == ignore) continue;

@@ -16,11 +16,11 @@ Q.Sprite.extend("Player", {
     this.on("end_move", this, function(){
       this.p.inTurn=false;
       this.p.moving=false;
-      that.p.moved=false;
+      this.p.moved=false;
       
       setTimeout(function() {
         Q.state.inc("nextMove",1);
-      }, 500);
+      }, 200);
       
     });
 
