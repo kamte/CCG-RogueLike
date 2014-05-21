@@ -4,6 +4,10 @@ var Dungeon = {
     map_size: 52,
     rooms: [],
     generate: function () {
+        if (this.rooms.length > 0) {
+            this.rooms = []; 
+            this.map = [];
+        } 
         this.map = [];
         this.pathMap = [];
         for (var x = 0; x < this.map_size; x++) {
@@ -34,11 +38,11 @@ var Dungeon = {
             }
             room.w--;
             room.h--;
-
             this.rooms.push(room);
         }
 
         this.joinRooms();
+
 
         //Crea los pasillos
 
@@ -168,7 +172,7 @@ var Dungeon = {
         }
         entity.p.x=fromMatrix(fila);
         entity.p.y=fromMatrix(columna);  
-        console.log(Dungeon.map[columna][fila]);
+        // console.log(Dungeon.map[columna][fila]);
         return entity;
     }
 }

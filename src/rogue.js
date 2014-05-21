@@ -12,6 +12,7 @@ Q.gravityY = 0;
 
 var matrix;
 var enemiesArray = new Array();
+var firstLevel = true;
 
 var act_turnEnemies = function(pos) {
   var aux = new Array();
@@ -88,25 +89,29 @@ var findNextLW = function(x,y) {
 }
 
 function setupLevel(stage) {
-   
     Dungeon.generate();
     matrix = Dungeon.pathMap;
 
     stage.insert(new Q.Repeater({ asset: "azteca.png", speedX: 0.5, speedY: 0.5 }));
     stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
-    console.log("player:");
     var p = stage.insert(Dungeon.insertEntity(new Q.Player()));
-    //var p = stage.insert(new Q.Player());
 
-    player = findPlayer();
+    if(!firstLevel) {
+      var hp = Q.state.get("health");
+      p.p.hitPoints = hp;
+      
+    }
+    else {
+      firstLevel = false;
+    }
+
+    player = p;
 
     Q.state.reset({ enemies: 0, health: p.p.hitPoints, enemies_dead: 0, nextMove: 0});
-   
-    console.log("enemigo:");
+    
     stage.insert(Dungeon.insertEntity(new Q.BadBall()));
-    console.log("escalera:")
+
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
-    //stage.insert(new Q.BadBall());
 
     stage.add("viewport").centerOn(150, 368); 
     stage.follow(p, { x: true, y: true });
@@ -157,7 +162,7 @@ Q.load("escalera.png, escalera.json, texturas.png, texturas.json, bola.png, bola
 Q.UI.Text.extend("Stats",{
   init: function(p) {
     this._super({
-      label: "Health: 100",
+      label: "Health: " + Q.state.get("health"),
       x: 0,
       y: 10,
       color: "white"
