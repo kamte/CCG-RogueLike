@@ -94,7 +94,7 @@ function setupLevel(stage) {
 
     stage.insert(new Q.Repeater({ asset: "azteca.png", speedX: 0.5, speedY: 0.5 }));
     stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
-  
+    console.log("player:");
     var p = stage.insert(Dungeon.insertEntity(new Q.Player()));
     //var p = stage.insert(new Q.Player());
 
@@ -102,8 +102,10 @@ function setupLevel(stage) {
 
     Q.state.reset({ enemies: 0, health: p.p.hitPoints, enemies_dead: 0, nextMove: 0});
    
-
+    console.log("enemigo:");
     stage.insert(Dungeon.insertEntity(new Q.BadBall()));
+    console.log("escalera:")
+    stage.insert(Dungeon.insertEntity(new Q.Escalera()));
     //stage.insert(new Q.BadBall());
 
     stage.add("viewport").centerOn(150, 368); 
@@ -118,12 +120,17 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("texturas.png, texturas.json, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
+Q.load("escalera.png, escalera.json, texturas.png, texturas.json, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
 
   Q.compileSheets("bola.png", "bola.json");
   Q.compileSheets("bolaMala.png", "bolaMala.json");
   Q.compileSheets("bombi.png", "bombi.json");
   Q.compileSheets("texturas.png","texturas.json");
+  Q.compileSheets("escalera.png","escalera.json");
+
+  Q.animations("escAnim", {
+    base: {frames: [0]}
+  });
   
   Q.animations("bolaAnim", {
     bolaD: {frames: [0]},

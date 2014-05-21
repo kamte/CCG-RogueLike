@@ -159,9 +159,16 @@ var Dungeon = {
         var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
         var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
 
+        while (Dungeon.map[columna][fila] != 2) {
+            i = Aux.newRandom(0, this.rooms.length-1);
+            r = this.rooms[i];
+
+            columna = Aux.newRandom(r.x+1, r.x+r.w-1);
+            fila = Aux.newRandom(r.y+1, r.y+r.h-1);
+        }
         entity.p.x=fromMatrix(fila);
-        entity.p.y=fromMatrix(columna);
-            
+        entity.p.y=fromMatrix(columna);  
+        console.log(Dungeon.map[columna][fila]);
         return entity;
     }
 }
