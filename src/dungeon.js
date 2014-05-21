@@ -150,6 +150,19 @@ var Dungeon = {
         }
 
         return false;
+    },
+
+    insertEntity: function (entity) {
+        var i = Aux.newRandom(0, this.rooms.length-1);
+        var r = this.rooms[i];
+
+        var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
+        var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
+
+        entity.p.x=fromMatrix(fila);
+        entity.p.y=fromMatrix(columna);
+            
+        return entity;
     }
 }
 
@@ -170,6 +183,7 @@ Q.Sprite.extend("DungeonTracker",{
     },
 
     setupBlocks: function() {
+
       Q._each(this.p.data,function(row,y) {
         Q._each(row,function(block,x) {
           if(block) { 

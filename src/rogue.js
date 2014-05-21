@@ -61,42 +61,25 @@ var findNextLW = function(x,y) {
   next[0]=x; next[1]=y;
   var player = findPlayer();
 
-  this.matrixX = toMatrix(x);
-  this.matrixY = toMatrix(y);
+  this.fila=toMatrix(y);
+  this.columna=toMatrix(x);
 
-  var arriba = new Array();
-  var centro = new Array();
-  var abajo = new Array();
-
-  var m = this.matrixY - 1;
-  var n = this.matrixY + 1;
-
-  var i=0;
-  for(j=this.matrixX-1; j<=this.matrixX+1; j++){
-    if(i>=0 && j>=0){
-      arriba[i]=Dungeon.map[m][j];
-      centro[i]=Dungeon.map[this.matrixY][j];
-      abajo[i]=Dungeon.map[n][j];
-    }
-    i++;
-  }
-
-  if(centro[2]==2 && x < player.p.x){
+  if(Dungeon.map[fila][columna+1]==2 && x < player.p.x){
     next[0] = x+32;
     next[1] = y;
   }
 
-  if(centro[0]==2 && x > player.p.x){
+  if(Dungeon.map[fila][columna-1]==2 && x > player.p.x){
     next[0] = x-32;
     next[1] = y;
   }
 
-  if(abajo[1]==2 && y < player.p.y){
+  if(Dungeon.map[fila+1][columna]==2 && y < player.p.y){
     next[0] = x;
     next[1] = y+32;
   }
 
-  if(arriba[1]==2 && y > player.p.y){
+  if(Dungeon.map[fila-1][columna]==2 && y > player.p.y){
     next[0] = x;
     next[1] = y-32;
   }
@@ -112,14 +95,16 @@ function setupLevel(stage) {
     stage.insert(new Q.Repeater({ asset: "azteca.png", speedX: 0.5, speedY: 0.5 }));
     stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
   
-    var p = stage.insert(new Q.Player());
+    var p = stage.insert(Dungeon.insertEntity(new Q.Player()));
+    //var p = stage.insert(new Q.Player());
 
     player = findPlayer();
 
     Q.state.reset({ enemies: 0, health: p.p.hitPoints, enemies_dead: 0, nextMove: 0});
    
-    stage.insert(new Q.BadBall());
-    //Q.state.inc("enemies",1);
+
+    stage.insert(Dungeon.insertEntity(new Q.BadBall()));
+    //stage.insert(new Q.BadBall());
 
     stage.add("viewport").centerOn(150, 368); 
     stage.follow(p, { x: true, y: true });

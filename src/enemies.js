@@ -100,7 +100,7 @@ Q.Sprite.extend("BadBall", {
       this.p.moved = true;
       console.log("turno bicho!");
       
-      Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 666;
+      Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 2;
 
       if((this.p.x-16)%32 != 0 || (this.p.y-16)%32 != 0 ){
           this.p.x = fromMatrix(Math.round(toMatrix(this.p.x)));
@@ -117,7 +117,7 @@ Q.Sprite.extend("BadBall", {
         this.p.y = nextMove[1];
       }
 
-      Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 2;
+      Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 666;
 
       this.pass_turn();
       this.p.moved=false;
