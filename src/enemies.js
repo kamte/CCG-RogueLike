@@ -64,6 +64,7 @@ Q.Sprite.extend("Player", {
   }
 });
 
+
 Q.Sprite.extend("BadBall", {
   init: function(p) {
     this._super(p, {  
@@ -111,10 +112,13 @@ Q.Sprite.extend("BadBall", {
         this.attack();
       } else {
         console.log(this.p.x, this.p.y);
-        
-        var nextMove = findNextLW(this.p.x,this.p.y);
-        this.p.x = nextMove[0];
-        this.p.y = nextMove[1];
+
+        if(this.distanceToPlayer() < 15) {
+          var nextMove = findNextLW(this.p.x,this.p.y);
+          this.p.x = nextMove[0];
+          this.p.y = nextMove[1];
+        }
+        else console.log("muy lejos, no me muevo");
       }
 
       Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 666;
@@ -130,4 +134,13 @@ Q.Sprite.extend("BadBall", {
     Q.state.set("health",player.p.hitPoints);
   },
 
+  distanceToPlayer: function(){
+    var p = findPlayer();
+
+    var xs = p.p.x - this.p.x;
+    xs = xs * xs;
+    var ys = p.p.y - this.p.y;
+    ys = ys * ys;
+    return toMatrix(Math.sqrt(xs + ys));
+  }
 });
