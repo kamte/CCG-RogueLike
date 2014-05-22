@@ -5,9 +5,11 @@ var CharSheet = {
 	defense: 1,
 	cards: [],
 	items: [],
+	hpBar: new Q.Health(),
+	expBar: new Q.Experience(),
 
 	updateHp: function(hp) {
-
+		this.hpBar.hurt();
 		if (hp > this.maxHp)
 			this.hitPoints = maxHp;
 		else

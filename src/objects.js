@@ -11,7 +11,8 @@ Q.Sprite.extend("Escalera", {
    			if(collision.isA("Player") && !this.p.taken) {
    				Q.clearStages();
           Q.stageScene("level1", 0);
-          Q.stageScene("hud",1);
+          Q.stageScene("HUD-background",1);
+          Q.stageScene("HUD-stats",2);
    			}
    		});
    	}

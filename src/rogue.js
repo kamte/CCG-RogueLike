@@ -137,7 +137,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("escalera.png, escalera.json, texturas.png, texturas.json, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
+Q.load("HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
 
   Q.compileSheets("bola.png", "bola.json");
   Q.compileSheets("bolaMala.png", "bolaMala.json");
@@ -166,31 +166,7 @@ Q.load("escalera.png, escalera.json, texturas.png, texturas.json, bola.png, bola
   Q.animations("bombiAnim", {
     bolaD: {frames: [0, 1], rate: 1/12, loop: true}
   });
-  
   Q.stageScene("level1", 0);
-  Q.stageScene("hud",1);
+  Q.stageScene("HUD-background",1);
+  Q.stageScene("HUD-stats",2);
 });
-
-Q.UI.Text.extend("Stats",{
-  init: function(p) {
-    this._super({
-      label: "Health: " + Q.state.get("health"),
-      x: 0,
-      y: 10,
-      color: "white"
-    });
-    Q.state.on("change.health",this,"hp");
-  },
-  hp: function(hitP) {
-    this.p.label = "Health: " + hitP;
-  }
-});
-
-Q.scene('hud',function(stage) {
-  var container = stage.insert(new Q.UI.Container({
-    x: 60, y: 0
-  }));
-  var label = container.insert(new Q.Stats());
-  container.fit(20);
-});
-
