@@ -41,38 +41,25 @@ Q.component("customControls", {
     p.diffX = 0;
     p.diffY = 0;
 
-    this.matrixX = toMatrix(p.x);
-    this.matrixY = toMatrix(p.y);
+    var fila=toMatrix(p.y);
+    var columna=toMatrix(p.x);
 
-    var arriba = new Array();
-    var centro = new Array();
-    var abajo = new Array();
-
-    var i=0;
-    for(j=this.matrixX-1; j<=this.matrixX+1; j++){
-      if(i>=0 && j>=0){
-        arriba[i]=Dungeon.map[this.matrixY-1][j];
-        centro[i]=Dungeon.map[this.matrixY][j];
-        abajo[i]=Dungeon.map[this.matrixY+1][j];
-      }
-      i++;
-    }
 
     if(p.inTurn) { //Move only when in turn
       p.pressed='none';
-      if(Q.inputs['left'] && centro[0]%2==0) {
+      if(Q.inputs['left'] && Dungeon.map[fila][columna-1]%2==0) {
         p.pressed='left';
         p.diffX = -p.stepDistance;
         p.moving = true;
-      } else if(Q.inputs['right'] && centro[2]%2==0) {
+      } else if(Q.inputs['right'] && Dungeon.map[fila][columna+1]%2==0) {
         p.pressed='right';
         p.diffX = p.stepDistance;
         p.moving = true;
-      } else if(Q.inputs['up'] && arriba[1]%2==0) {
+      } else if(Q.inputs['up'] && Dungeon.map[fila-1][columna]%2==0) {
         p.pressed='up';
         p.diffY = -p.stepDistance;
         p.moving = true;
-      } else if(Q.inputs['down'] && abajo[1]%2==0) {
+      } else if(Q.inputs['down'] && Dungeon.map[fila+1][columna]%2==0) {
         p.pressed='down';
         p.diffY = p.stepDistance;
         p.moving = true;
@@ -121,7 +108,7 @@ Q.component("character", {
 Q.component("turn_component", {
 
   init_turn: function(pos) {
-    enemiesArray.push(this.entity);
+    enemiesArray[pos]=this.entity;
     if(pos==null || pos==undefined)
       this.entity.p.position = Q.state.get("enemies");
     else

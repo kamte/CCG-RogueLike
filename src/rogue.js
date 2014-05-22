@@ -15,9 +15,10 @@ var enemiesArray = new Array();
 var firstLevel = true;
 
 var act_turnEnemies = function(pos) {
-  var aux = new Array();
-  for(var i=pos; i<Q.state.get("enemies")-1; i++){
+  for(var i=pos; i<Q.state.get("enemies"); i++){
     enemiesArray[i]=enemiesArray[i+1]; 
+    enemiesArray[i+1]=undefined;
+    enemiesArray[i].p.position=i;
   }
   Q.state.dec("enemies", 1);
 }
@@ -62,25 +63,37 @@ var findNextLW = function(x,y) {
   next[0]=x; next[1]=y;
   var player = findPlayer();
 
-  this.fila=toMatrix(y);
-  this.columna=toMatrix(x);
+  var fila=toMatrix(y);
+  var columna=toMatrix(x);
+
+  var posibles = [];
 
   if(Dungeon.map[fila][columna+1]==2 && x < player.p.x){
+    posibles.push('derecha');
+  }
+  if(Dungeon.map[fila][columna-1]==2 && x > player.p.x){
+    posibles.push('izquierda');
+  }
+  if(Dungeon.map[fila+1][columna]==2 && y < player.p.y){
+    posibles.push('abajo');
+  }
+  if(Dungeon.map[fila-1][columna]==2 && y > player.p.y){
+    posibles.push('arriba');
+  }
+
+  var num = Math.floor(Math.random()*(posibles.length));
+  var dir = posibles[num];
+  console.log(num, dir);
+  if(dir == 'derecha'){
     next[0] = x+32;
     next[1] = y;
-  }
-
-  if(Dungeon.map[fila][columna-1]==2 && x > player.p.x){
+  } else if(dir == 'izquierda') {
     next[0] = x-32;
     next[1] = y;
-  }
-
-  if(Dungeon.map[fila+1][columna]==2 && y < player.p.y){
+  } else if(dir == 'abajo') {
     next[0] = x;
     next[1] = y+32;
-  }
-
-  if(Dungeon.map[fila-1][columna]==2 && y > player.p.y){
+  } else if(dir == 'arriba'){
     next[0] = x;
     next[1] = y-32;
   }
@@ -109,6 +122,8 @@ function setupLevel(stage) {
     Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, enemies_dead: 0, nextMove: 0});
     
     stage.insert(Dungeon.insertEntity(new Q.BadBall()));
+    //stage.insert(Dungeon.insertEntity(new Q.BadBall()));
+    //stage.insert(Dungeon.insertEntity(new Q.BadBall()));
 
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
 

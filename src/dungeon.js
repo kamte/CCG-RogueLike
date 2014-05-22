@@ -4,10 +4,7 @@ var Dungeon = {
     map_size: 52,
     rooms: [],
     generate: function () {
-        if (this.rooms.length > 0) {
-            this.rooms = []; 
-            this.map = [];
-        } 
+        this.rooms = [];  
         this.map = [];
         this.pathMap = [];
         for (var x = 0; x < this.map_size; x++) {
@@ -163,13 +160,6 @@ var Dungeon = {
         var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
         var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
 
-        while (Dungeon.map[columna][fila] != 2) {
-            i = Aux.newRandom(0, this.rooms.length-1);
-            r = this.rooms[i];
-
-            columna = Aux.newRandom(r.x+1, r.x+r.w-1);
-            fila = Aux.newRandom(r.y+1, r.y+r.h-1);
-        }
         entity.p.x=fromMatrix(fila);
         entity.p.y=fromMatrix(columna);  
         // console.log(Dungeon.map[columna][fila]);

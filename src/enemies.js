@@ -80,7 +80,7 @@ Q.Sprite.extend("BadBall", {
 
     Q.state.inc("enemies", 1);
 
-    this.character.live(100, 20, 1);
+    this.character.live(100, 4, 1);
     this.turn_component.init_turn(Q.state.get("enemies"));
     
     this.on("hit", function(collision) {
