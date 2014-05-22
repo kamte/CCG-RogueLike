@@ -110,6 +110,8 @@ Q.component("character", {
 
     hit: function(aggressor) {
       this.p.hitPoints -= aggressor.p.attack-this.p.defense;
+      if(this.isA("Player"))
+        CharSheet.updateHp(this.p.hitPoints);
       //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
       console.log(this.p.x, this.p.y, "vida defensor "+this.p.hitPoints);
     }

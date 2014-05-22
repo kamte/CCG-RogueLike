@@ -106,8 +106,7 @@ function setupLevel(stage) {
     }
 
     player = p;
-
-    Q.state.reset({ enemies: 0, health: p.p.hitPoints, enemies_dead: 0, nextMove: 0});
+    Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, enemies_dead: 0, nextMove: 0});
     
     stage.insert(Dungeon.insertEntity(new Q.BadBall()));
 
@@ -118,8 +117,6 @@ function setupLevel(stage) {
   }
 
   Q.scene("level1",function(stage) {
-    // Call the helper methods to get the 
-    // level all set up with blocks, a ball and a paddle
     setupLevel(stage);
   });
 
