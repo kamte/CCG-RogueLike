@@ -136,16 +136,36 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
+Q.load("bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("bolaMala.png", "bolaMala.json");
+  Q.compileSheets("bat.png", "bat.json");
+  Q.compileSheets("snake.png", "snake.json");
+  Q.compileSheets("spider.png", "spider.json");
   Q.compileSheets("bombi.png", "bombi.json");
   Q.compileSheets("texturas.png","texturas.json");
   Q.compileSheets("escalera.png","escalera.json");
 
   Q.animations("escAnim", {
     base: {frames: [0]}
+  });
+
+  Q.animations("batAnim", {
+    idleR: {frames: [0,1,2,3], rate: 1/4, loop: true},
+    idleL: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"}
+  });
+
+  Q.animations("snakeAnim", {
+    idleR: {frames: [0,1], rate: 1/4, loop: true},
+    idleL: {frames: [0,1], rate: 1/4, loop: true, flip: "x"}
+  });
+
+  Q.animations("spiderAnim", {
+    idleR: {frames: [0]},
+    idleL: {frames: [0], flip: "x"},
+    walkR: {frames: [0,1,2,3], rate: 1/4, loop: true},
+    walkL: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"}
   });
   
   Q.animations("playerAnim", {
