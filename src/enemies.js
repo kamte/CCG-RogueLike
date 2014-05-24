@@ -2,8 +2,8 @@
 Q.Sprite.extend("Player", {
   init: function(p) {
     this._super(p, {  
-      sheet: "bolaDown", 
-      sprite: "bolaAnim", 
+      sheet: "standR", 
+      sprite: "playerAnim", 
       x: 16+32*2, 
       y: 16+32*2,
       moved:false
@@ -40,17 +40,26 @@ Q.Sprite.extend("Player", {
     if(!this.dead() && !this.p.moved &&(Q.state.get("nextMove")==this.p.position || Q.state.get("enemies")==0)){
       this.p.inTurn=true;
 
-      if(this.p.pressed==='right') {
-        this.play("bolaR");
+      if(Q.inputs['right'])
+        this.play("walkR");
+      if(Q.inputs['left'])
+        this.play("walkL");
+      if(Q.inputs['up'] || Q.inputs['down']) {
+        if (this.p.facing === 'right')
+          this.play("walkR");
+        else
+          this.play("walkL");
+      }
+
+      if(this.p.facing==='right') {
+        this.play("standR");
         this.p.moved=true;
-      } else if(this.p.pressed==='left') {
-        this.play("bolaL");
+      } else if(this.p.facing==='left') {
+        this.play("standL");
         this.p.moved=true;
-      } else if(this.p.pressed==='down') {
-        this.play("bolaD");
+      } else if(this.p.pressed==='down' || this.p.pressed === 'up') {
         this.p.moved=true;
-      } else if(this.p.pressed==='up') {
-        this.play("bolaU");
+      } else if(this.p.pressed==='left' || this.p.pressed === 'right') {
         this.p.moved=true;
       } else {};
 
@@ -68,7 +77,7 @@ Q.Sprite.extend("Player", {
 Q.Sprite.extend("BadBall", {
   init: function(p) {
     this._super(p, {  
-      sheet: "bolaMDown", 
+      sheet: "bola", 
       sprite: "bolaMalaAnim", 
       x: 16+32*7, 
       y: 16+32*5,  
@@ -89,6 +98,7 @@ Q.Sprite.extend("BadBall", {
   },
 
   step: function(dt) {
+    this.play("bola");
     if(this.dead()){
 
       console.log("dead "+this.p.hitPoints+" "+this.dead());

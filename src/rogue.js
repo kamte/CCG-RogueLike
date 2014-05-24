@@ -3,9 +3,10 @@ var Q = Quintus();
 Q = Quintus({development: true, audioSupported: ['mp3', 'ogg'] })
 .include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio")
 .setup("canvas")
-.controls()
 .touch()
 .enableSound();
+
+Q.input.keyboardControls();
 
 Q.gravityX = 0;
 Q.gravityY = 0;
@@ -122,8 +123,6 @@ function setupLevel(stage) {
     Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, enemies_dead: 0, nextMove: 0});
     
     stage.insert(Dungeon.insertEntity(new Q.BadBall()));
-    //stage.insert(Dungeon.insertEntity(new Q.BadBall()));
-    //stage.insert(Dungeon.insertEntity(new Q.BadBall()));
 
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
 
@@ -137,9 +136,9 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
+Q.load("player.png, player.json,  HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
 
-  Q.compileSheets("bola.png", "bola.json");
+  Q.compileSheets("player.png", "player.json");
   Q.compileSheets("bolaMala.png", "bolaMala.json");
   Q.compileSheets("bombi.png", "bombi.json");
   Q.compileSheets("texturas.png","texturas.json");
@@ -149,18 +148,17 @@ Q.load("HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, 
     base: {frames: [0]}
   });
   
-  Q.animations("bolaAnim", {
-    bolaD: {frames: [0]},
-    bolaL: {frames: [1]},
-    bolaR: {frames: [2]},
-    bolaU: {frames: [3]}
+  Q.animations("playerAnim", {
+    standR: {frames: [4]},
+    standL: {frames: [4], flip: "x"},
+    walkR: {frames: [4,3,5], rate: 1/4, loop: true},
+    walkL: {frames: [4,3,5], rate: 1/4, loop: true, flip: "x"},
+    hurtR: {frames: [1,4], rate: 1/2, loop: false},
+    hurtL: {frames: [1,4], rate: 1/2, loop: false, flip: "x"}
   });
 
   Q.animations("bolaMalaAnim", {
-    bolaMD: {frames: [0]},
-    bolaML: {frames: [1]},
-    bolaMR: {frames: [2]},
-    bolaMU: {frames: [3]}
+    bola: {frames: [0,1,2,3,4,3,2,1], rate: 1/4, loop: true}
   });
 
   Q.animations("bombiAnim", {

@@ -48,10 +48,12 @@ Q.component("customControls", {
     if(p.inTurn) { //Move only when in turn
       p.pressed='none';
       if(Q.inputs['left'] && Dungeon.map[fila][columna-1]%2==0) {
+        p.facing = 'left';
         p.pressed='left';
         p.diffX = -p.stepDistance;
         p.moving = true;
       } else if(Q.inputs['right'] && Dungeon.map[fila][columna+1]%2==0) {
+        p.facing = 'right';
         p.pressed='right';
         p.diffX = p.stepDistance;
         p.moving = true;
