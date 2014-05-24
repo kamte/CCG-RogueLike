@@ -24,7 +24,7 @@ Q.Sprite.extend("Collectable", {
       gravity: 0,
       sensor: true
     });
-    this.on("sensor",this,recoge);
+    this.on("sensor",this,"recoge");
   },
   recoge: function(collision) {
     if(collision.isA("Player")) {

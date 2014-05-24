@@ -125,6 +125,7 @@ function setupLevel(stage) {
     stage.insert(Dungeon.insertEntity(new Q.BadBall()));
 
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
+    //stage.insert(new Q.Equipment({sheet: "idleR", sprite: "spiderAnim", x:p.p.x, y: p.p.y + 32}));
 
     stage.add("viewport").centerOn(150, 368); 
     stage.follow(p, { x: true, y: true });
