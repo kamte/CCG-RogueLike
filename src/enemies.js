@@ -4,6 +4,7 @@ Q.Sprite.extend("Player", {
     this._super(p, {  
       sheet: "standR", 
       sprite: "playerAnim", 
+      facing: 'right',
       x: 16+32*2, 
       y: 16+32*2,
       moved:false
@@ -17,7 +18,7 @@ Q.Sprite.extend("Player", {
       this.p.inTurn=false;
       this.p.moving=false;
       this.p.moved=false;
-      
+
       setTimeout(function() {
         Q.state.inc("nextMove",1);
       }, 200);
@@ -40,28 +41,16 @@ Q.Sprite.extend("Player", {
     if(!this.dead() && !this.p.moved &&(Q.state.get("nextMove")==this.p.position || Q.state.get("enemies")==0)){
       this.p.inTurn=true;
 
-      if(Q.inputs['right'])
-        this.play("walkR");
-      if(Q.inputs['left'])
-        this.play("walkL");
-      if(Q.inputs['up'] || Q.inputs['down']) {
-        if (this.p.facing === 'right')
-          this.play("walkR");
-        else
-          this.play("walkL");
-      }
+      if(this.p.facing === 'right'){
+        this.gif = "walkR";
+      } else {
+        this.gif = "walkL";
+      } 
 
-      if(this.p.facing==='right') {
-        this.play("standR");
+      if(this.p.pressed==='left' || this.p.pressed==='right' || this.p.pressed==='down' || this.p.pressed==='up') {
         this.p.moved=true;
-      } else if(this.p.facing==='left') {
-        this.play("standL");
-        this.p.moved=true;
-      } else if(this.p.pressed==='down' || this.p.pressed === 'up') {
-        this.p.moved=true;
-      } else if(this.p.pressed==='left' || this.p.pressed === 'right') {
-        this.p.moved=true;
-      } else {};
+        this.play(this.gif);
+      } 
 
     } else if(this.dead()){
       console.log("dead "+this.p.hitPoints+" "+this.dead());

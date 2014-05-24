@@ -149,11 +149,11 @@ Q.load("player.png, player.json, HUD-maya.png, escalera.png, escalera.json, text
   });
   
   Q.animations("playerAnim", {
-    standR: {frames: [0]},
+    standR: {frames: [0], flip: false},
     standL: {frames: [0], flip: "x"},
-    walkR: {frames: [1,0,2,0], rate: 1/4, loop: true},
-    walkL: {frames: [1,0,2,0], rate: 1/4, loop: true, flip: "x"},
-    hurtR: {frames: [0,3], rate: 1/2, loop: false},
+    walkR: {frames: [1,0,2,0], rate: 1/8, loop: false, flip: false, next: 'standR'},
+    walkL: {frames: [1,0,2,0], rate: 1/8, loop: false, flip: "x", next: 'standL'},
+    hurtR: {frames: [0,3], rate: 1/2, loop: false, flip: false},
     hurtL: {frames: [0,3], rate: 1/2, loop: false, flip: "x"}
   });
 

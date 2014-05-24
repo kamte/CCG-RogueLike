@@ -1,8 +1,5 @@
 {
 	"standR":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"standL":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
 	"walkR":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":4},
-	"walkL":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":4},
-	"hurtR":{"sx":96,"sy":0,"tileW":32,"tileH":32,"frames":2},
-	"hurtL":{"sx":96,"sy":0,"tileW":32,"tileH":32,"frames":2}
+	"hurtR":{"sx":96,"sy":0,"tileW":32,"tileH":32,"frames":2}
 }
