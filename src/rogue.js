@@ -136,7 +136,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("player.png, player.json,  HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
+Q.load("player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("bolaMala.png", "bolaMala.json");
@@ -149,12 +149,12 @@ Q.load("player.png, player.json,  HUD-maya.png, escalera.png, escalera.json, tex
   });
   
   Q.animations("playerAnim", {
-    standR: {frames: [4]},
-    standL: {frames: [4], flip: "x"},
-    walkR: {frames: [4,3,5], rate: 1/4, loop: true},
-    walkL: {frames: [4,3,5], rate: 1/4, loop: true, flip: "x"},
-    hurtR: {frames: [1,4], rate: 1/2, loop: false},
-    hurtL: {frames: [1,4], rate: 1/2, loop: false, flip: "x"}
+    standR: {frames: [0]},
+    standL: {frames: [0], flip: "x"},
+    walkR: {frames: [1,0,2,0], rate: 1/4, loop: true},
+    walkL: {frames: [1,0,2,0], rate: 1/4, loop: true, flip: "x"},
+    hurtR: {frames: [0,3], rate: 1/2, loop: false},
+    hurtL: {frames: [0,3], rate: 1/2, loop: false, flip: "x"}
   });
 
   Q.animations("bolaMalaAnim", {
