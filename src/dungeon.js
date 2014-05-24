@@ -7,6 +7,10 @@ var Dungeon = {
         this.rooms = [];  
         this.map = [];
         this.pathMap = [];
+
+        var floor = Aux.newRandom(1, 16)*2;
+        var wall = (Aux.newRandom(0, 3)*2)+1;
+
         for (var x = 0; x < this.map_size; x++) {
             this.map[x] = [];
             this.pathMap[x] = []
@@ -64,7 +68,7 @@ var Dungeon = {
                     else pointB.y++;
                 }
 
-                this.map[pointB.x][pointB.y] = 2;
+                this.map[pointB.x][pointB.y] = floor;
                 this.pathMap[pointB.x][pointB.y]=0;
             }
         }
@@ -74,7 +78,7 @@ var Dungeon = {
             var room = this.rooms[i];
             for (var x = room.x; x < room.x + room.w; x++) {
                 for (var y = room.y; y < room.y + room.h; y++) {
-                    this.map[x][y] = 2;
+                    this.map[x][y] = floor;
                     this.pathMap[x][y] = 0;
                 }
             }
@@ -82,10 +86,10 @@ var Dungeon = {
         //Pone los tiles de pared a un número par (2 en este caso)
         for (var x = 0; x < this.map_size; x++) {
             for (var y = 0; y < this.map_size; y++) {
-                if (this.map[x][y] == 2) {
+                if (this.map[x][y] == floor) {
                     for (var xx = x - 1; xx <= x + 1; xx++) {
                         for (var yy = y - 1; yy <= y + 1; yy++) {
-                            if (this.map[xx][yy] == 0) this.map[xx][yy] = 1;
+                            if (this.map[xx][yy] == 0) this.map[xx][yy] = wall;
                         }
                     }
                 }
@@ -213,7 +217,7 @@ Q.Sprite.extend("DungeonTracker",{
         sprite: "floor",
       },p);
 
-      if(this.p.num==2){
+      if(this.p.num != 0 && this.p.num%2==0){
         this.p.type = Q.SPRITE_NONE;
       } else {
         this.p.type = Q.SPRITE_DEFAULT;

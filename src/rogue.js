@@ -69,16 +69,16 @@ var findNextLW = function(x,y) {
 
   var posibles = [];
 
-  if(Dungeon.map[fila][columna+1]==2 && x < player.p.x){
+  if(Dungeon.map[fila][columna+1]%2==0 && x < player.p.x){
     posibles.push('derecha');
   }
-  if(Dungeon.map[fila][columna-1]==2 && x > player.p.x){
+  if(Dungeon.map[fila][columna-1]%2==0 && x > player.p.x){
     posibles.push('izquierda');
   }
-  if(Dungeon.map[fila+1][columna]==2 && y < player.p.y){
+  if(Dungeon.map[fila+1][columna]%2==0 && y < player.p.y){
     posibles.push('abajo');
   }
-  if(Dungeon.map[fila-1][columna]==2 && y > player.p.y){
+  if(Dungeon.map[fila-1][columna]%2==0 && y > player.p.y){
     posibles.push('arriba');
   }
 

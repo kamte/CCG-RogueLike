@@ -1,6 +1,4 @@
 {
 	"idleR":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"idleL":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"walkR":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":4},
-	"WalkL":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":4}
+	"walkR":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":4}
 }
