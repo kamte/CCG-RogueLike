@@ -126,7 +126,7 @@ function setupLevel(stage) {
     stage.insert(Dungeon.insertEntity(new Q.Slime()));
 
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
-    // stage.insert(new Q.Equipment({sheet: "idleR", sprite: "spiderAnim", x:p.p.x, y: p.p.y + 32, sensor:true}));
+    stage.insert(new Q.Equipment({sheet: "sword", sprite: "swordAnim", x:p.p.x, y: p.p.y + 32, sensor:true}));
 
     stage.add("viewport").centerOn(150, 368); 
     stage.follow(p, { x: true, y: true });
@@ -139,7 +139,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
@@ -148,8 +148,13 @@ Q.load("bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, playe
   Q.compileSheets("spider.png", "spider.json");
   Q.compileSheets("texturas.png","texturas.json");
   Q.compileSheets("escalera.png","escalera.json");
+  Q.compileSheets("sword.png","sword.json");
 
   Q.animations("escAnim", {
+    base: {frames: [0]}
+  });
+
+  Q.animations("swordAnim", {
     base: {frames: [0]}
   });
 
