@@ -86,7 +86,7 @@ Q.Sprite.extend("Slime", {
       y: 16+32*5,  
       moved: false,
       type: Q.SPRITE_ENEMY,
-      sensor: true,
+      // sensor: true,
       experience: 10  
     });
     this.add('2d, animation, character, turn_component');

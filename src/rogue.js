@@ -49,7 +49,7 @@ var nextToPlayer = function(x,y) {
   var distY = Math.abs(y-yB);
 
   if((distX == 32) && (distY == 32)) {
-    console.log(distX, distY, "DISTANCIA");
+    // console.log(distX, distY, "DISTANCIA");
     return false;
   } else if((distX <= 32) && (distY <= 32)) {
     return true;
@@ -115,6 +115,7 @@ function setupLevel(stage) {
       
     }
     else {
+      stage.insert(new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", x:p.p.x, y: p.p.y + 32, attack:5}));
       firstLevel = false;
     }
 
@@ -126,14 +127,12 @@ function setupLevel(stage) {
     stage.insert(Dungeon.insertEntity(new Q.Slime()));
 
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
-    stage.insert(new Q.Equipment({sheet: "sword", sprite: "swordAnim", x:p.p.x, y: p.p.y + 32, sensor:true}));
 
     stage.add("viewport").centerOn(150, 368); 
     stage.follow(p, { x: true, y: true });
   }
 
   Q.scene("level1",function(stage) {
-    firstLevel = true;
     setupLevel(stage);
   });
 

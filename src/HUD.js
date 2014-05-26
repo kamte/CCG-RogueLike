@@ -65,7 +65,6 @@ Q.Sprite.extend("Experience",{
 
   train: function(){
     this.p.w = (CharSheet.experience/CharSheet.nextLevel) * 170;
-    console.log(this.p.w/170);
   },
 
   draw: function(ctx) {

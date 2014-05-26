@@ -46,6 +46,7 @@ Q.Sprite.extend("Collectable", {
         e.p.sheet = this.p.sheet;
 
         CharSheet.items.push(e);
+        console.log("Objeto recogido!");
       }
       this.destroy();
     }
