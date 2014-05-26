@@ -18,7 +18,7 @@ Q.UI.Text.extend("StatsHP",{
 Q.UI.Text.extend("StatsExp",{
   init: function(p) {
     this._super({
-      label: "Exp: " + 120,
+      label: "Exp: " + Q.state.get("experience"),
       x: -10,
       y: 8,
       color: "white",
@@ -56,15 +56,16 @@ Q.Sprite.extend("Experience",{
   init: function(p) {
     this._super(p,{
       color: "yellow",
-      w: 170,
+      w: 0,
       h: 3,
-      x: 120,
+      x: 30,
       y: 8
     });
   },
 
   train: function(){
-    this.p.w = Q.state.get("health");
+    this.p.w = (CharSheet.experience/CharSheet.nextLevel) * 170;
+    console.log(this.p.w/170);
   },
 
   draw: function(ctx) {

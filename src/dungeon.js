@@ -1,22 +1,18 @@
 var Dungeon = {
     map: null, //mapa para los tiles: 0=nada, impares=paredes, pares=suelos
-    pathMap: null, //mapa para colisiones y pathFinder, 0=no obstaculo, 1=obstaculo
     map_size: 52,
     rooms: [],
     generate: function () {
         this.rooms = [];  
         this.map = [];
-        this.pathMap = [];
 
         var floor = Aux.newRandom(1, 16)*2;
         var wall = (Aux.newRandom(0, 3)*2)+1;
 
         for (var x = 0; x < this.map_size; x++) {
             this.map[x] = [];
-            this.pathMap[x] = []
             for (var y = 0; y < this.map_size; y++) {
                 this.map[x][y] = 0;
-                this.pathMap[x][y] = 1;
             }
         }
 
@@ -69,21 +65,19 @@ var Dungeon = {
                 }
 
                 this.map[pointB.x][pointB.y] = floor;
-                this.pathMap[pointB.x][pointB.y]=0;
             }
         }
            
-        //Pone los tiles de suelo a un número par (2 en este caso)
+        //Pone los tiles de suelo a un número par
         for (i = 0; i < room_count; i++) {
             var room = this.rooms[i];
             for (var x = room.x; x < room.x + room.w; x++) {
                 for (var y = room.y; y < room.y + room.h; y++) {
                     this.map[x][y] = floor;
-                    this.pathMap[x][y] = 0;
                 }
             }
         }
-        //Pone los tiles de pared a un número par (2 en este caso)
+        //Pone los tiles de pared a un número impar
         for (var x = 0; x < this.map_size; x++) {
             for (var y = 0; y < this.map_size; y++) {
                 if (this.map[x][y] == floor) {

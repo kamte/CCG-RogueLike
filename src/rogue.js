@@ -11,7 +11,6 @@ Q.input.keyboardControls();
 Q.gravityX = 0;
 Q.gravityY = 0;
 
-var matrix;
 var enemiesArray = new Array();
 var firstLevel = true;
 
@@ -42,6 +41,7 @@ var muestraCoordenadas = function(x,y) {
 };
 
 var nextToPlayer = function(x,y) {
+  var player = findPlayer();
   xB = player.p.x;
   yB = player.p.y;
 
@@ -84,7 +84,7 @@ var findNextLW = function(x,y) {
 
   var num = Math.floor(Math.random()*(posibles.length));
   var dir = posibles[num];
-  console.log(num, dir);
+  // console.log(num, dir);
   if(dir == 'derecha'){
     next[0] = x+32;
     next[1] = y;
@@ -104,7 +104,6 @@ var findNextLW = function(x,y) {
 
 function setupLevel(stage) {
     Dungeon.generate();
-    matrix = Dungeon.pathMap;
 
     stage.insert(new Q.Repeater({ asset: "azteca.png", speedX: 0.5, speedY: 0.5 }));
     stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
@@ -112,39 +111,41 @@ function setupLevel(stage) {
 
     if(!firstLevel) {
       var hp = Q.state.get("health");
-      p.p.hitPoints = hp;
+      CharSheet.hitPoints = hp;
       
     }
     else {
       firstLevel = false;
     }
 
-    player = p;
-    Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, enemies_dead: 0, nextMove: 0});
+    Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, experience: CharSheet.experience, enemies_dead: 0, nextMove: 0});
     
-    stage.insert(Dungeon.insertEntity(new Q.BadBall()));
+    stage.insert(Dungeon.insertEntity(new Q.Slime()));
+    stage.insert(Dungeon.insertEntity(new Q.Slime()));
+    stage.insert(Dungeon.insertEntity(new Q.Slime()));
+    stage.insert(Dungeon.insertEntity(new Q.Slime()));
 
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
-    //stage.insert(new Q.Equipment({sheet: "idleR", sprite: "spiderAnim", x:p.p.x, y: p.p.y + 32}));
+    // stage.insert(new Q.Equipment({sheet: "idleR", sprite: "spiderAnim", x:p.p.x, y: p.p.y + 32, sensor:true}));
 
     stage.add("viewport").centerOn(150, 368); 
     stage.follow(p, { x: true, y: true });
   }
 
   Q.scene("level1",function(stage) {
+    firstLevel = true;
     setupLevel(stage);
   });
 
 
 //Carga de recursos
-Q.load("bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json, azteca.png", function() {
+Q.load("bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
-  Q.compileSheets("bolaMala.png", "bolaMala.json");
+  Q.compileSheets("slime.png", "slime.json");
   Q.compileSheets("bat.png", "bat.json");
   Q.compileSheets("snake.png", "snake.json");
   Q.compileSheets("spider.png", "spider.json");
-  Q.compileSheets("bombi.png", "bombi.json");
   Q.compileSheets("texturas.png","texturas.json");
   Q.compileSheets("escalera.png","escalera.json");
 
@@ -178,13 +179,10 @@ Q.load("bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, playe
     hurtL: {frames: [0,3], rate: 1/2, loop: false, flip: "x"}
   });
 
-  Q.animations("bolaMalaAnim", {
-    bola: {frames: [0,1,2,3,4,3,2,1], rate: 1/4, loop: true}
+  Q.animations("slimeAnim", {
+    slime: {frames: [0,1,2,3,4,3,2,1], rate: 1/4, loop: true}
   });
 
-  Q.animations("bombiAnim", {
-    bolaD: {frames: [0, 1], rate: 1/12, loop: true}
-  });
   Q.stageScene("level1", 0);
   Q.stageScene("HUD-background",1);
   Q.stageScene("HUD-stats",2);

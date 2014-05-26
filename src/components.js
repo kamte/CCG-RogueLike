@@ -82,15 +82,18 @@ Q.component("customControls", {
 
 Q.component("character", {
 
-  live: function(HP, ATK, DEF) {
+  live: function(HP, ATK, DEF, EXP) {
     this.entity.p.hitPoints = HP;
     this.entity.p.attack = ATK;
-    this.entity.p.defense = DEF
+    this.entity.p.defense = DEF;
+    this.entity.p.experience = EXP;
   },
 
   extend: {
     dead: function(){
       if (this.p.hitPoints <= 0){
+        Q.state.inc("experience",this.p.experience);
+        CharSheet.updateExp(this.p.experience);
         return true;
       } else {
         return false;
@@ -98,11 +101,9 @@ Q.component("character", {
     },
 
     hit: function(aggressor) {
-      this.p.hitPoints -= aggressor.p.attack-this.p.defense;
-      if(this.isA("Player"))
-        CharSheet.updateHp(this.p.hitPoints);
+      this.p.hitPoints -= CharSheet.attack-this.p.defense;
       //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
-      console.log(this.p.x, this.p.y, "vida defensor "+this.p.hitPoints);
+      // console.log(this.p.x, this.p.y, "vida defensor "+this.p.hitPoints);
     }
   } 
 });
