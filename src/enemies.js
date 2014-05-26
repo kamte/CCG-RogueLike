@@ -95,7 +95,9 @@ Q.Sprite.extend("Slime", {
 
     this.character.live(100, 4, 1, 20);
     this.turn_component.init_turn(Q.state.get("enemies"));
-    this.play("slime");
+    this.play(this.p.sheet);
+    //this.play("slime");
+    
     
     this.on("hit", function(collision) {
       // console.log("collision bola mala: "+collision.obj);
@@ -103,7 +105,6 @@ Q.Sprite.extend("Slime", {
   },
 
   step: function(dt) {
-    
     if(this.dead()){
 
       // console.log("dead "+this.p.hitPoints+" "+this.dead());

@@ -100,15 +100,36 @@ var findNextLW = function(x,y) {
   }
 
   return next;
-}
+};
+
+Q.scene('Title',function(stage) {
+  var box = stage.insert(new Q.UI.Container({
+    x: Q.width/2, y: Q.height/2
+  }));
+
+  var button = box.insert(new Q.UI.Button({
+    x: 0, y: 0, asset: "temploMaya.png", keyActionName: "confirm"
+  }));
+
+  box.insert(new Q.UI.Button({
+    x: 0, y: -170, asset: "qucumatz.png"
+  }));
+
+  button.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("level1", 0);
+      Q.stageScene("HUD-background",1);
+      Q.stageScene("HUD-stats",2);
+  });
+});
 
 function setupLevel(stage) {
     Dungeon.generate();
 
-    stage.insert(new Q.Repeater({ asset: "azteca.png", speedX: 0.5, speedY: 0.5 }));
+    stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
     stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
     var p = stage.insert(Dungeon.insertEntity(new Q.Player()));
-
+/*
     if(!firstLevel) {
       var hp = Q.state.get("health");
       CharSheet.hitPoints = hp;
@@ -117,14 +138,18 @@ function setupLevel(stage) {
     else {
       stage.insert(new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", x:p.p.x, y: p.p.y + 32, attack:5}));
       firstLevel = false;
-    }
+    }*/
 
     Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, experience: CharSheet.experience, enemies_dead: 0, nextMove: 0});
     
+    sword = new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:5});
+    
+    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "snake", sprite: "snakeAnim"})));
+    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "bat", sprite: "batAnim"})));
+    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "spider", sprite: "spiderAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime()));
-    stage.insert(Dungeon.insertEntity(new Q.Slime()));
-    stage.insert(Dungeon.insertEntity(new Q.Slime()));
-    stage.insert(Dungeon.insertEntity(new Q.Slime()));
+
+    stage.insert(Dungeon.insertEntity(sword));
 
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
 
@@ -138,7 +163,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
@@ -158,20 +183,23 @@ Q.load("sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.
   });
 
   Q.animations("batAnim", {
-    idleR: {frames: [0,1,2,3], rate: 1/4, loop: true},
-    idleL: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"}
+    bat: {frames: [0,1,2,3], rate: 1/4, loop: true},
+    //idleR: {frames: [0,1,2,3], rate: 1/4, loop: true},
+    //idleL: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"}
   });
 
   Q.animations("snakeAnim", {
-    idleR: {frames: [0,1], rate: 1/4, loop: true},
-    idleL: {frames: [0,1], rate: 1/4, loop: true, flip: "x"}
+    snake: {frames: [0,1], rate: 1/4, loop: true},
+    //idleR: {frames: [0,1], rate: 1/4, loop: true},
+    //idleL: {frames: [0,1], rate: 1/4, loop: true, flip: "x"}
   });
 
   Q.animations("spiderAnim", {
-    idleR: {frames: [0]},
-    idleL: {frames: [0], flip: "x"},
-    walkR: {frames: [0,1,2,3], rate: 1/4, loop: true},
-    walkL: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"}
+    spider: {frames: [0]},
+    //idleR: {frames: [0]},
+    //idleL: {frames: [0], flip: "x"},
+    //walkR: {frames: [0,1,2,3], rate: 1/4, loop: true},
+    //walkL: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"}
   });
   
   Q.animations("playerAnim", {
@@ -187,7 +215,8 @@ Q.load("sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.
     slime: {frames: [0,1,2,3,4,3,2,1], rate: 1/4, loop: true}
   });
 
-  Q.stageScene("level1", 0);
-  Q.stageScene("HUD-background",1);
-  Q.stageScene("HUD-stats",2);
+  Q.stageScene("Title", 0);
+  //Q.stageScene("level1", 0);
+  //Q.stageScene("HUD-background",1);
+  //Q.stageScene("HUD-stats",2);
 });
