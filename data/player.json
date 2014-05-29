@@ -1,0 +1,5 @@
+{
+	"standR":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"walkR":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":4},
+	"hurtR":{"sx":96,"sy":0,"tileW":32,"tileH":32,"frames":2}
+}

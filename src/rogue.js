@@ -3,49 +3,36 @@ var Q = Quintus();
 Q = Quintus({development: true, audioSupported: ['mp3', 'ogg'] })
 .include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio")
 .setup("canvas")
-.controls()
 .touch()
 .enableSound();
+
+Q.input.keyboardControls();
 
 Q.gravityX = 0;
 Q.gravityY = 0;
 
-var matrix =[
-[1,1,1,1,1,1,1,1,1,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,1,0,0,0,0,1,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,1,1,0,0,0,1],
-[1,0,0,0,1,1,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,1,0,0,0,0,1,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[1,1,1,1,1,1,1,1,1,1],
-];
-
 var enemiesArray = new Array();
+var firstLevel = true;
 
-var gridPrimigenio = new PF.Grid(10, 14, matrix);
-var finder = new PF.AStarFinder({
-  allowDiagonal: false
-});
-
-var enemiesMoved = 0;
+var act_turnEnemies = function(pos) {
+  for(var i=pos; i<Q.state.get("enemies"); i++){
+    enemiesArray[i]=enemiesArray[i+1]; 
+    enemiesArray[i+1]=undefined;
+    enemiesArray[i].p.position=i;
+  }
+  Q.state.dec("enemies", 1);
+}
 
 var findPlayer = function() {
   return Q("Player").first();
 }
 
 var toMatrix = function(x) {
-  return Math.round((x-16)/32-1);
+  return Math.round((x-16)/32);
 };
 
 var fromMatrix = function(x) {
-  return (x+1)*32+16;
+  return ((x*32)+16);
 };
 
 var muestraCoordenadas = function(x,y) {
@@ -54,6 +41,7 @@ var muestraCoordenadas = function(x,y) {
 };
 
 var nextToPlayer = function(x,y) {
+  var player = findPlayer();
   xB = player.p.x;
   yB = player.p.y;
 
@@ -61,7 +49,7 @@ var nextToPlayer = function(x,y) {
   var distY = Math.abs(y-yB);
 
   if((distX == 32) && (distY == 32)) {
-    console.log(distX, distY, "DISTANCIA");
+    // console.log(distX, distY, "DISTANCIA");
     return false;
   } else if((distX <= 32) && (distY <= 32)) {
     return true;
@@ -70,182 +58,165 @@ var nextToPlayer = function(x,y) {
   }
 };
 
-var findNext = function(x,y) {
-  var grid= gridPrimigenio.clone();
-  console.log("toMatrix ",x," ",y," ",toMatrix(x), toMatrix(y));
-  xB = player.p.x;
-  yB = player.p.y;
-  var path = finder.findPath(toMatrix(x), toMatrix(y), toMatrix(xB), toMatrix(yB), grid);
-  console.log("path "+path);
-  console.log("path[1] "+path[1]);
-  console.log("nextMove", path[1][0], path[1][1], matrix[path[1][0]][path[1][1]]);
-
-  return path[1];
-};
-
 //Versión LightWeight del pathfinder
 var findNextLW = function(x,y) {
   var next = new Array(2);
+  next[0]=x; next[1]=y;
   var player = findPlayer();
 
-  if (x < player.p.x && matrix[toMatrix(x+32)][toMatrix(y)]==0) {
+  var fila=toMatrix(y);
+  var columna=toMatrix(x);
+
+  var posibles = [];
+
+  if(Dungeon.map[fila][columna+1]%2==0 && x < player.p.x){
+    posibles.push('derecha');
+  }
+  if(Dungeon.map[fila][columna-1]%2==0 && x > player.p.x){
+    posibles.push('izquierda');
+  }
+  if(Dungeon.map[fila+1][columna]%2==0 && y < player.p.y){
+    posibles.push('abajo');
+  }
+  if(Dungeon.map[fila-1][columna]%2==0 && y > player.p.y){
+    posibles.push('arriba');
+  }
+
+  var num = Math.floor(Math.random()*(posibles.length));
+  var dir = posibles[num];
+  // console.log(num, dir);
+  if(dir == 'derecha'){
     next[0] = x+32;
     next[1] = y;
-    console.log(">>muevo DRCH<<");
-  } else if (x > player.p.x && matrix[toMatrix(x-32)][toMatrix(y)]==0) {
+  } else if(dir == 'izquierda') {
     next[0] = x-32;
     next[1] = y;
-    console.log(">>muevo IZQ<<");
-  } else if (y < player.p.y && matrix[toMatrix(x)][toMatrix(y+32)]==0) {
+  } else if(dir == 'abajo') {
     next[0] = x;
     next[1] = y+32;
-    console.log(">>muevo ABAJO<<");
-  } else if (y > player.p.y && matrix[toMatrix(x)][toMatrix(y-32)]===0) {
+  } else if(dir == 'arriba'){
     next[0] = x;
     next[1] = y-32;
-    console.log(">>muevo ARRIBA<<")
-  } else {
-    next[0] = x;
-    next[1] = y;
-    console.log(">>no muevo<<");
   }
-  //console.log("nextx ", next[0], " nexty ", next[1])
+
   return next;
-}
+};
 
-//Jugador
-Q.Sprite.extend("Player", {
-  init: function(p) {
-    this._super(p, {  
-      sheet: "bolaDown", 
-      sprite: "bolaAnim", 
-      x: 16+32*2, 
-      y: 16+32*2
-    });
-    this.add('2d, customControls, animation, character');
+Q.scene('Title',function(stage) {
+  var box = stage.insert(new Q.UI.Container({
+    x: Q.width/2, y: Q.height/2
+  }));
 
-    this.character.live(100, 20, 1);
+  var button = box.insert(new Q.UI.Button({
+    x: 0, y: 0, asset: "temploMaya.png", keyActionName: "confirm"
+  }));
 
-    this.on("hit", function(collision) {
-      if(collision.obj.p.type === Q.SPRITE_ENEMY){
-        console.log("ataque");
-        collision.obj.hit(this);
-      } else {
-        console.log("no enemigo");
-      }
-    });
-  },
+  box.insert(new Q.UI.Button({
+    x: 0, y: -170, asset: "qucumatz.png"
+  }));
 
-  step: function(dt) {
+  button.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("level1", 0);
+      Q.stageScene("HUD-background",1);
+      Q.stageScene("HUD-stats",2);
+  });
+});
 
-    if(this.p.moving && this.p.moved && ((this.p.x-16)%32) == 0 && ((this.p.y-16)%32)==0){
-      this.p.moving=false;
-      this.p.inTurn=false;
-      Q.state.dec("playerTurn",1);
-      Q("BadBall").trigger("monsterTurn",Q.state.get("enemies"));
-    } 
-    //Animación de movimiento
-    if(!this.dead() && (Q.state.get("playerTurn")==1 || Q.state.get("enemies")==0)){
-      this.p.moved=false;
-      this.p.inTurn=true;
+function setupLevel(stage) {
+    Dungeon.generate();
 
-      if(this.p.pressed==='right') {
-        this.play("bolaR");
-        this.p.moved=true;
-      } else if(this.p.pressed==='left') {
-        this.play("bolaL");
-        this.p.moved=true;
-      } else if(this.p.pressed==='down') {
-        this.play("bolaD");
-        this.p.moved=true;
-      } else if(this.p.pressed==='up') {
-        this.play("bolaU");
-        this.p.moved=true;
-      } else {};
-
-    } else if(this.dead()){
-      console.log("dead "+this.p.hitPoints+" "+this.dead());
-      this.destroy();
+    stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
+    stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
+    var p = stage.insert(Dungeon.insertEntity(new Q.Player()));
+/*
+    if(!firstLevel) {
+      var hp = Q.state.get("health");
+      CharSheet.hitPoints = hp;
+      
     }
+    else {
+      stage.insert(new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", x:p.p.x, y: p.p.y + 32, attack:5}));
+      firstLevel = false;
+    }*/
+
+    Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, experience: CharSheet.experience, enemies_dead: 0, nextMove: 0});
+    
+    sword = new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:5});
+    
+    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "snake", sprite: "snakeAnim"})));
+    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "bat", sprite: "batAnim"})));
+    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "spider", sprite: "spiderAnim"})));
+    stage.insert(Dungeon.insertEntity(new Q.Slime()));
+
+    stage.insert(Dungeon.insertEntity(sword));
+
+    stage.insert(Dungeon.insertEntity(new Q.Escalera()));
+
+    stage.add("viewport").centerOn(150, 368); 
+    stage.follow(p, { x: true, y: true });
   }
-});
 
-//Nivel1
-Q.scene("level1", function(stage) {
-
-  Q.stageTMX("level1OK.tmx", stage);
-
-  var p = stage.insert(new Q.Player());
-  player = findPlayer();
-
-  Q.state.reset({ enemies: 0, health: p.p.hitPoints, playerTurn: 1, monsterTurn: 1, turn: 0});
-
-  stage.insert(new Q.BadBall());
-  Q.state.inc("enemies",1);
-  /*
-  stage.insert(new Q.BadBall({x: 16+32*5, y: 16+32*2}));
-  Q.state.inc("enemies",1);
-  stage.insert(new Q.BadBall({x: 16+32*6, y: 16+32*6}));
-  Q.state.inc("enemies",1);
-  stage.insert(new Q.BadBall({x: 16+32*2, y: 16+32*7}));
-  Q.state.inc("enemies",1);
-  */
-  Q.state.set("turn", Q.state.get("enemies"));
-
-  stage.add("viewport").centerOn(150, 368); 
-  stage.follow(p, { x: true, y: true });
-});
+  Q.scene("level1",function(stage) {
+    setupLevel(stage);
+  });
 
 
 //Carga de recursos
-Q.loadTMX("level1OK.tmx, bola.png, bola.json, bolaMala.png, bolaMala.json, bombi.png, bombi.json", function() {
+Q.load("qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
-  Q.compileSheets("bola.png", "bola.json");
-  Q.compileSheets("bolaMala.png", "bolaMala.json");
-  Q.compileSheets("bombi.png", "bombi.json");
+  Q.compileSheets("player.png", "player.json");
+  Q.compileSheets("slime.png", "slime.json");
+  Q.compileSheets("bat.png", "bat.json");
+  Q.compileSheets("snake.png", "snake.json");
+  Q.compileSheets("spider.png", "spider.json");
+  Q.compileSheets("texturas.png","texturas.json");
+  Q.compileSheets("escalera.png","escalera.json");
+  Q.compileSheets("sword.png","sword.json");
+
+  Q.animations("escAnim", {
+    base: {frames: [0]}
+  });
+
+  Q.animations("swordAnim", {
+    base: {frames: [0]}
+  });
+
+  Q.animations("batAnim", {
+    bat: {frames: [0,1,2,3], rate: 1/4, loop: true},
+    //idleR: {frames: [0,1,2,3], rate: 1/4, loop: true},
+    //idleL: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"}
+  });
+
+  Q.animations("snakeAnim", {
+    snake: {frames: [0,1], rate: 1/4, loop: true},
+    //idleR: {frames: [0,1], rate: 1/4, loop: true},
+    //idleL: {frames: [0,1], rate: 1/4, loop: true, flip: "x"}
+  });
+
+  Q.animations("spiderAnim", {
+    spider: {frames: [0]},
+    //idleR: {frames: [0]},
+    //idleL: {frames: [0], flip: "x"},
+    //walkR: {frames: [0,1,2,3], rate: 1/4, loop: true},
+    //walkL: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"}
+  });
   
-  Q.animations("bolaAnim", {
-    bolaD: {frames: [0]},
-    bolaL: {frames: [1]},
-    bolaR: {frames: [2]},
-    bolaU: {frames: [3]}
+  Q.animations("playerAnim", {
+    standR: {frames: [0], flip: false},
+    standL: {frames: [0], flip: "x"},
+    walkR: {frames: [1,0,2,0], rate: 1/8, loop: false, flip: false, next: 'standR'},
+    walkL: {frames: [1,0,2,0], rate: 1/8, loop: false, flip: "x", next: 'standL'},
+    hurtR: {frames: [0,3], rate: 1/2, loop: false, flip: false},
+    hurtL: {frames: [0,3], rate: 1/2, loop: false, flip: "x"}
   });
 
-  Q.animations("bolaMalaAnim", {
-    bolaMD: {frames: [0]},
-    bolaML: {frames: [1]},
-    bolaMR: {frames: [2]},
-    bolaMU: {frames: [3]}
+  Q.animations("slimeAnim", {
+    slime: {frames: [0,1,2,3,4,3,2,1], rate: 1/4, loop: true}
   });
 
-  Q.animations("bombiAnim", {
-    bolaD: {frames: [0, 1], rate: 1/12, loop: true}
-  });
-  
-  Q.stageScene("level1", 0);
-  Q.stageScene("hud",1);
+  Q.stageScene("Title", 0);
+  //Q.stageScene("level1", 0);
+  //Q.stageScene("HUD-background",1);
+  //Q.stageScene("HUD-stats",2);
 });
-
-Q.UI.Text.extend("Stats",{
-  init: function(p) {
-    this._super({
-      label: "Health: 100",
-      x: 0,
-      y: 10,
-      color: "white"
-    });
-    Q.state.on("change.health",this,"hp");
-  },
-  hp: function(hitP) {
-    this.p.label = "Health: " + hitP;
-  }
-});
-
-Q.scene('hud',function(stage) {
-  var container = stage.insert(new Q.UI.Container({
-    x: 60, y: 0
-  }));
-  var label = container.insert(new Q.Stats());
-  container.fit(20);
-});
-

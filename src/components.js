@@ -14,15 +14,13 @@ Q.component("customControls", {
   },
 
   collision: function(col) {
-    var p = this.entity.p;
-
-    if(p.stepping) {
-      if(col.obj.p.type == Q.SPRITE_DEFAULT){
-        p.moving=false;
-      } 
-      p.stepping = false;
-      p.x = p.origX;
-      p.y = p.origY;
+    if (!col.obj.p.sensor) {
+      var p = this.entity.p;
+      if(p.stepping) { 
+        p.stepping = false;
+        p.x = p.origX;
+        p.y = p.origY;
+      }
     }
   },
 
@@ -45,31 +43,31 @@ Q.component("customControls", {
     p.diffX = 0;
     p.diffY = 0;
 
-    if(p.inTurn) { //Move only when in turn
+    var fila=toMatrix(p.y);
+    var columna=toMatrix(p.x);
 
-      if(Q.inputs['left']) {
+
+    if(p.inTurn) { //Move only when in turn
+      p.pressed='none';
+      if(Q.inputs['left'] && Dungeon.map[fila][columna-1]%2==0) {
+        p.facing = 'left';
         p.pressed='left';
         p.diffX = -p.stepDistance;
         p.moving = true;
-      } else if(Q.inputs['right']) {
+      } else if(Q.inputs['right'] && Dungeon.map[fila][columna+1]%2==0) {
+        p.facing = 'right';
         p.pressed='right';
         p.diffX = p.stepDistance;
         p.moving = true;
-      }
-
-      if(Q.inputs['up']) {
+      } else if(Q.inputs['up'] && Dungeon.map[fila-1][columna]%2==0) {
         p.pressed='up';
         p.diffY = -p.stepDistance;
         p.moving = true;
-      } else if(Q.inputs['down']) {
+      } else if(Q.inputs['down'] && Dungeon.map[fila+1][columna]%2==0) {
         p.pressed='down';
         p.diffY = p.stepDistance;
         p.moving = true;
-      }
-
-      if(!Q.inputs['up'] && !Q.inputs['down'] && !Q.inputs['left'] && !Q.inputs['right']) {
-        p.pressed='none';
-      }
+      } 
 
       if(p.diffY || p.diffX ) { 
         p.stepping = true;
@@ -78,6 +76,7 @@ Q.component("customControls", {
         p.destX = p.x + p.diffX;
         p.destY = p.y + p.diffY;
         p.stepWait = p.stepDelay; 
+        this.entity.trigger("end_move");
       }
     }
   }
@@ -85,15 +84,18 @@ Q.component("customControls", {
 
 Q.component("character", {
 
-  live: function(HP, ATK, DEF) {
+  live: function(HP, ATK, DEF, EXP) {
     this.entity.p.hitPoints = HP;
     this.entity.p.attack = ATK;
-    this.entity.p.defense = DEF
+    this.entity.p.defense = DEF;
+    this.entity.p.experience = EXP;
   },
 
   extend: {
     dead: function(){
       if (this.p.hitPoints <= 0){
+        Q.state.inc("experience",this.p.experience);
+        CharSheet.updateExp(this.p.experience);
         return true;
       } else {
         return false;
@@ -101,9 +103,26 @@ Q.component("character", {
     },
 
     hit: function(aggressor) {
-      this.p.hitPoints -= aggressor.p.attack-this.p.defense;
+      this.p.hitPoints -= CharSheet.attack-this.p.defense;
       //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
-      console.log("vida defensor "+this.p.hitPoints);
+      // console.log(this.p.x, this.p.y, "vida defensor "+this.p.hitPoints);
     }
   } 
+});
+
+Q.component("turn_component", {
+
+  init_turn: function(pos) {
+    enemiesArray[pos]=this.entity;
+    if(pos==null || pos==undefined)
+      this.entity.p.position = Q.state.get("enemies");
+    else
+      this.entity.p.position = pos;
+  },
+
+  extend: {
+    pass_turn: function(){
+      Q.state.inc("nextMove",1);
+    }
+  }
 });

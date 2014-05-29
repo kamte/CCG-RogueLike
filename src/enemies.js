@@ -1,88 +1,162 @@
-Q.Sprite.extend("BadBall", {
+//Jugador
+Q.Sprite.extend("Player", {
   init: function(p) {
     this._super(p, {  
-      sheet: "bolaMDown", 
-      sprite: "bolaMalaAnim", 
+      sheet: "standR", 
+      sprite: "playerAnim", 
+      facing: 'right',
+      x: 16+32*2, 
+      y: 16+32*2,
+      moved:false
+    });
+    this.add('2d, customControls, animation, turn_component');
+
+    //this.character.live(CharSheet.hitPoints, CharSheet.attack, CharSheet.defense, CharSheet.nextLevel);
+    this.turn_component.init_turn(0);
+
+    this.on("end_move", this, function(){
+      this.p.inTurn=false;
+      this.p.moving=false;
+      this.p.moved=false;
+
+      setTimeout(function() {
+        Q.state.inc("nextMove",1);
+      }, 200);
+      
+    });
+
+    this.on("hit", function(collision) {
+      if(collision.obj.p.type === Q.SPRITE_ENEMY){
+        // console.log("ataque");
+        collision.obj.hit(this);
+      } else {
+        // console.log("no enemigo");
+      }
+    });
+  },
+
+  step: function(dt) {
+
+    //Animación de movimiento
+    if(!this.dead() && !this.p.moved &&(Q.state.get("nextMove")==this.p.position || Q.state.get("enemies")==0)){
+      this.p.inTurn=true;
+
+      if(this.p.facing === 'right'){
+        this.gif = "walkR";
+      } else {
+        this.gif = "walkL";
+      } 
+
+      if(this.p.pressed==='left' || this.p.pressed==='right' || this.p.pressed==='down' || this.p.pressed==='up') {
+        this.p.moved=true;
+        this.play(this.gif);
+      } 
+
+    } else if(this.dead()){
+      // console.log("dead "+this.p.hitPoints+" "+this.dead());
+      this.destroy();
+    } else if(Q.state.get("nextMove")>Q.state.get("enemies")) {
+      Q.state.set("nextMove", 0);
+    }
+  },
+
+  dead: function(){
+    if (CharSheet.hitPoints <= 0){
+      return true;
+    } else {
+      return false;
+    }
+  },
+
+  hit: function(aggressor) {
+      var hitPoints = CharSheet.hitPoints - (aggressor.p.attack-CharSheet.defense);
+      CharSheet.updateHp(hitPoints);
+      //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
+      // console.log(this.p.x, this.p.y, "vida defensor "+this.p.hitPoints);
+    }
+});
+
+
+Q.Sprite.extend("Slime", {
+  init: function(p) {
+    this._super(p, {  
+      sheet: "slime", 
+      sprite: "slimeAnim", 
       x: 16+32*7, 
       y: 16+32*5,  
       moved: false,
-      type: Q.SPRITE_ENEMY  
+      type: Q.SPRITE_ENEMY,
+      // sensor: true,
+      experience: 10  
     });
-    this.add('2d, animation, character');
+    this.add('2d, animation, character, turn_component');
 
-    this.character.live(100, 20, 1);
+    Q.state.inc("enemies", 1);
+
+    this.character.live(100, 4, 1, 20);
+    this.turn_component.init_turn(Q.state.get("enemies"));
+    this.play(this.p.sheet);
+    //this.play("slime");
+    
     
     this.on("hit", function(collision) {
-      console.log("collision bola mala: "+collision.obj);
+      // console.log("collision bola mala: "+collision.obj);
     });
-    this.on("monsterTurn", this, "action");
-    this.on("finalMonsterTurn", this, function() { 
-      this.p.moved=false; 
-    });
-
   },
 
-  action: function() {
-    if (Q.state.get("turn") > 0 && !this.p.moved) {
-      console.log("turno bicho!");
+  step: function(dt) {
+    if(this.dead()){
+
+      // console.log("dead "+this.p.hitPoints+" "+this.dead());
+
+      act_turnEnemies(this.p.position);
+
+      this.destroy();
+
+    } else if (Q.state.get("nextMove") == this.p.position && !this.p.moved) {
+      this.p.moved = true;
+      // console.log("turno bicho!");
+      
+      Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 2;
+
       if((this.p.x-16)%32 != 0 || (this.p.y-16)%32 != 0 ){
           this.p.x = fromMatrix(Math.round(toMatrix(this.p.x)));
           this.p.y = fromMatrix(Math.round(toMatrix(this.p.y)));
-      }
-      matrix[toMatrix(this.p.x)][toMatrix(this.p.y)] = 0;
-
-      this.p.moved = true;
-      if(nextToPlayer(this.p.x,this.p.y))
+          // console.log(this.p.x, this.p.y);
+        }
+      if(nextToPlayer(this.p.x,this.p.y)){
         this.attack();
-      else {
-        
-        /*
-        var nextMove = findNextLW(this.p.x,this.p.y);
-        console.log("nextMove", toMatrix(nextMove[0]), toMatrix(nextMove[1]), matrix[toMatrix(nextMove[0])][toMatrix(nextMove[1])]);
-        if(matrix[toMatrix(nextMove[0])][toMatrix(nextMove[1])]==0) {
+      } else {
+        // console.log(this.p.x, this.p.y);
+
+        if(this.distanceToPlayer() < 15) {
+          var nextMove = findNextLW(this.p.x,this.p.y);
           this.p.x = nextMove[0];
           this.p.y = nextMove[1];
         }
-        */
-        
-        var nextMove = findNext(this.p.x,this.p.y);
-        console.log("nextMove", nextMove[0], nextMove[1], matrix[nextMove[0]][nextMove[1]]);
-        if(matrix[nextMove[0]][nextMove[1]]==0) {
-          this.p.x = fromMatrix(nextMove[0]);
-          this.p.y = fromMatrix(nextMove[1]);
-        }         
+        // else console.log("muy lejos, no me muevo");
       }
 
-      matrix[toMatrix(this.p.x)][toMatrix(this.p.y)] = 1;
+      Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 666;
 
-      Q.state.dec("turn",1);
-      //Q("BadBall").trigger("monsterTurn",turn-1);
+      this.pass_turn();
+      this.p.moved=false;
     }
-    if(Q.state.get("turn")==0)
-      setTimeout(function() {
-
-        Q.state.set("turn", Q.state.get("enemies"));
-        Q.state.inc("playerTurn",1);
-        Q("BadBall").trigger("finalMonsterTurn");
-        console.log("turno jugador")
-      }, 100);
-  },
-
-  step: function(dt){
-
-    if(this.dead()){
-      console.log("dead "+this.p.hitPoints+" "+this.dead());
-      this.destroy();
-      Q.state.dec("enemies", 1);
-    } 
   },
 
   attack: function(){
-    this.p.moved=true;
-    enemiesMoved++;
     player = findPlayer();
     player.hit(this);
-    Q.state.set("health",player.p.hitPoints);
+    Q.state.set("health",CharSheet.hitPoints);
   },
 
+  distanceToPlayer: function(){
+    var p = findPlayer();
+
+    var xs = p.p.x - this.p.x;
+    xs = xs * xs;
+    var ys = p.p.y - this.p.y;
+    ys = ys * ys;
+    return toMatrix(Math.sqrt(xs + ys));
+  }
 });
