@@ -11,8 +11,8 @@ Q.Sprite.extend("Escalera", {
    			if(collision.isA("Player")) {
    				Q.clearStages();
           Q.stageScene("level1", 0);
-          Q.stageScene("HUD-background",1);
-          Q.stageScene("HUD-stats",2);
+          Q.stageScene("HUD-background",2);
+          Q.stageScene("HUD-stats",3);
    			}
    		});
    	}
@@ -47,6 +47,7 @@ Q.Sprite.extend("Collectable", {
 
         CharSheet.items.push(e);
         console.log("Objeto recogido!");
+        Q.stageScene("inventory", 1);
       }
       this.destroy();
     }

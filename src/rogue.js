@@ -118,8 +118,8 @@ Q.scene('Title',function(stage) {
   button.on("click",function() {
       Q.clearStages();
       Q.stageScene("level1", 0);
-      Q.stageScene("HUD-background",1);
-      Q.stageScene("HUD-stats",2);
+      Q.stageScene("HUD-background",2);
+      Q.stageScene("HUD-stats",3);
   });
 });
 
@@ -129,27 +129,26 @@ function setupLevel(stage) {
     stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
     stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
     var p = stage.insert(Dungeon.insertEntity(new Q.Player()));
-/*
-    if(!firstLevel) {
-      var hp = Q.state.get("health");
-      CharSheet.hitPoints = hp;
-      
-    }
-    else {
-      stage.insert(new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", x:p.p.x, y: p.p.y + 32, attack:5}));
-      firstLevel = false;
-    }*/
 
     Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, experience: CharSheet.experience, enemies_dead: 0, nextMove: 0});
     
-    sword = new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:5});
+    sword1 = new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:5});
+    sword2 = new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:15});
+    sword3 = new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:10});
+    sword4 = new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:-6});
+    sword5 = new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:100});
+    sword6 = new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:45});
+    stage.insert(Dungeon.insertEntity(sword1));
+    stage.insert(Dungeon.insertEntity(sword2));
+    stage.insert(Dungeon.insertEntity(sword3));
+    stage.insert(Dungeon.insertEntity(sword4));
+    stage.insert(Dungeon.insertEntity(sword5));
+    stage.insert(Dungeon.insertEntity(sword6));
     
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "snake", sprite: "snakeAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "bat", sprite: "batAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "spider", sprite: "spiderAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime()));
-
-    stage.insert(Dungeon.insertEntity(sword));
 
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
 
@@ -216,7 +215,4 @@ Q.load("qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png,
   });
 
   Q.stageScene("Title", 0);
-  //Q.stageScene("level1", 0);
-  //Q.stageScene("HUD-background",1);
-  //Q.stageScene("HUD-stats",2);
 });

@@ -25,7 +25,6 @@ var CharSheet = {
 			this.nextLevel = this.nextLevel * 2;
 			this.expBar.train();
 			//LEVELUP
-			
 		}
 		else {
 			this.experience += exp;	
@@ -34,3 +33,30 @@ var CharSheet = {
 	}
 
 };
+
+Q.scene('inventory',function(stage) {
+	//To test 
+	for(var i = 0; i<4; i++)
+	 CharSheet.items.push(new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:5}));
+
+  var width = Q.width - 30;
+  var height = Q.height -85;
+  var container = stage.insert(new Q.UI.Container({
+    x: Q.width/2, y: 200, w:width, h:height, fill: "rgba(0,1,0,0.5)"
+  }));
+
+  var row = 0;
+  var col = 0;
+  for(var i = 0; i<CharSheet.items.length; i++){
+  	container.insert(new Q.UI.Button({
+    x: -width/2 + 32*(col+1)+13*col, y: -height/2 + 32*(row+6)+13*row, asset: CharSheet.items[i].p.sheet+".png", fill: "rgba(0,0,0,0.5)", pos:i
+  	},function() {
+      console.log("soy sword", this.p.pos, CharSheet.items[this.p.pos].p.attack)
+  	} ));  
+  	col = col+1
+  	if(col==6){
+  		col=0;
+  		row++;
+  	}
+  }
+});
