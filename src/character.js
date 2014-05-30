@@ -39,7 +39,7 @@ Q.scene('inventory',function(stage) {
 	// for(var i = 0; i<4; i++)
 	//  CharSheet.items.push(new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:5}));
 
-  var width = Q.width - 50;
+  var width = Q.width - 30;
   var height = Q.height - 85;
   var container = stage.insert(new Q.UI.Container({
     x: Q.width/2, y: 210, w:width, h:height, fill: "gray"
@@ -49,7 +49,7 @@ Q.scene('inventory',function(stage) {
   var col = 0;
   for(var i = 0; i<CharSheet.items.length; i++){
   	container.insert(new Q.UI.Button({
-    x: -width/2 + 32*(col+1)+13*col, y: -height/2 + 32*(row+6)+13*row, sheet: CharSheet.items[i].p.sheet, fill: "white", pos:i
+    x: -width/2 + 32*(col+1)+13*col, y: -height/2 + 32*(row+6)+13*row, sheet: CharSheet.items[i].p.sheet, fill: "rgba(0,0,0,0.5)", pos:i
   	},function() {
       console.log("soy", CharSheet.items[this.p.pos].p.name, this.p.pos, CharSheet.items[this.p.pos].p.attack)
   	} ));  
