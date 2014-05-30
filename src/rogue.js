@@ -58,50 +58,6 @@ var nextToPlayer = function(x,y) {
   }
 };
 
-//Versión LightWeight del pathfinder
-var findNextLW = function(x,y) {
-  var next = new Array(2);
-  next[0]=x; next[1]=y;
-  var player = findPlayer();
-
-  var fila=toMatrix(y);
-  var columna=toMatrix(x);
-
-  var posibles = [];
-
-  if(Dungeon.map[fila][columna+1]%2==0 && x < player.p.x){
-    posibles.push('derecha');
-  }
-  if(Dungeon.map[fila][columna-1]%2==0 && x > player.p.x){
-    posibles.push('izquierda');
-  }
-  if(Dungeon.map[fila+1][columna]%2==0 && y < player.p.y){
-    posibles.push('abajo');
-  }
-  if(Dungeon.map[fila-1][columna]%2==0 && y > player.p.y){
-    posibles.push('arriba');
-  }
-
-  var num = Math.floor(Math.random()*(posibles.length));
-  var dir = posibles[num];
-  // console.log(num, dir);
-  if(dir == 'derecha'){
-    next[0] = x+32;
-    next[1] = y;
-  } else if(dir == 'izquierda') {
-    next[0] = x-32;
-    next[1] = y;
-  } else if(dir == 'abajo') {
-    next[0] = x;
-    next[1] = y+32;
-  } else if(dir == 'arriba'){
-    next[0] = x;
-    next[1] = y-32;
-  }
-
-  return next;
-};
-
 Q.scene('Title',function(stage) {
   var box = stage.insert(new Q.UI.Container({
     x: Q.width/2, y: Q.height/2
