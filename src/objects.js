@@ -58,10 +58,20 @@ Q.Collectable.extend("Card", {
 Q.Collectable.extend("Equipment", {
   init: function(p) {
     this._super(p, {
-        hitPoints: 0,
-        maxHp: 0,
-        attack: 0,
-        defense: 0
+      hitPoints: 0,
+      maxHp: 0,
+      attack: 0,
+      defense: 0
+    });
+  }
+});
+
+Q.Equipment.extend("Sword", {
+  init: function(p) {
+    this._super(p, {
+      sheet: "sword",
+      sprite: "swordAnim",
+      name: "sword"
     });
   }
 });

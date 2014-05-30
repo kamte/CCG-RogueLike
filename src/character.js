@@ -51,7 +51,7 @@ Q.scene('inventory',function(stage) {
   	container.insert(new Q.UI.Button({
     x: -width/2 + 32*(col+1)+13*col, y: -height/2 + 32*(row+6)+13*row, asset: CharSheet.items[i].p.sheet+".png", fill: "rgba(0,0,0,0.5)", pos:i
   	},function() {
-      console.log("soy sword", this.p.pos, CharSheet.items[this.p.pos].p.attack)
+      console.log("soy", CharSheet.items[this.p.pos].p.name, this.p.pos, CharSheet.items[this.p.pos].p.attack)
   	} ));  
   	col = col+1
   	if(col==6){

@@ -6,8 +6,8 @@ var Dungeon = {
         this.rooms = [];  
         this.map = [];
 
-        var floor = Aux.newRandom(1, 16)*2;
-        var wall = (Aux.newRandom(0, 3)*2)+1;
+        var floor = Aux.newRandom(1, 14)*2;
+        var wall = (Aux.newRandom(0, 9)*2)+1;
 
         for (var x = 0; x < this.map_size; x++) {
             this.map[x] = [];
