@@ -160,7 +160,7 @@ var Dungeon = {
 
         while (Dungeon.map[columna][fila] % 2 !== 0) {
             columna = Aux.newRandom(r.x+1, r.x+r.w-1);
-            Aux.newRandom(r.y+1, r.y+r.h-1);
+            fila = Aux.newRandom(r.y+1, r.y+r.h-1);
         }
 
         entity.p.x=fromMatrix(fila);
