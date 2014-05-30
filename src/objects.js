@@ -69,8 +69,7 @@ Q.Collectable.extend("Equipment", {
 Q.Equipment.extend("Sword", {
   init: function(p) {
     this._super(p, {
-      sheet: "sword",
-      sprite: "swordAnim",
+      sheet: "arma1",
       name: "sword"
     });
   }
