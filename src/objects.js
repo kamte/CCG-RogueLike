@@ -37,17 +37,10 @@ Q.Sprite.extend("Collectable", {
       }
       else {
         //add to item array
-        var e = new Q.Equipment();
-        e.p.hitPoints = this.p.hitPoints;
-        e.p.maxHp = this.p.maxHp;
-        e.p.attack = this.p.attack;
-        e.p.defense = this.p.defense;
-        e.p.sprite = this.p.sprite;
-        e.p.sheet = this.p.sheet;
-
+        var e = this;
         CharSheet.items.push(e);
         console.log("Objeto recogido!");
-        Q.stageScene("inventory", 1);
+        // Q.stageScene("inventory", 1);
       }
       this.destroy();
     }
