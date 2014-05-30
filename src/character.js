@@ -48,10 +48,10 @@ Q.scene('inventory',function(stage) {
   var row = 0;
   var col = 0;
   for(var i = 0; i<CharSheet.items.length; i++){
-  	container.insert(new Q.UI.Button({
+  	container.insert(new Q.UI.ButtonOff({
     x: -width/2 + 32*(col+1)+13*col, y: -height/2 + 32*(row+6)+13*row, sheet: CharSheet.items[i].p.sheet, fill: "rgba(0,0,0,0.5)", pos:i
   	},function() {
-      console.log("soy", CharSheet.items[this.p.pos].p.name, this.p.pos, CharSheet.items[this.p.pos].p.attack)
+      console.log("soy", CharSheet.items[this.p.pos].p.name, this.p.pos, CharSheet.items[this.p.pos].p.attack);
   	} ));  
   	col = col+1
   	if(col==6){

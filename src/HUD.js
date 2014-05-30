@@ -1,3 +1,28 @@
+Q.UI.ButtonOff = Q.UI.Button.extend("UI.ButtonOff", {
+    init: function(p, callback, defaultProps) {
+      this._super(Q._defaults(p||{},defaultProps),{
+        type: Q.SPRITE_UI | Q.SPRITE_DEFAULT,
+        keyActionName: null
+      });
+      if(this.p.label && (!this.p.w || !this.p.h)) {
+        Q.ctx.save();
+        this.setFont(Q.ctx);
+        var metrics = Q.ctx.measureText(this.p.label);
+        Q.ctx.restore();
+        if(!this.p.h) {  this.p.h = 24 + 20; }
+        if(!this.p.w) { this.p.w = metrics.width + 20; }
+      }
+
+      if(isNaN(this.p.cx)) { this.p.cx = this.p.w / 2; }
+      if(isNaN(this.p.cy)) { this.p.cy = this.p.h / 2; }
+      this.callback = callback;
+      //this.on('touch',this,"highlight");
+      //this.on('touchEnd',this,"push");
+      if(this.p.keyActionName) {
+        Q.input.on(this.p.keyActionName,this,"push");
+      }
+    }
+  });
 
 Q.UI.Text.extend("StatsHP",{
   init: function(p) {
