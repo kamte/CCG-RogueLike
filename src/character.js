@@ -13,7 +13,7 @@ var CharSheet = {
 	updateHp: function(hp) {
 		this.hpBar.hurt();
 		if (hp > this.maxHp)
-			this.hitPoints = maxHp;
+			this.hitPoints = this.maxHp;
 		else
 			this.hitPoints = hp;
 	},
@@ -21,6 +21,10 @@ var CharSheet = {
 	updateExp : function(exp) {
 		if (this.experience + exp > this.nextLevel) {
 			this.experience = this.experience + exp - this.nextLevel;
+			this.maxHp += 10;
+			this.hitPoints = this.maxHp;
+			Q.state.set("health",this.maxHp);
+			this.hpBar.hurt();
 			Q.state.set("experience",this.experience);
 			this.nextLevel = this.nextLevel * 2;
 			this.expBar.train();

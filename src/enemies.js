@@ -51,7 +51,8 @@ Q.Sprite.extend("Player", {
       facing: 'right',
       x: 16+32*2, 
       y: 16+32*2,
-      moved:false
+      moved:false,
+      attacked:false,
     });
     this.add('2d, customControls, animation, turn_component');
 
@@ -59,9 +60,15 @@ Q.Sprite.extend("Player", {
     this.turn_component.init_turn(0);
 
     this.on("end_move", this, function(){
+      if (!this.p.attacked && Q.state.get("healed") < 30 && CharSheet.hitPoints < CharSheet.maxHp) {
+        Q.state.inc("healed",2);
+        Q.state.inc("health",2);
+        CharSheet.updateHp(CharSheet.hitPoints+2);
+      }
       this.p.inTurn=false;
       this.p.moving=false;
       this.p.moved=false;
+      this.p.attacked = false;
 
       setTimeout(function() {
         Q.state.inc("nextMove",1);
@@ -72,6 +79,7 @@ Q.Sprite.extend("Player", {
     this.on("hit", function(collision) {
       if(collision.obj.p.type === Q.SPRITE_ENEMY){
         // console.log("ataque");
+        this.p.attacked = true;
         collision.obj.hit(this);
       } else {
         // console.log("no enemigo");

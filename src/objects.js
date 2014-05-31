@@ -30,9 +30,7 @@ Q.Sprite.extend("Collectable", {
     if(collision.isA("Player")) {
       if(this.isA("Card")) {
         //add to card array, TODO
-        var c = new Q.Card();
-        c.p.sprite = this.p.sprite;
-        c.p.sheet = this.p.sheet;
+        var c = this;
         CharSheet.cards.push(c);
       }
       else {
@@ -63,6 +61,7 @@ Q.Collectable.extend("Equipment", {
       attack: 0,
       defense: 0
     });
+
   }
 });
 
@@ -70,6 +69,7 @@ Q.Equipment.extend("Sword", {
   init: function(p) {
     this._super(p, {
       sheet: "arma1",
+      sprite: "arma1",
       name: "sword"
     });
   }
