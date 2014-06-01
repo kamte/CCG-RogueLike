@@ -60,10 +60,15 @@ Q.Sprite.extend("Player", {
     this.turn_component.init_turn(0);
 
     this.on("end_move", this, function(){
-      if (!this.p.attacked && Q.state.get("healed") < 30 && CharSheet.hitPoints < CharSheet.maxHp) {
-        Q.state.inc("healed",2);
-        Q.state.inc("health",2);
-        CharSheet.updateHp(CharSheet.hitPoints+2);
+      max = CharSheet.maxHp / 4;
+      if (!this.p.attacked && Q.state.get("healed") < max && CharSheet.hitPoints < CharSheet.maxHp) {
+        toHeal = CharSheet.maxHp / 50;
+        Q.state.inc("healed",toHeal);
+        if (Q.state.get("health") + toHeal > CharSheet.maxHp)
+          Q.state.set("health",CharSheet.maxHp);
+        else
+          Q.state.inc("health",toHeal);
+        CharSheet.updateHp(CharSheet.hitPoints+toHeal);
       }
       this.p.inTurn=false;
       this.p.moving=false;
