@@ -90,14 +90,14 @@ function setupLevel(stage) {
     Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, experience: CharSheet.experience, enemies_dead: 0, nextMove: 0, healed:0});
 
 
-    sword = new Q.Sword({x:p.p.x, y:p.p.y, attack:10});
-    sword1 = new Q.Equipment({name: "arma1", sheet: "arma1", sprite: "arma1", attack:5});
-    sword2 = new Q.Equipment({name: "arma2", sheet: "arma2", sprite: "arma2", attack:15});
-    sword3 = new Q.Equipment({name: "arma3", sheet: "arma3", sprite: "arma3", attack:10});
-    sword4 = new Q.Equipment({name: "arma4", sheet: "arma4", sprite: "arma4", attack:-6});
-    sword5 = new Q.Equipment({name: "arma5", sheet: "arma5", sprite: "arma5", attack:100});
-    sword6 = new Q.Equipment({name: "arma6", sheet: "arma6", sprite: "arma6", attack:45});
-    stage.insert(sword);
+
+    sword1 = new Q.Weapon({name: "arma1", sheet: "arma1", attack:5});
+    sword2 = new Q.Weapon({name: "arma2", sheet: "arma2", attack:15});
+    sword3 = new Q.Weapon({name: "arma3", sheet: "arma3", attack:10});
+    sword4 = new Q.Weapon({name: "arma4", sheet: "arma4", attack:-6});
+    sword5 = new Q.Weapon({name: "arma5", sheet: "arma5", attack:100});
+    sword6 = new Q.Weapon({name: "arma6", sheet: "arma6", attack:45});
+
     stage.insert(Dungeon.insertEntity(sword1));
     stage.insert(Dungeon.insertEntity(sword2));
     stage.insert(Dungeon.insertEntity(sword3));
@@ -122,7 +122,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");

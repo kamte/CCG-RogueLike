@@ -36,7 +36,7 @@ Q.Sprite.extend("Collectable", {
       else {
         //add to item array
         var e = this;
-        CharSheet.items.push(e);
+        CharSheet.addObject(e);
         console.log("Objeto recogido!");
         // Q.stageScene("inventory", 1);
       }
@@ -61,16 +61,46 @@ Q.Collectable.extend("Equipment", {
       attack: 0,
       defense: 0
     });
+  },
 
+  use: function(){
+    console.log("use")
+    CharSheet.equipObject(this);
   }
 });
 
-Q.Equipment.extend("Sword", {
+Q.Equipment.extend("Weapon", {
   init: function(p) {
     this._super(p, {
-      sheet: "arma1",
-      sprite: "arma1",
-      name: "sword"
+      sheet: "arma20",
+      name: "weapon"
+    });
+  }
+});
+
+Q.Equipment.extend("Helmet", {
+  init: function(p) {
+    this._super(p, {
+      sheet: "casco3",
+      name: "helmet"
+    });
+  }
+});
+
+Q.Equipment.extend("Armor", {
+  init: function(p) {
+    this._super(p, {
+      sheet: "armadura4",
+      name: "armor"
+    });
+  }
+});
+
+Q.Equipment.extend("Shield", {
+  init: function(p) {
+    this._super(p, {
+      sheet: "escudo2",
+      name: "shield"
     });
   }
 });

@@ -21,6 +21,9 @@ Q.UI.ButtonOff = Q.UI.Button.extend("UI.ButtonOff", {
       if(this.p.keyActionName) {
         Q.input.on(this.p.keyActionName,this,"push");
       }
+    },
+
+    highlight: function() {
     }
   });
 
