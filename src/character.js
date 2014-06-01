@@ -1,4 +1,5 @@
 var CharSheet = {
+	level: 1,
 	hitPoints: 100,
 	maxHp: 100,
 	attack: 20,
@@ -23,6 +24,8 @@ var CharSheet = {
 	updateExp : function(exp) {
 		if (this.experience + exp > this.nextLevel) {
 			this.experience = this.experience + exp - this.nextLevel;
+			this.level +=1;
+			
 			this.maxHp += 10;
 			this.heal  = Math.round(this.maxHp / 50);
 			this.healCap = Math.round(this.maxHp / 4);

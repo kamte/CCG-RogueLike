@@ -56,6 +56,51 @@ Q.UI.Text.extend("StatsExp",{
   }
 });
 
+Q.UI.Text.extend("StatsAtk",{
+  init: function(p) {
+    this._super({
+      label: "Attack: " + CharSheet.attack,
+      x: -2,
+      y: 32,
+      color: "white",
+      size: 10
+    });
+  },
+  set: function(atk) {
+    this.p.label = "Attack: " + atk;
+  }
+});
+
+Q.UI.Text.extend("StatsDef",{
+  init: function(p) {
+    this._super({
+      label: "Defense: " + CharSheet.defense,
+      x: 0,
+      y: 44,
+      color: "white",
+      size: 10
+    });
+  },
+  set: function(def) {
+    this.p.label = "Defense: " + def;
+  }
+});
+
+Q.UI.Text.extend("StatsLvl",{
+  init: function(p) {
+    this._super({
+      label: "Level: " + CharSheet.level,
+      x: 60,
+      y: 32,
+      color: "white",
+      size: 10
+    });
+  },
+  set: function(lvl) {
+    this.p.label = "Level: " + lvl;
+  }
+});
+
 Q.Sprite.extend("Health",{
   init: function(p) {
     this._super(p,{
@@ -120,6 +165,9 @@ Q.scene('HUD-stats',function(stage) {
   }));
   container.insert(new Q.StatsHP());
   container.insert(new Q.StatsExp());
+  container.insert(new Q.StatsAtk());
+  container.insert(new Q.StatsDef());
+  container.insert(new Q.StatsLvl());
   container.insert(CharSheet.hpBar);
   container.insert(CharSheet.expBar);
   container.fit(20);
