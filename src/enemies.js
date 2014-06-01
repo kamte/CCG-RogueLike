@@ -60,9 +60,10 @@ Q.Sprite.extend("Player", {
     this.turn_component.init_turn(0);
 
     this.on("end_move", this, function(){
-      max = CharSheet.maxHp / 4;
+      max = CharSheet.healCap;
       if (!this.p.attacked && Q.state.get("healed") < max && CharSheet.hitPoints < CharSheet.maxHp) {
-        toHeal = CharSheet.maxHp / 50;
+        toHeal = CharSheet.heal;
+        console.log(toHeal, max);
         Q.state.inc("healed",toHeal);
         if (Q.state.get("health") + toHeal > CharSheet.maxHp)
           Q.state.set("health",CharSheet.maxHp);
@@ -84,7 +85,6 @@ Q.Sprite.extend("Player", {
     this.on("hit", function(collision) {
       if(collision.obj.p.type === Q.SPRITE_ENEMY){
         // console.log("ataque");
-        this.p.attacked = true;
         collision.obj.hit(this);
       } else {
         // console.log("no enemigo");
@@ -204,6 +204,8 @@ Q.Sprite.extend("Slime", {
   attack: function(){
     player = findPlayer();
     player.hit(this);
+    player.p.attacked = true;
+
     Q.state.set("health",CharSheet.hitPoints);
   },
 

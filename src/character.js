@@ -5,6 +5,8 @@ var CharSheet = {
 	defense: 1,
 	experience: 0,
 	nextLevel: 50,
+	heal: 2,
+	healCap: 25,
 	cards: [],
 	items: [],
 	hpBar: new Q.Health(),
@@ -22,6 +24,8 @@ var CharSheet = {
 		if (this.experience + exp > this.nextLevel) {
 			this.experience = this.experience + exp - this.nextLevel;
 			this.maxHp += 10;
+			this.heal  = Math.round(this.maxHp / 50);
+			this.healCap = Math.round(this.maxHp / 4);
 			this.hitPoints = this.maxHp;
 			Q.state.set("health",this.maxHp);
 			this.hpBar.hurt();
