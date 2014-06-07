@@ -8,7 +8,7 @@
 	"arma7":{"sx":192,"sy":0,"tileW":32,"tileH":32,"frames":1},
 	"arma8":{"sx":224,"sy":0,"tileW":32,"tileH":32,"frames":1},
 	"arma9":{"sx":256,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"arma10":{"sx":298,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"arma10":{"sx":288,"sy":0,"tileW":32,"tileH":32,"frames":1},
 
 	"arma11":{"sx":0,"sy":32,"tileW":32,"tileH":32,"frames":1},
 	"arma12":{"sx":32,"sy":32,"tileW":32,"tileH":32,"frames":1},
@@ -19,7 +19,7 @@
 	"arma17":{"sx":192,"sy":32,"tileW":32,"tileH":32,"frames":1},
 	"arma18":{"sx":224,"sy":32,"tileW":32,"tileH":32,"frames":1},
 	"arma19":{"sx":256,"sy":32,"tileW":32,"tileH":32,"frames":1},
-	"arma20":{"sx":298,"sy":32,"tileW":32,"tileH":32,"frames":1},
+	"arma20":{"sx":288,"sy":32,"tileW":32,"tileH":32,"frames":1},
 	
 	"arma21":{"sx":0,"sy":64,"tileW":32,"tileH":32,"frames":1},
 	"arma22":{"sx":32,"sy":64,"tileW":32,"tileH":32,"frames":1},
@@ -30,7 +30,7 @@
 	"arma27":{"sx":192,"sy":64,"tileW":32,"tileH":32,"frames":1},
 	"arma28":{"sx":224,"sy":64,"tileW":32,"tileH":32,"frames":1},
 	"arma29":{"sx":256,"sy":64,"tileW":32,"tileH":32,"frames":1},
-	"arma30":{"sx":298,"sy":64,"tileW":32,"tileH":32,"frames":1},
+	"arma30":{"sx":288,"sy":64,"tileW":32,"tileH":32,"frames":1},
 	
 	"arma31":{"sx":0,"sy":96,"tileW":32,"tileH":32,"frames":1},
 	"arma32":{"sx":32,"sy":96,"tileW":32,"tileH":32,"frames":1},
@@ -41,5 +41,5 @@
 	"arma37":{"sx":192,"sy":96,"tileW":32,"tileH":32,"frames":1},
 	"arma38":{"sx":224,"sy":96,"tileW":32,"tileH":32,"frames":1},
 	"arma39":{"sx":256,"sy":96,"tileW":32,"tileH":32,"frames":1},
-	"arma40":{"sx":298,"sy":96,"tileW":32,"tileH":32,"frames":1}
+	"arma40":{"sx":288,"sy":96,"tileW":32,"tileH":32,"frames":1}
 }
