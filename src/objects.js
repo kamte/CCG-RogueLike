@@ -19,11 +19,11 @@ Q.Sprite.extend("Escalera", {
 });
 
 Q.Sprite.extend("Collectable", {
-  init: function(p) {
-    this._super(p, {
+  init: function(props, defaultProps) {
+    this._super(Q._extend({
       gravity: 0,
       sensor: true
-    });
+    },props), defaultProps);
     this.on("sensor",this,"recoge");
   },
   recoge: function(collision) {
@@ -46,21 +46,21 @@ Q.Sprite.extend("Collectable", {
 });
 
 Q.Collectable.extend("Card", {
-  init: function(p) {
-    this._super(p, {
-    });
+  init: function(props,defaultProps) {
+    this._super(Q._extend({
+    },props), defaultProps);
 
   }
 });
 
 Q.Collectable.extend("Equipment", {
-  init: function(p) {
-    this._super(p, {
+  init: function(props,defaultProps) {
+    this._super(Q._extend({
       hitPoints: 0,
       maxHp: 0,
       attack: 0,
       defense: 0
-    });
+    },props), defaultProps);
   },
 
   use: function(){

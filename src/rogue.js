@@ -86,24 +86,25 @@ function setupLevel(stage) {
     stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
     var p = stage.insert(Dungeon.insertEntity(new Q.Player()));
 
-    // Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, experience: CharSheet.experience, enemies_dead: 0, nextMove: 0});
-    Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, experience: CharSheet.experience, enemies_dead: 0, nextMove: 0, healed:0});
+    Q.state.reset({ 
+      enemies: 0,
+      health: CharSheet.hitPoints,
+      experience: CharSheet.experience,
+      enemies_dead: 0,
+      nextMove: 0,
+      healed:0});
 
 
 
-    sword1 = new Q.Weapon({name: "arma1", sheet: "arma1", attack:5});
-    sword2 = new Q.Weapon({name: "arma2", sheet: "arma2", attack:15});
-    sword3 = new Q.Weapon({name: "arma3", sheet: "arma3", attack:10});
-    sword4 = new Q.Weapon({name: "arma4", sheet: "arma4", attack:-6});
-    sword5 = new Q.Weapon({name: "arma5", sheet: "arma5", attack:100});
-    sword6 = new Q.Weapon({name: "arma6", sheet: "arma6", attack:45});
+    sword1 = new Q.Weapon({attack:5});
+    helmet1 = new Q.Helmet({defense:1});
+    armor1 = new Q.Armor({defense:2});
+    shield1 = new Q.Shield({defense:1});
 
     stage.insert(Dungeon.insertEntity(sword1));
-    stage.insert(Dungeon.insertEntity(sword2));
-    stage.insert(Dungeon.insertEntity(sword3));
-    stage.insert(Dungeon.insertEntity(sword4));
-    stage.insert(Dungeon.insertEntity(sword5));
-    stage.insert(Dungeon.insertEntity(sword6));
+    stage.insert(Dungeon.insertEntity(helmet1));
+    stage.insert(Dungeon.insertEntity(armor1));
+    stage.insert(Dungeon.insertEntity(shield1));
     
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "snake", sprite: "snakeAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "bat", sprite: "batAnim"})));
