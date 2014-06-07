@@ -19,6 +19,7 @@ var CharSheet = {
 	hpBar: new Q.Health(),
 	expBar: new Q.Experience(),
 
+
 	updateHp: function(hp) {
 		this.hpBar.hurt();
 		if (hp > this.maxHp)
@@ -31,7 +32,7 @@ var CharSheet = {
 		if (this.experience + exp > this.nextLevel) {
 			this.experience = this.experience + exp - this.nextLevel;
 			this.level +=1;
-			
+			Q("StatsLvl",3).first().set(this.level);
 			this.maxHp += 10;
 			this.heal  = Math.round(this.maxHp / 50);
 			this.healCap = Math.round(this.maxHp / 4);
@@ -41,7 +42,6 @@ var CharSheet = {
 			Q.state.set("experience",this.experience);
 			this.nextLevel = this.nextLevel * 2;
 			this.expBar.train();
-			//LEVELUP
 		}
 		else {
 			this.experience += exp;	

@@ -166,11 +166,13 @@ Q.scene('HUD-stats',function(stage) {
   var container = stage.insert(new Q.UI.Container({
     x: 110, y: Q.height-55
   }));
+
   container.insert(new Q.StatsHP());
   container.insert(new Q.StatsExp());
   container.insert(new Q.StatsAtk());
   container.insert(new Q.StatsDef());
   container.insert(new Q.StatsLvl());
+
   container.insert(CharSheet.hpBar);
   container.insert(CharSheet.expBar);
   container.fit(20);
