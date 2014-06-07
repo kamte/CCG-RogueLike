@@ -29,14 +29,22 @@ var CharSheet = {
 	},
 
 	updateExp : function(exp) {
+    //Si sube de nivel se actualizan las estadísticas
 		if (this.experience + exp > this.nextLevel) {
 			this.experience = this.experience + exp - this.nextLevel;
-			this.level +=1;
-			Q("StatsLvl",3).first().set(this.level);
-			this.maxHp += 10;
-			this.heal  = Math.round(this.maxHp / 50);
-			this.healCap = Math.round(this.maxHp / 4);
-			this.hitPoints = this.maxHp;
+			this.level += 1;
+      this.attack += 2;
+      this.defense += 1;
+      this.maxHp += 10;
+      this.heal  = Math.round(this.maxHp / 50);
+      this.healCap = Math.round(this.maxHp / 4);
+      this.hitPoints = this.maxHp;
+
+      var statsHUD =  Q("StatsContainer",3).first();
+
+      statsHUD.updateCombatStats(this.attack, this.defense);
+      statsHUD.updateLevel(this.level);
+			
 			Q.state.set("health",this.maxHp);
 			this.hpBar.hurt();
 			Q.state.set("experience",this.experience);
@@ -73,6 +81,12 @@ var CharSheet = {
   },
 
   equipObject : function (equipment){
+    var statsHUD =  Q("StatsContainer",3).first();
+
+    var lostAttack = 0;
+    var lostDefense = 0;
+
+    //Equipar objeto. Si ya hay uno equipado (!= undefined) se intercambia posicion con el nuevo a equipar
     if(equipment.isA("Helmet")){
       if(this.helmet==undefined){
         this.helmet = equipment;
@@ -115,6 +129,17 @@ var CharSheet = {
         this.currentButton.p.fill = "rgba(0,0,0,0.5)";
       }
     }
+
+    //Actualizar estadísticas
+    if(this.items[this.selectItem]!=undefined){
+      lostAttack = this.items[this.selectItem].p.attack;
+      lostDefense = this.items[this.selectItem].p.defense;
+    }
+    this.attack += equipment.p.attack - lostAttack;
+    this.defense += equipment.p.defense - lostDefense;
+    statsHUD.updateCombatStats(this.attack, this.defense);
+
+    //Deseleccionar objeto del inventario
     this.selectItem = -1;
   } 
 

@@ -162,17 +162,41 @@ Q.scene('HUD-background', function(stage){
     box.insert(new Q.HUDbg());
 });
 
+Q.UI.Container.extend("StatsContainer",{
+  init: function(p) {
+    this._super({
+      x: 110, 
+      y: Q.height-55,
+      HPlabel: new Q.StatsHP(),
+      EXPlabel: new Q.StatsExp(),
+      ATKlabel: new Q.StatsAtk(),
+      DEFlabel: new Q.StatsDef(),
+      LVLlabel: new Q.StatsLvl()
+    });
+  },
+
+  updateCombatStats: function(atk, def) {
+    this.p.ATKlabel.set(atk);
+    this.p.DEFlabel.set(def);
+  },
+
+  updateLevel: function(lvl) {
+    this.p.LVLlabel.set(lvl);
+  }, 
+
+  initLabels: function(){
+    this.insert(this.p.HPlabel);
+    this.insert(this.p.EXPlabel);
+    this.insert(this.p.ATKlabel);
+    this.insert(this.p.DEFlabel);
+    this.insert(this.p.LVLlabel);
+  }
+});
+
 Q.scene('HUD-stats',function(stage) {
-  var container = stage.insert(new Q.UI.Container({
-    x: 110, y: Q.height-55
-  }));
+  var container = stage.insert(new Q.StatsContainer());
 
-  container.insert(new Q.StatsHP());
-  container.insert(new Q.StatsExp());
-  container.insert(new Q.StatsAtk());
-  container.insert(new Q.StatsDef());
-  container.insert(new Q.StatsLvl());
-
+  container.initLabels();
   container.insert(CharSheet.hpBar);
   container.insert(CharSheet.expBar);
   container.fit(20);
