@@ -100,11 +100,15 @@ function setupLevel(stage) {
     helmet1 = new Q.Helmet({defense:1});
     armor1 = new Q.Armor({defense:2});
     shield1 = new Q.Shield({defense:1});
+    potion1 = new Q.Potion({attack:20});
+    food1 = new Q.Food({hitPoints:50});
 
     stage.insert(Dungeon.insertEntity(sword1));
     stage.insert(Dungeon.insertEntity(helmet1));
     stage.insert(Dungeon.insertEntity(armor1));
     stage.insert(Dungeon.insertEntity(shield1));
+     stage.insert(Dungeon.insertEntity(potion1));
+      stage.insert(Dungeon.insertEntity(food1));
     
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "snake", sprite: "snakeAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "bat", sprite: "batAnim"})));

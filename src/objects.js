@@ -64,9 +64,68 @@ Q.Collectable.extend("Equipment", {
   },
 
   use: function(){
-    console.log("use")
-    CharSheet.equipObject(this);
-  }
+    var statsHUD =  Q("StatsContainer",3).first();
+
+    var lostAttack = 0;
+    var lostDefense = 0;
+
+    //Equipar objeto. Si ya hay uno equipado (!= undefined) se intercambia posicion con el nuevo a equipar
+    if(this.isA("Helmet")){
+      if(CharSheet.helmet==undefined){
+        CharSheet.helmet = this;
+        CharSheet.items[CharSheet.selectItem] = undefined;
+        CharSheet.currentButton.p.fill = "rgba(0,0,0,0.5)";
+      } else {
+        var aux = CharSheet.items[CharSheet.selectItem];
+        CharSheet.items[CharSheet.selectItem] = CharSheet.helmet;
+        CharSheet.helmet = aux;
+        CharSheet.currentButton.p.fill = "rgba(0,0,0,0.5)";
+      }
+    } else if(this.isA("Weapon")){
+      if(CharSheet.weapon==undefined){
+        CharSheet.weapon = this;
+        CharSheet.items[CharSheet.selectItem] = undefined;
+      } else {
+        var aux = CharSheet.items[CharSheet.selectItem];
+        CharSheet.items[CharSheet.selectItem] = CharSheet.weapon;
+        CharSheet.weapon = aux;
+        CharSheet.currentButton.p.fill = "rgba(0,0,0,0.5)";
+      }
+    } else if(this.isA("Shield")){
+      if(CharSheet.shield==undefined){
+        CharSheet.shield = this;
+        CharSheet.items[CharSheet.selectItem] = undefined;
+      } else {
+        var aux = CharSheet.items[CharSheet.selectItem];
+        CharSheet.items[CharSheet.selectItem] = CharSheet.shield;
+        CharSheet.shield = aux;
+        CharSheet.currentButton.p.fill = "rgba(0,0,0,0.5)";
+      }
+    } else if(this.isA("Armor")){
+      if(CharSheet.armor==undefined){
+        CharSheet.armor = this;
+        CharSheet.items[CharSheet.selectItem] = undefined;
+      } else {
+        var aux = CharSheet.items[CharSheet.selectItem];
+        CharSheet.items[CharSheet.selectItem] = CharSheet.armor;
+        CharSheet.armor = aux;
+        CharSheet.currentButton.p.fill = "rgba(0,0,0,0.5)";
+      }
+    }
+
+    //Actualizar estadísticas
+    if(CharSheet.items[CharSheet.selectItem]!=undefined){
+      lostAttack = CharSheet.items[CharSheet.selectItem].p.attack;
+      lostDefense = CharSheet.items[CharSheet.selectItem].p.defense;
+    }
+    CharSheet.attack += this.p.attack - lostAttack;
+    CharSheet.defense += this.p.defense - lostDefense;
+    statsHUD.updateCombatStats(CharSheet.attack, CharSheet.defense);
+
+    //Deseleccionar objeto del inventario
+    CharSheet.selectItem = -1;
+  } 
+
 });
 
 Q.Equipment.extend("Weapon", {
@@ -102,5 +161,40 @@ Q.Equipment.extend("Shield", {
       sheet: "escudo2",
       name: "shield"
     });
+  }
+});
+
+Q.Collectable.extend("Potion", {
+  init: function(props,defaultProps) {
+    this._super(Q._extend({
+      sheet: "pocion1",
+      name: "pocion",
+      hitPoints: 0,
+      maxHp: 0,
+      attack: 0,
+      defense: 0, 
+      heal: 0,
+      maxHeal: 0
+    },props), defaultProps);
+  },
+
+  use: function(){
+    CharSheet.upStats(this.p.attack, this.p.defense, this.p.hitPoints, this.p.heal, this.p.maxHp, this.p.maxHeal);
+    CharSheet.removeSelectedObject();
+  }
+});
+
+Q.Collectable.extend("Food", {
+  init: function(props,defaultProps) {
+    this._super(Q._extend({
+      sheet: "comida1",
+      name: "comida",
+      hitPoints: 0,
+    },props), defaultProps);
+  },
+
+  use: function(){
+    CharSheet.upStats(0, 0, this.p.hitPoints, 0, 0, 0);
+    CharSheet.removeSelectedObject();
   }
 });

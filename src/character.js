@@ -6,8 +6,8 @@ var CharSheet = {
 	defense: 1,
 	experience: 0,
 	nextLevel: 50,
-	heal: 2,
-	healCap: 25,
+	heal: 1,
+	healCap: 30,
 	cards: [],
 	items: new Array(36),
   helmet: undefined,
@@ -33,20 +33,9 @@ var CharSheet = {
 		if (this.experience + exp > this.nextLevel) {
 			this.experience = this.experience + exp - this.nextLevel;
 			this.level += 1;
-      this.attack += 2;
-      this.defense += 1;
-      this.maxHp += 10;
-      this.heal  = Math.round(this.maxHp / 50);
-      this.healCap = Math.round(this.maxHp / 4);
-      this.hitPoints = this.maxHp;
-
-      var statsHUD =  Q("StatsContainer",3).first();
-
-      statsHUD.updateCombatStats(this.attack, this.defense);
-      statsHUD.updateLevel(this.level);
-			
-			Q.state.set("health",this.maxHp);
-			this.hpBar.hurt();
+      
+      this.upStats(2, 1, 'all', 0.2, 10, 2);
+      console.log(this.maxHp);
 			Q.state.set("experience",this.experience);
 			this.nextLevel = this.nextLevel * 2;
 			this.expBar.train();
@@ -56,6 +45,28 @@ var CharSheet = {
 			this.expBar.train();
 		}
 	},
+
+  upStats : function(atk, def, hp, heal, mHP, mHeal){
+      this.attack += atk;
+      this.defense += def;
+      this.maxHp += mHP;
+
+      if(hp == 'all' || this.hitPoints+hp>this.maxHp){
+        this.hitPoints = this.maxHp;
+      } else {
+        this.hitPoints += hp;
+      }
+      this.heal += heal;
+      this.healCap += mHeal;
+
+      var statsHUD =  Q("StatsContainer",3).first();
+
+      statsHUD.updateCombatStats(this.attack, this.defense);
+      statsHUD.updateLevel(this.level);
+      
+      Q.state.set("health",this.hitPoints);
+      this.hpBar.hurt();
+  },
 
   addObject : function (collectable){
     for(var i = 0; i<this.items.length; i++){
@@ -71,78 +82,19 @@ var CharSheet = {
     this.items[i] = undefined;
   },
 
+  removeSelectedObject : function(){
+    this.items[this.selectItem].destroy;
+    this.items[this.selectItem] = undefined;
+  },
+
   removeObject : function(collectable){
     for(var i = 0; i<this.items.length; i++){
       if(this.items[i]==collectable){
         this.removeObjectInIndex(i);
-        break;
       }
+      break;
     } 
-  },
-
-  equipObject : function (equipment){
-    var statsHUD =  Q("StatsContainer",3).first();
-
-    var lostAttack = 0;
-    var lostDefense = 0;
-
-    //Equipar objeto. Si ya hay uno equipado (!= undefined) se intercambia posicion con el nuevo a equipar
-    if(equipment.isA("Helmet")){
-      if(this.helmet==undefined){
-        this.helmet = equipment;
-        this.items[this.selectItem] = undefined;
-        this.currentButton.p.fill = "rgba(0,0,0,0.5)";
-      } else {
-        var aux = this.items[this.selectItem];
-        this.items[this.selectItem] = this.helmet;
-        this.helmet = aux;
-        this.currentButton.p.fill = "rgba(0,0,0,0.5)";
-      }
-    } else if(equipment.isA("Weapon")){
-      if(this.weapon==undefined){
-        this.weapon = equipment;
-        this.items[this.selectItem] = undefined;
-      } else {
-        var aux = this.items[this.selectItem];
-        this.items[this.selectItem] = this.weapon;
-        this.weapon = aux;
-        this.currentButton.p.fill = "rgba(0,0,0,0.5)";
-      }
-    } else if(equipment.isA("Shield")){
-      if(this.shield==undefined){
-        this.shield = equipment;
-        this.items[this.selectItem] = undefined;
-      } else {
-        var aux = this.items[this.selectItem];
-        this.items[this.selectItem] = this.shield;
-        this.shield = aux;
-        this.currentButton.p.fill = "rgba(0,0,0,0.5)";
-      }
-    } else if(equipment.isA("Armor")){
-      if(this.armor==undefined){
-        this.armor = equipment;
-        this.items[this.selectItem] = undefined;
-      } else {
-        var aux = this.items[this.selectItem];
-        this.items[this.selectItem] = this.armor;
-        this.armor = aux;
-        this.currentButton.p.fill = "rgba(0,0,0,0.5)";
-      }
-    }
-
-    //Actualizar estadísticas
-    if(this.items[this.selectItem]!=undefined){
-      lostAttack = this.items[this.selectItem].p.attack;
-      lostDefense = this.items[this.selectItem].p.defense;
-    }
-    this.attack += equipment.p.attack - lostAttack;
-    this.defense += equipment.p.defense - lostDefense;
-    statsHUD.updateCombatStats(this.attack, this.defense);
-
-    //Deseleccionar objeto del inventario
-    this.selectItem = -1;
-  } 
-
+  }
 };
 
 Q.scene('inventory',function(stage) {
