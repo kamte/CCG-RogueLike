@@ -96,11 +96,12 @@ function setupLevel(stage) {
 
     //Generar entre x e y objetos
     objectGenerator.spawner(stage, 5, 14);
-
-    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "snake", sprite: "snakeAnim"})));
-    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "bat", sprite: "batAnim"})));
-    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "spider", sprite: "spiderAnim"})));
-    stage.insert(Dungeon.insertEntity(new Q.Slime()));
+    
+    //Spawn 4 to 6 enemies when a floor is entered
+    var n = Aux.newRandom(4,6);
+    console.log("Enemies spawned:",n);
+    for (i = 0; i < n; i++)
+      spawn(stage);
 
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
 

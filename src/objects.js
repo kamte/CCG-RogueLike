@@ -10,6 +10,7 @@ Q.Sprite.extend("Escalera", {
    		this.on("sensor",this,function(collision){
    			if(collision.isA("Player")) {
    				Q.clearStages();
+          ++CharSheet.floor;
           Q.stageScene("level1", 0);
           Q.stageScene("HUD-background",2);
           Q.stageScene("HUD-stats",3);

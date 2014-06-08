@@ -98,6 +98,7 @@ Q.component("customControls", {
 Q.component("character", {
 
   live: function(HP, ATK, DEF, EXP) {
+    console.log(HP, ATK, DEF, EXP);
     this.entity.p.hitPoints = HP;
     this.entity.p.attack = ATK;
     this.entity.p.defense = DEF;

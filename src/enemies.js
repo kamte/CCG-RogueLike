@@ -42,6 +42,18 @@ var findNextLW = function(x,y) {
   return next;
 };
 
+var spawn = function(stage) {
+  var n = Aux.newRandom(0,3);
+  if (n == 0) 
+    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "snake", sprite: "snakeAnim"})));
+  else if (n == 1)
+    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "bat", sprite: "batAnim"})));
+  else if (n == 2)
+    stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "spider", sprite: "spiderAnim"})));
+  else
+    stage.insert(Dungeon.insertEntity(new Q.Slime()));
+};
+
 //Jugador
 Q.Sprite.extend("Player", {
   init: function(p) {
@@ -106,6 +118,14 @@ Q.Sprite.extend("Player", {
       if(this.p.pressed==='left' || this.p.pressed==='right' || this.p.pressed==='down' || this.p.pressed==='up') {
         this.p.moved=true;
         this.play(this.gif);
+        //If the player walked around and didnt fight, roll for a possible new spawn:
+        if (!this.p.attacked) {
+          var n = Aux.newRandom(0,100);
+          if (n > 90) {
+            console.log("Spawning a new enemy!")
+            spawn(Q.stage(0));
+          }
+        }
       } 
 
     } else if(this.dead()){
@@ -148,8 +168,18 @@ Q.Sprite.extend("Slime", {
     this.add('2d, animation, character, turn_component');
 
     Q.state.inc("enemies", 1);
+    var hp, atk, def, exp;
+    var floor = CharSheet.floor-1;
 
-    this.character.live(100, 4, 1, 20);
+    //Make enemies randomly up to 2 times stronger
+    var mod = Aux.newRandom(100,200) / 100;
+
+    hp =  Math.floor(mod * (100 + 10 * floor));
+    atk = Math.floor(mod * (4 + 2 * floor));
+    def = Math.floor(mod * (1 + 1 * floor));
+    exp = Math.floor(mod * (20 + 5 * floor));
+    
+    this.character.live(hp, atk, def, exp);
     this.turn_component.init_turn(Q.state.get("enemies"));
     this.play(this.p.sheet);
     //this.play("slime");

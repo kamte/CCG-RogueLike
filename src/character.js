@@ -24,11 +24,12 @@ var CharSheet = {
 	hpBar: new Q.Health(),
 	expBar: new Q.Experience(),
   deleteOn: false,
+  floor: 1,
 
 	updateHp: function(hp) {
 		if (hp > this.maxHp)
 			this.hitPoints = this.maxHp;
-		else
+    else
 			this.hitPoints = hp;
 
     Q.state.set("health",this.hitPoints);
