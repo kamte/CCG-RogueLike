@@ -1,13 +1,13 @@
 var Dungeon = {
     map: null, //mapa para los tiles: 0=nada, impares=paredes, pares=suelos
-    map_size: 52,
+    map_size: 150,
     rooms: [],
     generate: function () {
         this.rooms = [];  
         this.map = [];
 
-        var floor = Aux.newRandom(1, 16)*2;
-        var wall = (Aux.newRandom(0, 3)*2)+1;
+        var floor = Aux.newRandom(1, 14)*2;
+        var wall = (Aux.newRandom(0, 9)*2)+1;
 
         for (var x = 0; x < this.map_size; x++) {
             this.map[x] = [];
@@ -16,9 +16,9 @@ var Dungeon = {
             }
         }
 
-        var room_count = Aux.newRandom(7, 9);
+        var room_count = Aux.newRandom(8, 11);
         var min_size = 6;
-        var max_size = 10;
+        var max_size = 11;
 
         //Genera las habitaciones
         for (var i = 0; i < room_count; i++) {
@@ -119,7 +119,7 @@ var Dungeon = {
 
     //Mueve las habitaciones mas cerca unas de otras
     joinRooms: function () {
-        for (var i = 0; i < 2; i++) {
+        for (var i = 0; i < 3; i++) {
             for (var j = 0; j < this.rooms.length; j++) {
                 var room = this.rooms[j];
                 while (true) {
@@ -157,6 +157,11 @@ var Dungeon = {
 
         var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
         var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
+
+        while (Dungeon.map[columna][fila] % 2 !== 0 || Dungeon.map[columna][fila] == 0) {
+            columna = Aux.newRandom(r.x+1, r.x+r.w-1);
+            fila = Aux.newRandom(r.y+1, r.y+r.h-1);
+        }
 
         entity.p.x=fromMatrix(fila);
         entity.p.y=fromMatrix(columna);  

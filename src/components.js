@@ -7,6 +7,7 @@ Q.component("customControls", {
     if(!p.stepDistance) { p.stepDistance = 32; }
     if(!p.stepDelay) { p.stepDelay = 0.2; }
     if(!p.inTurn) {p.inTurn = true; }
+    if(!p.timer) {p.timer=0; }
 
     p.stepWait = 0;
     this.entity.on("step",this,"step");
@@ -48,6 +49,8 @@ Q.component("customControls", {
 
 
     if(p.inTurn) { //Move only when in turn
+      p.timer +=1;
+      // console.log(cont);
       p.pressed='none';
       if(Q.inputs['left'] && Dungeon.map[fila][columna-1]%2==0) {
         p.facing = 'left';
@@ -67,7 +70,17 @@ Q.component("customControls", {
         p.pressed='down';
         p.diffY = p.stepDistance;
         p.moving = true;
-      } 
+      } else if(Q.inputs['fire'] && p.timer > 10) {
+        p.timer = 0;
+        if (Q.stage(1) != undefined) {
+          console.log("inventario abierto, cerrando");
+          Q.clearStage(1);
+        }
+        else {
+          console.log("abriendo inventario");
+          Q.stageScene("inventory", 1);
+        }
+      }
 
       if(p.diffY || p.diffX ) { 
         p.stepping = true;

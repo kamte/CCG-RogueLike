@@ -1,0 +1,7 @@
+{
+	"comida1":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"comida2":{"sx":32,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"comida3":{"sx":64,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"comida4":{"sx":96,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"comida5":{"sx":128,"sy":0,"tileW":32,"tileH":32,"frames":1}
+}

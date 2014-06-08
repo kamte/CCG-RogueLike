@@ -58,50 +58,6 @@ var nextToPlayer = function(x,y) {
   }
 };
 
-//Versión LightWeight del pathfinder
-var findNextLW = function(x,y) {
-  var next = new Array(2);
-  next[0]=x; next[1]=y;
-  var player = findPlayer();
-
-  var fila=toMatrix(y);
-  var columna=toMatrix(x);
-
-  var posibles = [];
-
-  if(Dungeon.map[fila][columna+1]%2==0 && x < player.p.x){
-    posibles.push('derecha');
-  }
-  if(Dungeon.map[fila][columna-1]%2==0 && x > player.p.x){
-    posibles.push('izquierda');
-  }
-  if(Dungeon.map[fila+1][columna]%2==0 && y < player.p.y){
-    posibles.push('abajo');
-  }
-  if(Dungeon.map[fila-1][columna]%2==0 && y > player.p.y){
-    posibles.push('arriba');
-  }
-
-  var num = Math.floor(Math.random()*(posibles.length));
-  var dir = posibles[num];
-  // console.log(num, dir);
-  if(dir == 'derecha'){
-    next[0] = x+32;
-    next[1] = y;
-  } else if(dir == 'izquierda') {
-    next[0] = x-32;
-    next[1] = y;
-  } else if(dir == 'abajo') {
-    next[0] = x;
-    next[1] = y+32;
-  } else if(dir == 'arriba'){
-    next[0] = x;
-    next[1] = y-32;
-  }
-
-  return next;
-};
-
 Q.scene('Title',function(stage) {
   var box = stage.insert(new Q.UI.Container({
     x: Q.width/2, y: Q.height/2
@@ -118,8 +74,8 @@ Q.scene('Title',function(stage) {
   button.on("click",function() {
       Q.clearStages();
       Q.stageScene("level1", 0);
-      Q.stageScene("HUD-background",1);
-      Q.stageScene("HUD-stats",2);
+      Q.stageScene("HUD-background",2);
+      Q.stageScene("HUD-stats",3);
   });
 });
 
@@ -129,27 +85,35 @@ function setupLevel(stage) {
     stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
     stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
     var p = stage.insert(Dungeon.insertEntity(new Q.Player()));
-/*
-    if(!firstLevel) {
-      var hp = Q.state.get("health");
-      CharSheet.hitPoints = hp;
-      
-    }
-    else {
-      stage.insert(new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", x:p.p.x, y: p.p.y + 32, attack:5}));
-      firstLevel = false;
-    }*/
 
-    Q.state.reset({ enemies: 0, health: CharSheet.hitPoints, experience: CharSheet.experience, enemies_dead: 0, nextMove: 0});
-    
-    sword = new Q.Equipment({name: "sword", sheet: "sword", sprite: "swordAnim", attack:5});
+    Q.state.reset({ 
+      enemies: 0,
+      health: CharSheet.hitPoints,
+      experience: CharSheet.experience,
+      enemies_dead: 0,
+      nextMove: 0,
+      healed:0});
+
+
+
+    sword1 = new Q.Weapon({attack:5});
+    helmet1 = new Q.Helmet({defense:1});
+    armor1 = new Q.Armor({defense:2});
+    shield1 = new Q.Shield({defense:1});
+    potion1 = new Q.Potion({attack:20});
+    food1 = new Q.Food({hitPoints:50});
+
+    stage.insert(Dungeon.insertEntity(sword1));
+    stage.insert(Dungeon.insertEntity(helmet1));
+    stage.insert(Dungeon.insertEntity(armor1));
+    stage.insert(Dungeon.insertEntity(shield1));
+     stage.insert(Dungeon.insertEntity(potion1));
+      stage.insert(Dungeon.insertEntity(food1));
     
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "snake", sprite: "snakeAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "bat", sprite: "batAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "spider", sprite: "spiderAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime()));
-
-    stage.insert(Dungeon.insertEntity(sword));
 
     stage.insert(Dungeon.insertEntity(new Q.Escalera()));
 
@@ -163,7 +127,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
@@ -172,13 +136,15 @@ Q.load("qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png,
   Q.compileSheets("spider.png", "spider.json");
   Q.compileSheets("texturas.png","texturas.json");
   Q.compileSheets("escalera.png","escalera.json");
-  Q.compileSheets("sword.png","sword.json");
+  Q.compileSheets("armaduras.png","armaduras.json");
+  Q.compileSheets("armas.png","armas.json");
+  Q.compileSheets("cascos.png","cascos.json");
+  Q.compileSheets("comida.png","comida.json");
+  Q.compileSheets("escudos.png","escudos.json");
+  Q.compileSheets("pociones.png","pociones.json");
+
 
   Q.animations("escAnim", {
-    base: {frames: [0]}
-  });
-
-  Q.animations("swordAnim", {
     base: {frames: [0]}
   });
 
@@ -216,7 +182,4 @@ Q.load("qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png,
   });
 
   Q.stageScene("Title", 0);
-  //Q.stageScene("level1", 0);
-  //Q.stageScene("HUD-background",1);
-  //Q.stageScene("HUD-stats",2);
 });

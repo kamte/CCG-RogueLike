@@ -1,3 +1,47 @@
+//Versión LightWeight del pathfinder
+var findNextLW = function(x,y) {
+  var next = new Array(2);
+  next[0]=x; next[1]=y;
+  var player = findPlayer();
+
+  var fila=toMatrix(y);
+  var columna=toMatrix(x);
+
+  var posibles = [];
+
+  if(Dungeon.map[fila][columna+1]%2==0 && x < player.p.x){
+    posibles.push('derecha');
+  }
+  if(Dungeon.map[fila][columna-1]%2==0 && x > player.p.x){
+    posibles.push('izquierda');
+  }
+  if(Dungeon.map[fila+1][columna]%2==0 && y < player.p.y){
+    posibles.push('abajo');
+  }
+  if(Dungeon.map[fila-1][columna]%2==0 && y > player.p.y){
+    posibles.push('arriba');
+  }
+
+  var num = Math.floor(Math.random()*(posibles.length));
+  var dir = posibles[num];
+  // console.log(num, dir);
+  if(dir == 'derecha'){
+    next[0] = x+32;
+    next[1] = y;
+  } else if(dir == 'izquierda') {
+    next[0] = x-32;
+    next[1] = y;
+  } else if(dir == 'abajo') {
+    next[0] = x;
+    next[1] = y+32;
+  } else if(dir == 'arriba'){
+    next[0] = x;
+    next[1] = y-32;
+  }
+
+  return next;
+};
+
 //Jugador
 Q.Sprite.extend("Player", {
   init: function(p) {
@@ -7,7 +51,8 @@ Q.Sprite.extend("Player", {
       facing: 'right',
       x: 16+32*2, 
       y: 16+32*2,
-      moved:false
+      moved:false,
+      attacked:false,
     });
     this.add('2d, customControls, animation, turn_component');
 
@@ -15,9 +60,20 @@ Q.Sprite.extend("Player", {
     this.turn_component.init_turn(0);
 
     this.on("end_move", this, function(){
+      max = CharSheet.healCap;
+      if (!this.p.attacked && Q.state.get("healed") < max && CharSheet.hitPoints < CharSheet.maxHp) {
+        toHeal = Math.floor(CharSheet.heal);
+        Q.state.inc("healed",toHeal);
+        if (Q.state.get("health") + toHeal > CharSheet.maxHp)
+          Q.state.set("health",CharSheet.maxHp);
+        else
+          Q.state.inc("health",toHeal);
+        CharSheet.updateHp(CharSheet.hitPoints+toHeal);
+      }
       this.p.inTurn=false;
       this.p.moving=false;
       this.p.moved=false;
+      this.p.attacked = false;
 
       setTimeout(function() {
         Q.state.inc("nextMove",1);
@@ -147,6 +203,8 @@ Q.Sprite.extend("Slime", {
   attack: function(){
     player = findPlayer();
     player.hit(this);
+    player.p.attacked = true;
+
     Q.state.set("health",CharSheet.hitPoints);
   },
 
