@@ -62,7 +62,7 @@ Q.Sprite.extend("Player", {
     this.on("end_move", this, function(){
       max = CharSheet.healCap;
       if (!this.p.attacked && Q.state.get("healed") < max && CharSheet.hitPoints < CharSheet.maxHp) {
-        toHeal = CharSheet.heal;
+        toHeal = Math.floor(CharSheet.heal);
         Q.state.inc("healed",toHeal);
         if (Q.state.get("health") + toHeal > CharSheet.maxHp)
           Q.state.set("health",CharSheet.maxHp);

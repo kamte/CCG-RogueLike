@@ -116,7 +116,7 @@ Q.Sprite.extend("Health",{
   },
 
   hurt: function(){
-    this.p.w = CharSheet.hitPoints;
+    this.p.w = (CharSheet.hitPoints/CharSheet.maxHp)*100;
   },
 
   draw: function(ctx) {
