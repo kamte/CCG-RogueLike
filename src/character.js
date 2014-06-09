@@ -1,4 +1,5 @@
 var CharSheet = {
+  //STATS
 	level: 1,
 	hitPoints: 100,
 	maxHp: 100,
@@ -8,16 +9,24 @@ var CharSheet = {
 	nextLevel: 50,
 	heal: 1,
 	healCap: 30,
+
+  //INVENTARIO
 	cards: [],
 	items: new Array(36),
   helmet: undefined,
   armor: undefined,
   shield: undefined,
   weapon: undefined,
+
+  //AUXILIARES
   selectItem: -1,
   currentButton: undefined,
 	hpBar: new Q.Health(),
 	expBar: new Q.Experience(),
+  deleteOn: false,
+
+
+
 
 
 	updateHp: function(hp) {
@@ -103,8 +112,12 @@ Q.scene('inventory',function(stage) {
 	// CharSheet.addObject(new Q.Weapon({name: "sword", sheet: "arma2", attack:5}));
   CharSheet.selectItem = -1;
 
+  var equip = "yellow";
+  var remove = "red";
+  var notSelected = "black";
+
   var width = Q.width - 30;
-  var height = Q.height - 85;
+  var height = Q.height - 65;
   var inventoryBox = stage.insert(new Q.UI.Container({
     x: Q.width/2, 
     y: 210, w:width, 
@@ -118,7 +131,7 @@ Q.scene('inventory',function(stage) {
 
   var equipmentBox = inventoryBox.insert(new Q.UI.Container({
     x: -70, 
-    y: -140, 
+    y: -155, 
     w:120, 
     h:80, 
     fill: "white", 
@@ -136,7 +149,7 @@ Q.scene('inventory',function(stage) {
     x: -40, 
     y: 0, 
     sheet: (CharSheet.weapon==undefined) ? undefined : CharSheet.weapon.p.sheet, 
-    fill: "black", 
+    fill: notSelected, 
   },function() {
       console.log("soy weapon");
   } ));
@@ -145,7 +158,7 @@ Q.scene('inventory',function(stage) {
     x: 0, 
     y: -20, 
     sheet: (CharSheet.helmet==undefined) ? undefined : CharSheet.helmet.p.sheet, 
-    fill: "black", 
+    fill: notSelected, 
     pos:i
   },function() {
     console.log("soy helmet");
@@ -155,7 +168,7 @@ Q.scene('inventory',function(stage) {
     x: 0, 
     y: 20, 
     sheet: (CharSheet.armor==undefined) ? undefined : CharSheet.armor.p.sheet, 
-    fill: "black", 
+    fill: notSelected, 
     pos:i
   },function() {
     console.log("soy armor");
@@ -165,7 +178,7 @@ Q.scene('inventory',function(stage) {
     x: 40, 
     y: 0, 
     sheet: (CharSheet.shield==undefined) ? undefined : CharSheet.shield.p.sheet, 
-    fill: "black", 
+    fill: notSelected, 
     pos:i
   },function() {
     console.log("soy shield");
@@ -176,26 +189,32 @@ Q.scene('inventory',function(stage) {
   for(var i = 0; i<CharSheet.items.length; i++){
 
     inventoryBox.insert(new Q.UI.ButtonOff({
-      x: -width/2 + 32*(col+1)+13*col, 
-      y: -height/2+16 + 32*(row+4)+13*row, 
+      x: -width/2 + 32*(col+1) + 13*col, 
+      y: -height/2 + 32*(row+4) + 13*row, 
       sheet: (CharSheet.items[i]==undefined) ? undefined : CharSheet.items[i].p.sheet, 
-      fill: "black", 
+      fill: notSelected, 
       pos:i
   	},function() {
-      console.log("soy", CharSheet.items[this.p.pos].p.name, this.p.pos, CharSheet.items[this.p.pos].p.attack);
-
       if(CharSheet.selectItem==this.p.pos){
-        CharSheet.items[this.p.pos].use();
+        if(!CharSheet.deleteOn){
+          CharSheet.items[this.p.pos].use();
+        } else {
+          CharSheet.removeSelectedObject();
+        }
         Q.clearStage(1);
         Q.stageScene("inventory", 1);
       } else {
         if(CharSheet.currentButton!=undefined)
         {
-          CharSheet.currentButton.p.fill = "black";
+          CharSheet.currentButton.p.fill = notSelected;
         }
         CharSheet.selectItem=this.p.pos;
         CharSheet.currentButton = this;
-        this.p.fill = "yellow";
+        if(!CharSheet.deleteOn) {
+          this.p.fill = equip;
+        } else {
+          this.p.fill = remove;
+        }
       }
   	} ));  
 
@@ -205,4 +224,22 @@ Q.scene('inventory',function(stage) {
   		row++;
   	}
   }
+
+  inventoryBox.insert(new Q.UI.ButtonOff({
+      x: 0, 
+      y: 185, 
+      w: 100, 
+      h: 25,
+      fill: (CharSheet.deleteOn) ? remove : "gray",
+      asset: "basura.png"
+    },function() {
+        CharSheet.deleteOn = !CharSheet.deleteOn;
+        if(CharSheet.deleteOn) {
+          this.p.fill = remove;
+          CharSheet.currentButton.p.fill = remove;
+        } else {
+          this.p.fill = "gray";
+          CharSheet.currentButton.p.fill = equip;
+        }
+    } )); 
 });
