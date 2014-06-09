@@ -157,9 +157,7 @@ Q.Sprite.extend("Monster", {
     var floor = CharSheet.floor-1;
 
     this.turn_component.init_turn(Q.state.get("enemies"));
-    this.play(this.p.sheet);
-    //this.play("slime");
-    
+    this.play(this.p.sheet);  
     
     this.on("hit", function(collision) {
       // console.log("collision bola mala: "+collision.obj);
@@ -172,6 +170,19 @@ Q.Sprite.extend("Monster", {
       // console.log("dead "+this.p.hitPoints+" "+this.dead());
 
       act_turnEnemies(this.p.position);
+      switch(this.p.sheet) {
+        case "bat":
+          Spawner.bats--;
+          break;
+        case "snake":
+          Spawner.snakes--;
+          break;
+        case "spider":
+          Spawner.spiders--;
+          break;
+        default:
+          Spawner.slime--;
+      };
 
       this.destroy();
 
