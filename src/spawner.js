@@ -17,7 +17,7 @@ var Spawner = {
 	    var mod = Aux.newRandom(100,150) / 100;
 
 		var n = Aux.newRandom(0,3);
-		var monster;
+		var monster = undefined;
 		if (n == 0) {
 			if (this.snakes < this.maxSnakes) {
 				monster = new Q.Monster({sheet: "snake", sprite: "snakeAnim"});
@@ -25,8 +25,7 @@ var Spawner = {
 			    atk = Math.floor(mod * (6 + 2 * floor));
 			    def = Math.floor(mod * (1 + 1 * floor));
 			    exp = Math.floor(mod * (20 + 5 * floor));
-				monster.character.live(hp, atk, def, exp);
-				stage.insert(Dungeon.insertAwayFromPlayer(monster));
+				
 				this.snakes++;
 			}
 		}
@@ -37,8 +36,6 @@ var Spawner = {
 			    atk = Math.floor(mod * (4 + 2 * floor));
 			    def = Math.floor(mod * (1 + 1 * floor));
 			    exp = Math.floor(mod * (20 + 5 * floor));
-				monster.character.live(hp, atk, def, exp);
-				stage.insert(Dungeon.insertAwayFromPlayer(monster));
 				this.bats++;
 			}
 		}
@@ -49,8 +46,6 @@ var Spawner = {
 			    atk = Math.floor(mod * (3 + 2 * floor));
 			    def = Math.floor(mod * (2 + 1 * floor));
 			    exp = Math.floor(mod * (20 + 5 * floor));
-				monster.character.live(hp, atk, def, exp);
-				stage.insert(Dungeon.insertAwayFromPlayer(monster));
 				this.spiders++;
 			}
 		}
@@ -61,10 +56,12 @@ var Spawner = {
 			    atk = Math.floor(mod * (5 + 2 * floor));
 			    def = Math.floor(mod * (1 + 1 * floor));
 			    exp = Math.floor(mod * (20 + 5 * floor));
-				monster.character.live(hp, atk, def, exp);
-				stage.insert(Dungeon.insertAwayFromPlayer(monster));
 				this.slimes++;
 			}
+		}
+		if (monster!==undefined) {
+			monster.character.live(hp, atk, def, exp);
+			stage.insert(Dungeon.insertAwayFromPlayer(monster));
 		}
 	},
 
