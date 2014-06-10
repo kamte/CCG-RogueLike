@@ -26,11 +26,12 @@ var CharSheet = {
   deleteOn: false,
 
 	updateHp: function(hp) {
-		this.hpBar.hurt();
 		if (hp > this.maxHp)
 			this.hitPoints = this.maxHp;
 		else
 			this.hitPoints = hp;
+
+    Q.state.set("health",this.hitPoints);
 	},
 
 	updateExp : function(exp) {
@@ -56,21 +57,21 @@ var CharSheet = {
       this.defense += def;
       this.maxHp += mHP;
 
-      if(hp == 'all' || this.hitPoints+hp>this.maxHp){
-        this.hitPoints = this.maxHp;
-      } else {
-        this.hitPoints += hp;
-      }
+      if(hp == 'all'){
+        hp = this.maxHp; 
+      } 
+
+      this.updateHp(hp+this.hitPoints);
+
       this.heal += heal;
       this.healCap += mHeal;
 
       var statsHUD =  Q("StatsContainer",3).first();
-
-      statsHUD.updateCombatStats(this.attack, this.defense);
+      console.log(this.maxHp)
+      statsHUD.updateCombatStats(this.attack, this.defense, this.maxHp);
       statsHUD.updateLevel(this.level);
       
-      Q.state.set("health",this.hitPoints);
-      this.hpBar.hurt();
+
   },
 
   addObject : function (collectable){

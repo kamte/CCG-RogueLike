@@ -30,8 +30,8 @@ Q.UI.ButtonOff = Q.UI.Button.extend("UI.ButtonOff", {
 Q.UI.Text.extend("StatsHP",{
   init: function(p) {
     this._super({
-      label: "Health: " + Q.state.get("health"),
-      x: 0,
+      label: "Health: " + Q.state.get("health") + "/" + CharSheet.maxHp,
+      x: 10,
       y: 20,
       color: "white",
       size: 10
@@ -39,7 +39,12 @@ Q.UI.Text.extend("StatsHP",{
     Q.state.on("change.health",this,"hp");
   },
   hp: function(hitP) {
-    this.p.label = "Health: " + hitP;
+    this.p.label = "Health: " + hitP + "/" + CharSheet.maxHp;
+    CharSheet.hpBar.hurt();
+  }, 
+  set: function(maxHp) {
+    this.p.label = "Health: " + CharSheet.hitPoints + "/" + maxHp;
+    CharSheet.hpBar.hurt();
   }
 });
 
@@ -110,7 +115,7 @@ Q.Sprite.extend("Health",{
       color: "red",
       w: 100,
       h: 5,
-      x: 85,
+      x: 115,
       y: 21
     });
   },
@@ -175,9 +180,10 @@ Q.UI.Container.extend("StatsContainer",{
     });
   },
 
-  updateCombatStats: function(atk, def) {
+  updateCombatStats: function(atk, def, hp) {
     this.p.ATKlabel.set(atk);
     this.p.DEFlabel.set(def);
+    this.p.HPlabel.set(hp);
   },
 
   updateLevel: function(lvl) {
