@@ -98,6 +98,13 @@ Q.component("customControls", {
 Q.component("character", {
 
   live: function(HP, ATK, DEF, EXP) {
+    //Make enemies randomly up to 1.5 times stronger
+    var mod = Aux.newRandom(100,150) / 100;
+    HP=Math.floor(mod*HP);
+    ATK=Math.floor(mod*ATK);
+    DEF=Math.floor(mod*DEF);
+    EXP=Math.floor(mod*EXP);
+    
     console.log(HP, ATK, DEF, EXP);
     this.entity.p.hitPoints = HP;
     this.entity.p.attack = ATK;
