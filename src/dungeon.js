@@ -47,12 +47,12 @@ var Dungeon = {
             var roomA = this.rooms[i];
             var roomB = this.rooms[i+1];
             pointA = {
-                x: Aux.newRandom(roomA.x, roomA.x + roomA.w),
-                y: Aux.newRandom(roomA.y, roomA.y + roomA.h)
+                x: Aux.newRandom(roomA.x+1, roomA.x + roomA.w-1),
+                y: Aux.newRandom(roomA.y+1, roomA.y + roomA.h-1)
             };
             pointB = {
-                x: Aux.newRandom(roomB.x, roomB.x + roomB.w),
-                y: Aux.newRandom(roomB.y, roomB.y + roomB.h)
+                x: Aux.newRandom(roomB.x+1, roomB.x + roomB.w-1),
+                y: Aux.newRandom(roomB.y+1, roomB.y + roomB.h-1)
             };
 
             while ((pointB.x != pointA.x) || (pointB.y != pointA.y)) {
