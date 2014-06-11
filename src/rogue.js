@@ -94,22 +94,9 @@ function setupLevel(stage) {
       nextMove: 0,
       healed:0});
 
+    //Generar entre x e y objetos
+    objectGenerator.spawner(stage, 5, 14);
 
-
-    sword1 = new Q.Weapon({attack:5});
-    helmet1 = new Q.Helmet({defense:1});
-    armor1 = new Q.Armor({defense:2});
-    shield1 = new Q.Shield({defense:1});
-    potion1 = new Q.Potion({attack:20});
-    food1 = new Q.Food({hitPoints:50});
-
-    stage.insert(Dungeon.insertEntity(sword1));
-    stage.insert(Dungeon.insertEntity(helmet1));
-    stage.insert(Dungeon.insertEntity(armor1));
-    stage.insert(Dungeon.insertEntity(shield1));
-     stage.insert(Dungeon.insertEntity(potion1));
-      stage.insert(Dungeon.insertEntity(food1));
-    
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "snake", sprite: "snakeAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "bat", sprite: "batAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "spider", sprite: "spiderAnim"})));

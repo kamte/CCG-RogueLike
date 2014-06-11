@@ -3,7 +3,7 @@ Q.UI.Text.extend("EquipDesc",{
     this._super({
       label: "",
       x: 0,
-      y: -40,
+      y: -36,
       color: "black",
       size: 10
     });
@@ -15,6 +15,36 @@ Q.UI.Text.extend("EquipDesc",{
       this.p.label = desc;
       this.p.color = "blue";
     }
+  }
+});
+
+Q.UI.Text.extend("NameDesc",{
+  init: function(p) {
+    this._super({
+      label: "",
+      x: 0,
+      y: -24,
+      color: "black",
+      size: 10,
+      align: 'left'
+    });
+  },
+  set: function(name, tier) {
+    if(name == null || name==undefined){
+      this.p.label = "";
+    } else {
+      this.p.label = name;
+      if(tier==0 || tier==1){
+        this.p.color = "gray";
+      } else if(tier==2) {
+        this.p.color = "black";
+      } else if(tier==3) {
+        this.p.color = "blue";
+      } else if(tier==4) {
+        this.p.color = "purple";
+      } 
+    }   
+    
   }
 });
 
@@ -100,19 +130,27 @@ var hpDesc = new Q.HpDesc();
 var atkDesc = new Q.AtkDesc();
 var defDesc = new Q.DefDesc();
 var equipDesc = new Q.EquipDesc();
+var nameDesc = new Q.NameDesc();
 
 var updateDesc = function (item, equip){
   var maxHp = null;
   var attack = null;
   var defense = null;
+  var name = "";
+  var tier = 0;
 
   if(item != undefined) {
-    maxHp = item.p.maxHp;
-    attack = item.p.attack;
-    defense = item.p.defense;
+    if(!item.isA("Potion")){
+      maxHp = item.p.maxHp;
+      attack = item.p.attack;
+      defense = item.p.defense;
+    }
+    name = item.p.name;
+    tier = item.p.tier;
   }
 
   equipDesc.set(equip);
+  nameDesc.set(name, tier);
   hpDesc.set(maxHp);
   atkDesc.set(attack);
   defDesc.set(defense);
@@ -164,6 +202,7 @@ Q.scene('inventory',function(stage) {
   }));
 
   descriptionBox.insert(equipDesc);
+  descriptionBox.insert(nameDesc)
   descriptionBox.insert(hpDesc);
   descriptionBox.insert(atkDesc);
   descriptionBox.insert(defDesc);
