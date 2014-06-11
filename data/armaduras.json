@@ -1,17 +1,17 @@
 {
-	"armadura1":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"armadura2":{"sx":32,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"armadura3":{"sx":64,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"armor1":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"armor2":{"sx":32,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"armor3":{"sx":64,"sy":0,"tileW":32,"tileH":32,"frames":1},
 
-	"armadura4":{"sx":0,"sy":32,"tileW":32,"tileH":32,"frames":1},
-	"armadura5":{"sx":32,"sy":32,"tileW":32,"tileH":32,"frames":1},
-	"armadura6":{"sx":64,"sy":32,"tileW":32,"tileH":32,"frames":1},
+	"armor4":{"sx":0,"sy":32,"tileW":32,"tileH":32,"frames":1},
+	"armor5":{"sx":32,"sy":32,"tileW":32,"tileH":32,"frames":1},
+	"armor6":{"sx":64,"sy":32,"tileW":32,"tileH":32,"frames":1},
 
-	"armadura7":{"sx":0,"sy":64,"tileW":32,"tileH":32,"frames":1},
-	"armadura8":{"sx":32,"sy":64,"tileW":32,"tileH":32,"frames":1},
-	"armadura9":{"sx":64,"sy":64,"tileW":32,"tileH":32,"frames":1},
+	"armor7":{"sx":0,"sy":64,"tileW":32,"tileH":32,"frames":1},
+	"armor8":{"sx":32,"sy":64,"tileW":32,"tileH":32,"frames":1},
+	"armor9":{"sx":64,"sy":64,"tileW":32,"tileH":32,"frames":1},
 	
-	"armadura10":{"sx":0,"sy":96,"tileW":32,"tileH":32,"frames":1},
-	"armadura11":{"sx":32,"sy":96,"tileW":32,"tileH":32,"frames":1},
-	"armadura12":{"sx":64,"sy":96,"tileW":32,"tileH":32,"frames":1}
+	"armor10":{"sx":0,"sy":96,"tileW":32,"tileH":32,"frames":1},
+	"armor11":{"sx":32,"sy":96,"tileW":32,"tileH":32,"frames":1},
+	"armor12":{"sx":64,"sy":96,"tileW":32,"tileH":32,"frames":1}
 }

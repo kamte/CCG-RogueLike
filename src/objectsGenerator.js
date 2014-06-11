@@ -1,19 +1,18 @@
 var NamesGenerator = {
 
 	DBtier4: ["Kukulkán", "Huracán", "Tepeu", "Alom", "Bitol", "Qaholom", "Tzacol", "Xlitan", "Ajtzak", "Akaime", "Bitol", "Chirakata-Ixminasune", "Hunahpu-Gutch", "Ixmucane", "Ixpiyacoc", "Mulzencab", "Tepeu", "Tzacol", "Patán", "Quicxic", "Quicré", "Quicrixcac", "Itzamná"],
-	DBtier3: ["Mueve-montañas", "Rompe muros", "Mata-dragones", "Descomunal", "Perfora corazones", "Inquebrantable"],
-	DBtier2: ["de espinas", "tenaz", "punzante", "de las tinieblas", "de las llanuras", "irreal", "elemental"],
-	DBtier1: ["de hierro", "de madera", "inútil", "de hojalata", "de cobre", "carcomido", "de mentira", "antinatural"],
-	DBpotions: ["misteriosa", "de ranas y sapos", "asquerosa", "inconfundible", "deliciosa", "maya", "de cola de rata"],
-	DBfood: ["pan", "pastel", "carne hecha", "carne cruda", "queso"],
+	DBtier3: ["Mountain-moving", "Wall-breaker", "Dragon-killer", "Colossal", "Heart-piercing", "Unbreakable", "Flawless", "Spectacular"],
+	DBtier2: ["Thorned", "Tenacious", "Spiked", "Shadow", "Foreign", "Unreal", "Elemental", "Sharp", "Swift"],
+	DBtier1: ["Iron", "Wooden", "Useless", "Tin", "Copper", "Corroded", "Toy", "Old", "Fake", "Sticky"],
+	DBpotions: ["Misterious", "Frog surprise", "Disgusting", "Peculiar", "Tasty", "Mayan", "Rat tail", "Hairy"],
+	DBfood: ["Bread", "Cake", "Cooked meat", "Raw meat", "Cheese"],
 
 	randomName: function(tier, item){
 		var name = "";
 		if(item=='equip'){
-			name += " ";
 			if(tier == 4){
 				var r = Aux.newRandom(0, this.DBtier4.length-1);
-				name += ("de " + this.DBtier4[r]);
+				name += (this.DBtier4[r] + "'s");
 			} else if(tier == 3) {
 				var r = Aux.newRandom(0, this.DBtier3.length-1); 
 				name += this.DBtier3[r];
@@ -26,7 +25,7 @@ var NamesGenerator = {
 			}
 		} else if (item=='potion'){
 			var r = Aux.newRandom(0, this.DBpotions.length-1);
-			name = "Poción " + this.DBpotions[r] + '\n' + "No sabes cuál será" + '\n' + "su efecto";
+			name = this.DBpotions[r] + " potion" + '\n' + "you don't know what" + '\n' + "it will do";
 		} else if (item=='food') {
 			console.log("tahaha")
 			var r = Aux.newRandom(0, this.DBfood.length-1);
@@ -83,13 +82,13 @@ var objectGenerator = {
 			var sprite;
 
 			if(r<0.25){
-				item = new Q.Weapon({tier: tier, sheet: ("arma"+(((tier-1)*10)+Aux.newRandom(1,10))), name:("Arma "+NamesGenerator.randomName(tier, 'equip'))});
+				item = new Q.Weapon({tier: tier, sheet: ("weapon"+(((tier-1)*10)+Aux.newRandom(1,10))), name:(NamesGenerator.randomName(tier, 'equip')+ " weapon")});
 			} else if(r<0.50){
-				item = new Q.Shield({tier: tier, sheet: ("escudo"+(((tier-1)*6)+Aux.newRandom(1,6))), name:("Escudo"+NamesGenerator.randomName(tier, 'equip'))});
+				item = new Q.Shield({tier: tier, sheet: ("shield"+(((tier-1)*6)+Aux.newRandom(1,6))), name:(NamesGenerator.randomName(tier, 'equip') + " shield")});
 			} else if(r<0.75){
-				item = new Q.Armor({tier: tier, sheet: ("armadura"+(((tier-1)*3)+Aux.newRandom(1,3))), name:("Armadura"+NamesGenerator.randomName(tier, 'equip'))});
+				item = new Q.Armor({tier: tier, sheet: ("armor"+(((tier-1)*3)+Aux.newRandom(1,3))), name:(NamesGenerator.randomName(tier, 'equip') + " armor")});
 			} else {
-				item = new Q.Helmet({tier: tier, sheet: ("casco"+(((tier-1)*3)+Aux.newRandom(1,3))), name:("Casco"+NamesGenerator.randomName(tier, 'equip'))});
+				item = new Q.Helmet({tier: tier, sheet: ("helmet"+(((tier-1)*3)+Aux.newRandom(1,3))), name:(NamesGenerator.randomName(tier, 'equip') + " helmet")});
 			}
 			item.statear(atk,def,hp);
 
@@ -98,7 +97,7 @@ var objectGenerator = {
 			var hp = Math.ceil(Math.random()*CharSheet.maxHp/2);
 			var name = NamesGenerator.randomName(tier, 'food');
 
-			item = new Q.Food({tier: tier, sheet: name, name: (name + '\n' + "Si te lo comes" + '\n' + "te curarás una" + '\n' + "porción de tu vida")});
+			item = new Q.Food({tier: tier, sheet: name, name: (name + '\n' + "Eating it will" + '\n' + "heal a portion" + '\n' + "of your life")});
 
 			item.statear(hp);
 
@@ -128,7 +127,7 @@ var objectGenerator = {
 			}
 
 		//NO SPAWNEAR "20%"
-			item = new Q.Potion({tier: tier, sheet: ("pocion"+(Aux.newRandom(1,7))), name: NamesGenerator.randomName(tier, 'potion')});
+			item = new Q.Potion({tier: tier, sheet: ("potion"+(Aux.newRandom(1,7))), name: NamesGenerator.randomName(tier, 'potion')});
 
 			item.statear(atk, def, hp, heal, maxHeal);
 		}

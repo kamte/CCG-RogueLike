@@ -219,7 +219,7 @@ Q.scene('inventory',function(stage) {
     sheet: (CharSheet.weapon==undefined) ? undefined : CharSheet.weapon.p.sheet, 
     fill: notSelected, 
   },function() {
-      updateDesc(CharSheet.weapon, "Arma equipada");
+      updateDesc(CharSheet.weapon, "Equipped weapon");
       CharSheet.currentButton.p.fill = notSelected;
       CharSheet.selectItem = -1;
   } ));
@@ -231,7 +231,7 @@ Q.scene('inventory',function(stage) {
     fill: notSelected, 
     pos:i
   },function() {
-    updateDesc(CharSheet.helmet, "Casco equipado");
+    updateDesc(CharSheet.helmet, "Equipped helmet");
     CharSheet.currentButton.p.fill = notSelected;
     CharSheet.selectItem = -1;
   } ));
@@ -243,7 +243,7 @@ Q.scene('inventory',function(stage) {
     fill: notSelected, 
     pos:i
   },function() {
-    updateDesc(CharSheet.armor, "Armadura equipada");
+    updateDesc(CharSheet.armor, "Equipped armor");
     CharSheet.currentButton.p.fill = notSelected;
     CharSheet.selectItem = -1;
   } ));
@@ -255,7 +255,7 @@ Q.scene('inventory',function(stage) {
     fill: notSelected, 
     pos:i
   },function() {
-    updateDesc(CharSheet.shield, "Escudo equipado");
+    updateDesc(CharSheet.shield, "Equipped shield");
     CharSheet.currentButton.p.fill = notSelected;
     CharSheet.selectItem = -1;
   } ));  
