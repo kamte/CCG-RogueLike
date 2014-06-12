@@ -109,12 +109,29 @@ Q.UI.Text.extend("StatsLvl",{
   }
 });
 
+Q.Sprite.extend("MaxHealth",{
+  init: function(p) {
+    this._super(p,{
+      color: "black",
+      w: 102,
+      h: 9,
+      x: 115,
+      y: 21
+    });
+  },
+
+  draw: function(ctx) {
+    ctx.fillStyle = this.p.color;
+    ctx.fillRect(-this.p.cx, -this.p.cy, this.p.w, this.p.h);
+  }
+});
+
 Q.Sprite.extend("Health",{
   init: function(p) {
     this._super(p,{
       color: "red",
       w: 100,
-      h: 5,
+      h: 7,
       x: 115,
       y: 21
     });
@@ -130,13 +147,30 @@ Q.Sprite.extend("Health",{
   }
 });
 
+Q.Sprite.extend("MaxExperience",{
+  init: function(p) {
+    this._super(p,{
+      color: "black",
+      w: 171,
+      h: 5,
+      x: 109,
+      y: 8
+    });
+  },
+
+  draw: function(ctx) {
+    ctx.fillStyle = this.p.color;
+    ctx.fillRect(-this.p.cx, -this.p.cy, this.p.w, this.p.h);
+  }
+});
+
 Q.Sprite.extend("Experience",{
   init: function(p) {
     this._super(p,{
       color: "yellow",
       w: 0,
       h: 3,
-      x: 30,
+      x: 25,
       y: 8
     });
   },
@@ -203,6 +237,8 @@ Q.scene('HUD-stats',function(stage) {
   var container = stage.insert(new Q.StatsContainer());
 
   container.initLabels();
+  container.insert(new Q.MaxExperience());
+  container.insert(new Q.MaxHealth());
   container.insert(CharSheet.hpBar);
   container.insert(CharSheet.expBar);
   container.fit(20);
