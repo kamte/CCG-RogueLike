@@ -1,78 +1,119 @@
+ // var ChanceState = {
+ // 	monsterName: "",
+ // 	minFloor: 0,
+ // 	maxFloor: 0,
+ // 	chance: 0,
+ // 	currentChance: 0,
+
+ // 	updateChance: function(floor) {
+ // 		var mid = Math.ceil((this.minFloor + this.maxFloor) / 2);
+
+ // 		if (floor < this.minFloor || floor > this.maxFloor)
+ // 			this.currentChance = 0;
+
+ // 		else if (floor === this.minFloor)
+ // 			this.currentChance = this.chance;
+
+ // 		else if (floor <= mid)
+ // 			this.currentChance += 5;
+
+ // 		else
+ // 			this.currentChance -= 3;
+ // 	}
+ // };
+ function updateChance(floor) {
+ 	var mid = Math.ceil((this.minFloor + this.maxFloor) / 2);
+
+ 	if (floor < this.minFloor || floor > this.maxFloor)
+ 		this.currentChance = 0;
+
+ 	else if (floor === this.minFloor)
+ 		this.currentChance = this.chance;
+
+ 	else if (floor <= mid)
+ 		this.currentChance += 5;
+
+ 	else
+ 		this.currentChance -= 3;
+ };
+
+  function ChanceState(name, min, max, chance) {
+ 	this.monsterName = name;
+ 	this.minFloor = min;
+ 	this.maxFloor = max;
+ 	this.chance = chance;
+ 	this.currentChance = 0;
+ 	this.updateChance = updateChance;
+ };
+
+
+
 var Spawner = {
-	bats: 0,
-	maxBats: 7,
-	batChance: 50,
-	slimes: 0,
-	maxSlimes: 3,
-	slimeChance: 10,
-	snakes: 0,
-	maxSnakes: 4,
-	snakeChance: 20,
-	spiders: 0,
-	maxSpiders: 4,
-	spiderChance: 20,
+	maxMonsters: 15,
+	monsters: 0,
+	monsterList: undefined,
+
+	initState: function() {
+		if (this.monsterList === undefined) {
+			this.monsterList = [];
+			var bat = new ChanceState("Bat",1,5,10);
+			this.monsterList.push(bat);
+
+			var snake = new ChanceState("Snake",3,7,5);
+			this.monsterList.push(snake);
+
+			var spider = new ChanceState("Spider",6,10,5);
+			this.monsterList.push(spider);
+
+			var slime = new ChanceState("Slime",10,15,2);
+			this.monsterList.push(slime);
+		}
+	},
 
 	spawn: function(stage) {
 
-		var hp, atk, def, exp;
-	    var floor = CharSheet.floor-1;
-		var n = Aux.newRandom(1,100);
-		var monster = undefined;
 
-		if (n <= this.snakeChance) {
-			if (this.snakes < this.maxSnakes) {
-				monster = new Q.Snake();
-				this.snakes++;
+		if (this.monsters < this.maxMonsters) {
+
+		    var sum = 0;
+		    for (i=0; i < this.monsterList.length; i++)
+		    	sum += this.monsterList[i].currentChance;
+
+			var n = Aux.newRandom(1,sum);
+			var monster = undefined;
+
+
+			if (n <= this.monsterList[1].currentChance) {
+					monster = new Q.Snake();
 			}
-		}
-		else if (n <= this.snakeChance + this.batChance) {
-			if (this.bats < this.maxBats) {
-				monster = new Q.Bat();
-				this.bats++;
+			else if (n <= this.monsterList[1].currentChance + this.monsterList[0].currentChance) {
+					monster = new Q.Bat();
 			}
-		}
-		else if (n <= this.snakeChance + this.batChance + this.spiderChance) {
-			if (this.spiders < this.maxSpiders) {
-				monster = new Q.Spider();
-				this.spiders++;
+			else if (n <= this.monsterList[1].currentChance + this.monsterList[0].currentChance + this.monsterList[2].currentChance) {
+					monster = new Q.Spider();
 			}
-		}
-		else {
-			if (this.slimes < this.maxSlimes) {
-				monster = new Q.Slime();
-				this.slimes++;
+			else {
+					monster = new Q.Slime();
 			}
-		}
-		if (monster!==undefined) {
-			stage.insert(Dungeon.insertAwayFromPlayer(monster));
+			if (monster!==undefined) {
+				this.monsters++;
+				stage.insert(Dungeon.insertAwayFromPlayer(monster));
+			}
 		}
 	},
 
 	initialSpawn: function(stage, min, max) {
 		var n = Aux.newRandom(min,max);
 
+		if (CharSheet.floor === 1)
+			Spawner.initState();
+		
+		for(i=0; i < this.monsterList.length; i++)
+			this.monsterList[i].updateChance(CharSheet.floor);
+
 	    console.log("Enemies to spawn:",n);
 	    for (i = 0; i < n; i++)
 	      Spawner.spawn(stage);
-	},
-
-	update: function() {
-		if (this.batChance > 5) {
-		    this.batChance -= 5;
-		    var roll = Aux.newRandom(0,2);
-
-		    if (this.spiderChance < 30 && roll ===0)
-		    	this.spiderChance+=5;
-		    else if (this.snakeChance < 30 && (roll === 1 || this.spiderChance>=30))
-		    	this.snakeChance+=5;
-		    else 
-		    	this.slimeChance += 5;
-
-		    this.maxBats = Math.floor(this.batChance/10)+2;
-		    this.maxSlimes = Math.floor(this.slimeChance/10)+2;
-		    this.maxSpiders = Math.floor(this.spiderChance/10)+2;
-		    this.maxSnakes = Math.floor(this.snakeChance/10)+2;
-		    console.log(this.batChance, this.slimeChance, this.spiderChance, this.snakeChance);
-		}
 	}
+
  };

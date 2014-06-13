@@ -11,7 +11,6 @@ Q.Sprite.extend("Escalera", {
    			if(collision.isA("Player")) {
    				Q.clearStages();
           ++CharSheet.floor;
-          Spawner.update();
           Q.stageScene("level1", 0);
           Q.stageScene("HUD-background",2);
           Q.stageScene("HUD-stats",3);

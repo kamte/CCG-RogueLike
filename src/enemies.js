@@ -171,19 +171,7 @@ Q.Sprite.extend("Monster", {
       // console.log("dead "+this.p.hitPoints+" "+this.dead());
 
       act_turnEnemies(this.p.position);
-      switch(this.p.sheet) {
-        case "bat":
-          Spawner.bats--;
-          break;
-        case "snake":
-          Spawner.snakes--;
-          break;
-        case "spider":
-          Spawner.spiders--;
-          break;
-        default:
-          Spawner.slime--;
-      };
+      Spawner.monsters--;
 
       this.destroy();
 
@@ -241,7 +229,7 @@ Q.Monster.extend("Bat", {
   init: function(p) {
     this._super(p, {
       sheet: "bat",
-      sprite: "batAnim",
+      sprite: "batAnim"
     });
     var hp, atk, def, exp;
     var floor = CharSheet.floor-1;
@@ -259,7 +247,7 @@ Q.Monster.extend("Snake", {
   init: function(p) {
     this._super(p, {
       sheet: "snake",
-      sprite: "snakeAnim",
+      sprite: "snakeAnim"
     });
     var hp, atk, def, exp;
     var floor = CharSheet.floor-1;
@@ -277,7 +265,7 @@ Q.Monster.extend("Spider", {
   init: function(p) {
     this._super(p, {
       sheet: "spider",
-      sprite: "spiderAnim",
+      sprite: "spiderAnim"
     });
     var hp, atk, def, exp;
     var floor = CharSheet.floor-1;
@@ -295,7 +283,7 @@ Q.Monster.extend("Slime", {
   init: function(p) {
     this._super(p, {
       sheet: "slime",
-      sprite: "slimeAnim",
+      sprite: "slimeAnim"
     });
     var hp, atk, def, exp;
     var floor = CharSheet.floor-1;
