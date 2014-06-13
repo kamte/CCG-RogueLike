@@ -43,6 +43,9 @@ Q.UI.Text.extend("StatsHP",{
     CharSheet.hpBar.hurt();
   }, 
   set: function(maxHp) {
+    if(maxHp<CharSheet.hitPoints){
+      CharSheet.updateHp(maxHp);
+    }
     this.p.label = "Health: " + CharSheet.hitPoints + "/" + maxHp;
     CharSheet.hpBar.hurt();
   }

@@ -141,8 +141,8 @@ Q.Equipment.extend("Weapon", {
   },
 
   statear: function(atk, def, hp){
-      this.p.attack=atk*this.p.tier;
-      this.p.maxHp=Math.floor(hp*this.p.tier/3);
+      this.p.attack = Math.abs(atk*this.p.tier);
+      this.p.maxHp = Math.floor(hp*this.p.tier/3);
 
       if(def <= 0)
         this.p.defense=def*this.p.tier;       
@@ -156,8 +156,8 @@ Q.Equipment.extend("Helmet", {
   },
 
   statear: function(atk, def, hp){
-      this.p.defense=Math.floor(def*this.p.tier/3);
-      this.p.maxHp= hp*this.p.tier;
+      this.p.maxHp = Math.abs(hp*this.p.tier);
+      this.p.defense = Math.floor(def*this.p.tier/3);
 
       if(atk <= 0)
           this.p.attack=def*this.p.tier;
@@ -171,8 +171,8 @@ Q.Equipment.extend("Armor", {
   },
 
   statear: function(atk, def, hp){
-    this.p.defense=def*this.p.tier;
-    this.p.maxHp=Math.floor(hp*this.p.tier/3);
+    this.p.defense = Math.abs(def*this.p.tier);
+    this.p.maxHp = Math.floor(hp*this.p.tier/3);
 
     if(atk<=0)
         this.p.attack=atk*this.p.tier;
@@ -186,8 +186,8 @@ Q.Equipment.extend("Shield", {
   },
 
   statear: function(atk, def, hp){
-    this.p.defense= def*this.p.tier;
-    this.p.attack= Math.floor(atk*this.p.tier/3);
+    this.p.defense = Math.abs(def*this.p.tier);
+    this.p.attack = Math.floor(atk*this.p.tier/3);
 
     if(hp<=0)
         this.p.maxHp=hp*this.p.tier;
