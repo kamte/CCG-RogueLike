@@ -21,46 +21,29 @@ var Spawner = {
 
 		if (n <= this.snakeChance) {
 			if (this.snakes < this.maxSnakes) {
-				monster = new Q.Monster({sheet: "snake", sprite: "snakeAnim"});
-				hp =  80 + 10 * floor;
-			    atk = 6 + 2 * floor;
-			    def = 1 + 1 * floor;
-			    exp = 20 + 5 * floor;
+				monster = new Q.Snake();
 				this.snakes++;
 			}
 		}
 		else if (n <= this.snakeChance + this.batChance) {
 			if (this.bats < this.maxBats) {
-				monster = new Q.Monster({sheet: "bat", sprite: "batAnim"});
-				hp =  90 + 10 * floor;
-			    atk = 4 + 2 * floor;
-			    def = 1 + 1 * floor;
-			    exp = 15 + 5 * floor;
+				monster = new Q.Bat();
 				this.bats++;
 			}
 		}
 		else if (n <= this.snakeChance + this.batChance + this.spiderChance) {
 			if (this.spiders < this.maxSpiders) {
-				monster = new Q.Monster({sheet: "spider", sprite: "spiderAnim"});
-				hp =  110 + 10 * floor;
-			    atk = 3 + 2 * floor;
-			    def = 2 + 1 * floor;
-			    exp = 20 + 5 * floor;
+				monster = new Q.Spider();
 				this.spiders++;
 			}
 		}
 		else {
 			if (this.slimes < this.maxSlimes) {
-				monster = new Q.Monster({sheet: "slime", sprite: "slimeAnim"});
-				hp =  100 + 10 * floor;
-			    atk = 5 + 2 * floor;
-			    def = 1 + 1 * floor;
-			    exp = 25 + 6 * floor;
+				monster = new Q.Slime();
 				this.slimes++;
 			}
 		}
 		if (monster!==undefined) {
-			monster.character.live(hp, atk, def, exp);
 			stage.insert(Dungeon.insertAwayFromPlayer(monster));
 		}
 	},
