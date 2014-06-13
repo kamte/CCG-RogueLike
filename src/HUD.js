@@ -30,8 +30,8 @@ Q.UI.ButtonOff = Q.UI.Button.extend("UI.ButtonOff", {
 Q.UI.Text.extend("StatsHP",{
   init: function(p) {
     this._super({
-      label: "Health: " + Q.state.get("health"),
-      x: 0,
+      label: "Health: " + Q.state.get("health") + "/" + CharSheet.maxHp,
+      x: 10,
       y: 20,
       color: "white",
       size: 10
@@ -39,7 +39,12 @@ Q.UI.Text.extend("StatsHP",{
     Q.state.on("change.health",this,"hp");
   },
   hp: function(hitP) {
-    this.p.label = "Health: " + hitP;
+    this.p.label = "Health: " + hitP + "/" + CharSheet.maxHp;
+    CharSheet.hpBar.hurt();
+  }, 
+  set: function(maxHp) {
+    this.p.label = "Health: " + CharSheet.hitPoints + "/" + maxHp;
+    CharSheet.hpBar.hurt();
   }
 });
 
@@ -104,13 +109,30 @@ Q.UI.Text.extend("StatsLvl",{
   }
 });
 
+Q.Sprite.extend("MaxHealth",{
+  init: function(p) {
+    this._super(p,{
+      color: "black",
+      w: 102,
+      h: 9,
+      x: 115,
+      y: 21
+    });
+  },
+
+  draw: function(ctx) {
+    ctx.fillStyle = this.p.color;
+    ctx.fillRect(-this.p.cx, -this.p.cy, this.p.w, this.p.h);
+  }
+});
+
 Q.Sprite.extend("Health",{
   init: function(p) {
     this._super(p,{
       color: "red",
       w: 100,
-      h: 5,
-      x: 85,
+      h: 7,
+      x: 115,
       y: 21
     });
   },
@@ -125,13 +147,30 @@ Q.Sprite.extend("Health",{
   }
 });
 
+Q.Sprite.extend("MaxExperience",{
+  init: function(p) {
+    this._super(p,{
+      color: "black",
+      w: 171,
+      h: 5,
+      x: 109,
+      y: 8
+    });
+  },
+
+  draw: function(ctx) {
+    ctx.fillStyle = this.p.color;
+    ctx.fillRect(-this.p.cx, -this.p.cy, this.p.w, this.p.h);
+  }
+});
+
 Q.Sprite.extend("Experience",{
   init: function(p) {
     this._super(p,{
       color: "yellow",
       w: 0,
       h: 3,
-      x: 30,
+      x: 25,
       y: 8
     });
   },
@@ -175,9 +214,10 @@ Q.UI.Container.extend("StatsContainer",{
     });
   },
 
-  updateCombatStats: function(atk, def) {
+  updateCombatStats: function(atk, def, hp) {
     this.p.ATKlabel.set(atk);
     this.p.DEFlabel.set(def);
+    this.p.HPlabel.set(hp);
   },
 
   updateLevel: function(lvl) {
@@ -197,6 +237,8 @@ Q.scene('HUD-stats',function(stage) {
   var container = stage.insert(new Q.StatsContainer());
 
   container.initLabels();
+  container.insert(new Q.MaxExperience());
+  container.insert(new Q.MaxHealth());
   container.insert(CharSheet.hpBar);
   container.insert(CharSheet.expBar);
   container.fit(20);

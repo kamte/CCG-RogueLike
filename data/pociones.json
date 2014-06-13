@@ -1,9 +1,9 @@
 {
-	"pocion1":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"pocion2":{"sx":32,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"pocion3":{"sx":64,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"pocion4":{"sx":96,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"pocion5":{"sx":128,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"pocion6":{"sx":160,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"pocion7":{"sx":192,"sy":0,"tileW":32,"tileH":32,"frames":1}
+	"potionn1":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"potionn2":{"sx":32,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"potionn3":{"sx":64,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"potionn4":{"sx":96,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"potionn5":{"sx":128,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"potionn6":{"sx":160,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"potionn7":{"sx":192,"sy":0,"tileW":32,"tileH":32,"frames":1}
 }

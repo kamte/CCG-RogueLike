@@ -94,22 +94,9 @@ function setupLevel(stage) {
       nextMove: 0,
       healed:0});
 
+    //Generar entre x e y objetos
+    objectGenerator.spawner(stage, 5, 14);
 
-
-    sword1 = new Q.Weapon({attack:5});
-    helmet1 = new Q.Helmet({defense:1});
-    armor1 = new Q.Armor({defense:2});
-    shield1 = new Q.Shield({defense:1});
-    potion1 = new Q.Potion({attack:20});
-    food1 = new Q.Food({hitPoints:50});
-
-    stage.insert(Dungeon.insertEntity(sword1));
-    stage.insert(Dungeon.insertEntity(helmet1));
-    stage.insert(Dungeon.insertEntity(armor1));
-    stage.insert(Dungeon.insertEntity(shield1));
-     stage.insert(Dungeon.insertEntity(potion1));
-      stage.insert(Dungeon.insertEntity(food1));
-    
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "snake", sprite: "snakeAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "bat", sprite: "batAnim"})));
     stage.insert(Dungeon.insertEntity(new Q.Slime({sheet: "spider", sprite: "spiderAnim"})));
@@ -127,7 +114,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("basura.png, equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
