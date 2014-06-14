@@ -27,6 +27,21 @@ Q.UI.ButtonOff = Q.UI.Button.extend("UI.ButtonOff", {
     }
   });
 
+Q.UI.Text.extend("FloorLabel",{
+  init: function(p) {
+    this._super({
+      label: "Floor: " + CharSheet.floor,
+      x: 185,
+      y: 44,
+      color: "white",
+      size: 12
+    });
+  },
+  act: function() {
+    this.p.label = "Floor: " + CharSheet.floor;
+  }
+});
+
 Q.UI.Text.extend("StatsHP",{
   init: function(p) {
     this._super({
@@ -213,7 +228,8 @@ Q.UI.Container.extend("StatsContainer",{
       EXPlabel: new Q.StatsExp(),
       ATKlabel: new Q.StatsAtk(),
       DEFlabel: new Q.StatsDef(),
-      LVLlabel: new Q.StatsLvl()
+      LVLlabel: new Q.StatsLvl(),
+      FloorLabel: new Q.FloorLabel()
     });
   },
 
@@ -233,6 +249,7 @@ Q.UI.Container.extend("StatsContainer",{
     this.insert(this.p.ATKlabel);
     this.insert(this.p.DEFlabel);
     this.insert(this.p.LVLlabel);
+    this.insert(this.p.FloorLabel);
   }
 });
 
