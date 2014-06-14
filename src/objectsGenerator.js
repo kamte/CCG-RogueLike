@@ -69,14 +69,15 @@ var objectGenerator = {
 		//EQUIPO 35%
 		if(r<0.35){
 			r = Math.random();
+
 			//TODO tener en cuenta el piso
-			var atk = Math.ceil(Math.random()*2);
+			var atk = Math.ceil(Math.random()*5*CharSheet.floor+CharSheet.floor);
 			if(Math.random()<0.3)
 				atk=-atk;
-			var def = Math.ceil(Math.random()*1);
+			var def = Math.ceil(Math.random()*2*CharSheet.floor+CharSheet.floor);
 			if(Math.random()<0.3)
 				def=-def;
-			var hp = Math.ceil(Math.random()*10);
+			var hp = Math.ceil(Math.random()*20*CharSheet.floor+CharSheet.floor*2);
 			if(Math.random()<0.3)
 				hp=-hp;
 			var sprite;
@@ -94,7 +95,7 @@ var objectGenerator = {
 
 		//COMIDA 30%
 		} else if(r<0.66){
-			var hp = Math.ceil(Math.random()*CharSheet.maxHp/2);
+			var hp = Math.ceil(Math.random()*CharSheet.maxHp/2+CharSheet.floor*2);
 			var name = NamesGenerator.randomName(tier, 'food');
 
 			item = new Q.Food({tier: tier, sheet: name, name: (name + '\n' + "Eating it will" + '\n' + "heal a portion" + '\n' + "of your life")});

@@ -124,7 +124,11 @@ Q.component("character", {
     },
 
     hit: function(aggressor) {
-      this.p.hitPoints -= CharSheet.attack-this.p.defense;
+      var variation = Aux.newRandom(80, 100);
+      var reduction = this.p.defense > 0 ? this.p.defense : 1;
+      var damage = Math.ceil(variation * 0.01 * (40 * CharSheet.attack/(25*reduction)));
+      this.p.hitPoints -= damage;
+      console.log("player pega", damage)
       //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
       // console.log(this.p.x, this.p.y, "vida defensor "+this.p.hitPoints);
     }

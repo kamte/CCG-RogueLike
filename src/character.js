@@ -4,7 +4,7 @@ var CharSheet = {
 	hitPoints: 100,
 	maxHp: 100,
 	attack: 20,
-	defense: 1,
+	defense: 2,
 	experience: 0,
 	nextLevel: 50,
 	heal: 1,

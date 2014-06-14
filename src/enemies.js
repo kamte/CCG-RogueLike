@@ -109,7 +109,7 @@ Q.Sprite.extend("Player", {
         //If the player walked around and didnt fight, roll for a possible new spawn:
         if (!this.p.attacked) {
           var n = Aux.newRandom(0,100);
-          if (n > 95) {
+          if (n > 98) {
             console.log("Spawning a new enemy!")
             Spawner.spawn(Q.stage(0));
           }
@@ -133,7 +133,11 @@ Q.Sprite.extend("Player", {
   },
 
   hit: function(aggressor) {
-      var hitPoints = CharSheet.hitPoints - (aggressor.p.attack-CharSheet.defense);
+      var variation = Aux.newRandom(80, 100);
+      var reduction = CharSheet.defense > 0 ? CharSheet.defense : 1;
+      var damage = Math.ceil(variation * 0.01 * (40 * aggressor.p.attack/(25*reduction)));
+      var hitPoints = CharSheet.hitPoints - damage;
+      console.log("damage",damage);
       CharSheet.updateHp(hitPoints);
       //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
       // console.log(this.p.x, this.p.y, "vida defensor "+this.p.hitPoints);
