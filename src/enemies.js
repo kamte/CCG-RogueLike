@@ -106,6 +106,14 @@ Q.Sprite.extend("Player", {
       if(this.p.pressed==='left' || this.p.pressed==='right' || this.p.pressed==='down' || this.p.pressed==='up') {
         this.p.moved=true;
         this.play(this.gif);
+        //If the player walked around and didnt fight, roll for a possible new spawn:
+        if (!this.p.attacked) {
+          var n = Aux.newRandom(0,100);
+          if (n > 95) {
+            console.log("Spawning a new enemy!")
+            Spawner.spawn(Q.stage(0));
+          }
+        }
       } 
 
     } else if(this.dead()){
@@ -133,27 +141,24 @@ Q.Sprite.extend("Player", {
 });
 
 
-Q.Sprite.extend("Slime", {
-  init: function(p) {
-    this._super(p, {  
-      sheet: "slime", 
-      sprite: "slimeAnim", 
+Q.Sprite.extend("Monster", {
+  init: function(props, defaultProps) {
+    this._super(Q._extend({  
       x: 16+32*7, 
       y: 16+32*5,  
       moved: false,
       type: Q.SPRITE_ENEMY,
       // sensor: true,
       experience: 10  
-    });
+    },props), defaultProps);
+
     this.add('2d, animation, character, turn_component');
 
     Q.state.inc("enemies", 1);
+    var floor = CharSheet.floor-1;
 
-    this.character.live(100, 4, 1, 20);
     this.turn_component.init_turn(Q.state.get("enemies"));
-    this.play(this.p.sheet);
-    //this.play("slime");
-    
+    this.play(this.p.sheet);  
     
     this.on("hit", function(collision) {
       // console.log("collision bola mala: "+collision.obj);
@@ -166,6 +171,7 @@ Q.Sprite.extend("Slime", {
       // console.log("dead "+this.p.hitPoints+" "+this.dead());
 
       act_turnEnemies(this.p.position);
+      Spawner.monsters--;
 
       this.destroy();
 
@@ -218,3 +224,75 @@ Q.Sprite.extend("Slime", {
     return toMatrix(Math.sqrt(xs + ys));
   }
 });
+
+Q.Monster.extend("Bat", {
+  init: function(p) {
+    this._super(p, {
+      sheet: "bat",
+      sprite: "batAnim"
+    });
+    var hp, atk, def, exp;
+    var floor = CharSheet.floor-1;
+
+    hp =  90 + 10 * floor;
+    atk = 4 + 2 * floor;
+    def = 1 + 1 * floor;
+    exp = 15 + 5 * floor;
+
+    this.character.live(hp,atk,def,exp);
+  }
+});
+
+Q.Monster.extend("Snake", {
+  init: function(p) {
+    this._super(p, {
+      sheet: "snake",
+      sprite: "snakeAnim"
+    });
+    var hp, atk, def, exp;
+    var floor = CharSheet.floor-1;
+
+    hp =  80 + 8 * floor;
+    atk = 6 + 3 * floor;
+    def = 1 + 1 * floor;
+    exp = 20 + 5 * floor;
+
+    this.character.live(hp,atk,def,exp);
+  }
+});
+
+Q.Monster.extend("Spider", {
+  init: function(p) {
+    this._super(p, {
+      sheet: "spider",
+      sprite: "spiderAnim"
+    });
+    var hp, atk, def, exp;
+    var floor = CharSheet.floor-1;
+
+    hp =  110 + 12 * floor;
+    atk = 3 + 2 * floor;
+    def = 2 + 2 * floor;
+    exp = 15 + 5 * floor;
+
+    this.character.live(hp,atk,def,exp);
+  }
+});
+
+Q.Monster.extend("Slime", {
+  init: function(p) {
+    this._super(p, {
+      sheet: "slime",
+      sprite: "slimeAnim"
+    });
+    var hp, atk, def, exp;
+    var floor = CharSheet.floor-1;
+
+    hp =  100 + 10 * floor;
+    atk = 5 + 2 * floor;
+    def = 1 + 1 * floor;
+    exp = 25 + 8 * floor;
+
+    this.character.live(hp,atk,def,exp);
+  }
+});  

@@ -43,16 +43,16 @@ var Dungeon = {
 
         //Crea los pasillos
 
-        for (i = 0; i < room_count-1; i++) {
+        for (var i = 0; i < room_count-1; i++) {
             var roomA = this.rooms[i];
             var roomB = this.rooms[i+1];
             pointA = {
-                x: Aux.newRandom(roomA.x, roomA.x + roomA.w),
-                y: Aux.newRandom(roomA.y, roomA.y + roomA.h)
+                x: Aux.newRandom(roomA.x+1, roomA.x + roomA.w-1),
+                y: Aux.newRandom(roomA.y+1, roomA.y + roomA.h-1)
             };
             pointB = {
-                x: Aux.newRandom(roomB.x, roomB.x + roomB.w),
-                y: Aux.newRandom(roomB.y, roomB.y + roomB.h)
+                x: Aux.newRandom(roomB.x+1, roomB.x + roomB.w-1),
+                y: Aux.newRandom(roomB.y+1, roomB.y + roomB.h-1)
             };
 
             while ((pointB.x != pointA.x) || (pointB.y != pointA.y)) {
@@ -69,7 +69,7 @@ var Dungeon = {
         }
            
         //Pone los tiles de suelo a un número par
-        for (i = 0; i < room_count; i++) {
+        for (var i = 0; i < room_count; i++) {
             var room = this.rooms[i];
             for (var x = room.x; x < room.x + room.w; x++) {
                 for (var y = room.y; y < room.y + room.h; y++) {
@@ -165,7 +165,36 @@ var Dungeon = {
 
         entity.p.x=fromMatrix(fila);
         entity.p.y=fromMatrix(columna);  
-        // console.log(Dungeon.map[columna][fila]);
+        return entity;
+    },
+
+    insertAwayFromPlayer: function (entity) {
+        var distX, distY;
+        var px = toMatrix(findPlayer().p.x);
+        var py = toMatrix(findPlayer().p.y);
+        var minX = 6;
+        var minY = 7;
+        var i = Aux.newRandom(0, this.rooms.length-1);
+        var r = this.rooms[i];
+
+        var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
+        var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
+
+        distX = Math.abs(px - fila);
+        distY = Math.abs(py - columna);
+
+        while (Dungeon.map[columna][fila] % 2 !== 0 || Dungeon.map[columna][fila] == 0 || distX < minX || distY < minY) {
+            i = Aux.newRandom(0, this.rooms.length-1);
+            r = this.rooms[i];
+            columna = Aux.newRandom(r.x+1, r.x+r.w-1);
+            fila = Aux.newRandom(r.y+1, r.y+r.h-1);
+            distX = Math.abs(px - fila);
+            distY = Math.abs(py - columna);
+        }
+
+        entity.p.x=fromMatrix(fila);
+        entity.p.y=fromMatrix(columna);  
+        //console.log(Dungeon.map[columna][fila]);
         return entity;
     },
 
