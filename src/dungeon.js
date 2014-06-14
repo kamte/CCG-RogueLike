@@ -43,7 +43,7 @@ var Dungeon = {
 
         //Crea los pasillos
 
-        for (i = 0; i < room_count-1; i++) {
+        for (var i = 0; i < room_count-1; i++) {
             var roomA = this.rooms[i];
             var roomB = this.rooms[i+1];
             pointA = {
@@ -69,7 +69,7 @@ var Dungeon = {
         }
            
         //Pone los tiles de suelo a un número par
-        for (i = 0; i < room_count; i++) {
+        for (var i = 0; i < room_count; i++) {
             var room = this.rooms[i];
             for (var x = room.x; x < room.x + room.w; x++) {
                 for (var y = room.y; y < room.y + room.h; y++) {

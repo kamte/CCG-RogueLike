@@ -109,7 +109,7 @@ Q.Sprite.extend("Player", {
         //If the player walked around and didnt fight, roll for a possible new spawn:
         if (!this.p.attacked) {
           var n = Aux.newRandom(0,100);
-          if (n > 90) {
+          if (n > 95) {
             console.log("Spawning a new enemy!")
             Spawner.spawn(Q.stage(0));
           }

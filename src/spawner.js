@@ -1,26 +1,3 @@
- // var ChanceState = {
- // 	monsterName: "",
- // 	minFloor: 0,
- // 	maxFloor: 0,
- // 	chance: 0,
- // 	currentChance: 0,
-
- // 	updateChance: function(floor) {
- // 		var mid = Math.ceil((this.minFloor + this.maxFloor) / 2);
-
- // 		if (floor < this.minFloor || floor > this.maxFloor)
- // 			this.currentChance = 0;
-
- // 		else if (floor === this.minFloor)
- // 			this.currentChance = this.chance;
-
- // 		else if (floor <= mid)
- // 			this.currentChance += 5;
-
- // 		else
- // 			this.currentChance -= 3;
- // 	}
- // };
  function updateChance(floor) {
  	var mid = Math.ceil((this.minFloor + this.maxFloor) / 2);
 
@@ -49,8 +26,6 @@
 
 
 var Spawner = {
-	maxMonsters: 15,
-	monsters: 0,
 	monsterList: undefined,
 
 	initState: function() {
@@ -71,35 +46,34 @@ var Spawner = {
 	},
 
 	spawn: function(stage) {
+	    var sum = 0;
+	    for (var i=0; i < this.monsterList.length; i++)
+	    	sum += this.monsterList[i].currentChance;
 
+		var n = Aux.newRandom(1,sum);
+		var monster = undefined;
+		// console.log("rolled:", n);
 
-		if (this.monsters < this.maxMonsters) {
-
-		    var sum = 0;
-		    for (i=0; i < this.monsterList.length; i++)
-		    	sum += this.monsterList[i].currentChance;
-
-			var n = Aux.newRandom(1,sum);
-			var monster = undefined;
-
-
-			if (n <= this.monsterList[1].currentChance) {
-					monster = new Q.Snake();
-			}
-			else if (n <= this.monsterList[1].currentChance + this.monsterList[0].currentChance) {
-					monster = new Q.Bat();
-			}
-			else if (n <= this.monsterList[1].currentChance + this.monsterList[0].currentChance + this.monsterList[2].currentChance) {
-					monster = new Q.Spider();
-			}
-			else {
-					monster = new Q.Slime();
-			}
-			if (monster!==undefined) {
-				this.monsters++;
-				stage.insert(Dungeon.insertAwayFromPlayer(monster));
-			}
+		if (n <= this.monsterList[1].currentChance) {
+			console.log("Snake");
+			monster = new Q.Snake();
 		}
+		else if (n <= this.monsterList[1].currentChance + this.monsterList[0].currentChance) {
+			console.log("Bat");
+			monster = new Q.Bat();
+		}
+		else if (n <= this.monsterList[1].currentChance + this.monsterList[0].currentChance + this.monsterList[2].currentChance) {
+			console.log("Spider");
+			monster = new Q.Spider();
+		}
+		else {
+			console.log("Slime");
+			monster = new Q.Slime();
+		}
+		console.log(monster.p.attack);
+		stage.insert(Dungeon.insertAwayFromPlayer(monster));
+		this.monsters++;
+		
 	},
 
 	initialSpawn: function(stage, min, max) {
@@ -107,13 +81,15 @@ var Spawner = {
 
 		if (CharSheet.floor === 1)
 			Spawner.initState();
-		
-		for(i=0; i < this.monsterList.length; i++)
+
+		for(var i=0; i < this.monsterList.length; i++)
 			this.monsterList[i].updateChance(CharSheet.floor);
 
-	    console.log("Enemies to spawn:",n);
-	    for (i = 0; i < n; i++)
-	      Spawner.spawn(stage);
+		console.log("Enemies to spawn:",n);
+	    for (var i = 0; i < n; ++i){
+	    	console.log("llamada", i);
+	    	Spawner.spawn(stage);
+	  	}
 	}
 
  };

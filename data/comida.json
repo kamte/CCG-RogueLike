@@ -1,7 +1,7 @@
 {
-	"pan":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"pastel":{"sx":32,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"carne hecha":{"sx":64,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"carne cruda":{"sx":96,"sy":0,"tileW":32,"tileH":32,"frames":1},
-	"queso":{"sx":128,"sy":0,"tileW":32,"tileH":32,"frames":1}
+	"Bread":{"sx":0,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"Cake":{"sx":32,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"Cooked meat":{"sx":64,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"Raw meat":{"sx":96,"sy":0,"tileW":32,"tileH":32,"frames":1},
+	"Cheese":{"sx":128,"sy":0,"tileW":32,"tileH":32,"frames":1}
 }
