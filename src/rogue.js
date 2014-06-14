@@ -94,13 +94,14 @@ function setupLevel(stage) {
       nextMove: 0,
       healed:0});
 
+
+    stage.insert(Dungeon.insertEntity(new Q.Escalera()));
+    
     //Generar entre x e y objetos
     objectGenerator.spawner(stage, 5, 14);
     
     //Spawn 4 to 6 enemies when a floor is entered
     Spawner.initialSpawn(stage,4,6);
-
-    stage.insert(Dungeon.insertEntity(new Q.Escalera()));
 
     stage.add("viewport").centerOn(150, 368); 
     stage.follow(p, { x: true, y: true });
