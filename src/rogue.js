@@ -59,25 +59,58 @@ var nextToPlayer = function(x,y) {
 };
 
 Q.scene('Title',function(stage) {
+  stage.insert(new Q.Sprite({asset: "temploMaya.png", x: Q.width/2, y: Q.height/2}));
+
   var box = stage.insert(new Q.UI.Container({
     x: Q.width/2, y: Q.height/2
-  }));
-
-  var button = box.insert(new Q.UI.Button({
-    x: 0, y: 0, asset: "temploMaya.png", keyActionName: "confirm"
   }));
 
   box.insert(new Q.UI.Button({
     x: 0, y: -170, asset: "qucumatz.png"
   }));
 
-  button.on("click",function() {
+  var playButton = box.insert(new Q.UI.Button({
+    x: 0, y: 10, asset: "play.png", keyActionName: "confirm"
+  }));
+
+  playButton.on("click",function() {
       Q.clearStages();
       Q.stageScene("level1", 0);
       Q.stageScene("HUD-background",2);
       Q.stageScene("HUD-stats",3);
   });
+
+  var instructionButton = box.insert(new Q.UI.Button({
+    x: 0, y: 90, asset: "instructions.png", keyActionName: "confirm"
+  }));
+
+  var creditsButton = box.insert(new Q.UI.Button({
+    x: 0, y: 170, asset: "credits.png", keyActionName: "confirm", shadow: true
+  }));
+
+  creditsButton.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("Credits", 0);
+  });
 });
+
+Q.scene('Credits',function(stage) {
+
+  var box = stage.insert(new Q.UI.Container({
+    x: Q.width/2, y: Q.height/2, asset: "temploMaya.png"
+  }));
+
+  var playButton = box.insert(new Q.UI.Button({
+    x: 0, y: 0, asset: "creditsView.png", keyActionName: "confirm"
+  }));
+
+  playButton.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("Title", 0);
+  });
+
+});
+
 
 function setupLevel(stage) {
     Dungeon.generate();
@@ -113,7 +146,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("basura.png, equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("creditsView.png, instructions.png, play.png, credits.png, basura.png, equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
