@@ -155,12 +155,16 @@ var Dungeon = {
         var i = Aux.newRandom(0, this.rooms.length-1);
         var r = this.rooms[i];
 
+        var stairs = Q("Escalera").first();
+
         var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
         var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
 
         while (Dungeon.map[columna][fila] % 2 !== 0 || Dungeon.map[columna][fila] == 0) {
             columna = Aux.newRandom(r.x+1, r.x+r.w-1);
             fila = Aux.newRandom(r.y+1, r.y+r.h-1);
+            if (fila === toMatrix(stairs.p.x) || columna === toMatrix(stairs.p.y))
+                continue;
         }
 
         entity.p.x=fromMatrix(fila);
@@ -202,12 +206,17 @@ var Dungeon = {
         var i = room%this.rooms.length;
         var r = this.rooms[i];
 
+        var stairs = Q("Escalera").first();
+
+
         var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
         var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
 
         while (Dungeon.map[columna][fila] % 2 !== 0 || Dungeon.map[columna][fila] == 0) {
             columna = Aux.newRandom(r.x+1, r.x+r.w-1);
             fila = Aux.newRandom(r.y+1, r.y+r.h-1);
+            if (fila === toMatrix(stairs.p.x) || columna === toMatrix(stairs.p.y))
+                continue;
         }
 
         entity.p.x=fromMatrix(fila);

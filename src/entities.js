@@ -9,16 +9,16 @@ var findNextLW = function(x,y) {
 
   var posibles = [];
 
-  if(Dungeon.map[fila][columna+1]%2==0 && x < player.p.x){
+  if(Dungeon.map[fila][columna+1] !== 666 && Dungeon.map[fila][columna+1]%2===0 && x < player.p.x){
     posibles.push('derecha');
   }
-  if(Dungeon.map[fila][columna-1]%2==0 && x > player.p.x){
+  if(Dungeon.map[fila][columna-1] !== 666 && Dungeon.map[fila][columna-1]%2===0 && x > player.p.x){
     posibles.push('izquierda');
   }
-  if(Dungeon.map[fila+1][columna]%2==0 && y < player.p.y){
+  if(Dungeon.map[fila+1][columna] !== 666 && Dungeon.map[fila+1][columna]%2===0 && y < player.p.y){
     posibles.push('abajo');
   }
-  if(Dungeon.map[fila-1][columna]%2==0 && y > player.p.y){
+  if(Dungeon.map[fila-1][columna] !== 666 && Dungeon.map[fila-1][columna]%2===0 && y > player.p.y){
     posibles.push('arriba');
   }
 
@@ -28,17 +28,21 @@ var findNextLW = function(x,y) {
   if(dir == 'derecha'){
     next[0] = x+32;
     next[1] = y;
+    console.log("yendo a la derecha");
   } else if(dir == 'izquierda') {
     next[0] = x-32;
     next[1] = y;
+    console.log("yendo a la izquierda");
   } else if(dir == 'abajo') {
     next[0] = x;
     next[1] = y+32;
+    console.log("yendo hacia abajo");
   } else if(dir == 'arriba'){
     next[0] = x;
     next[1] = y-32;
+    console.log("yendo hacia arriba");
   }
-
+  console.log("Proxima casilla:", Dungeon.map[toMatrix(next[1])][toMatrix(next[0])]);
   return next;
 };
 
@@ -173,7 +177,7 @@ Q.Sprite.extend("Monster", {
     if(this.dead()){
 
       // console.log("dead "+this.p.hitPoints+" "+this.dead());
-
+      Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
       act_turnEnemies(this.p.position);
       Spawner.monsters--;
 
@@ -183,7 +187,7 @@ Q.Sprite.extend("Monster", {
       this.p.moved = true;
       // console.log("turno bicho!");
       
-      Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 2;
+      Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
 
       if((this.p.x-16)%32 != 0 || (this.p.y-16)%32 != 0 ){
           this.p.x = fromMatrix(Math.round(toMatrix(this.p.x)));
@@ -202,8 +206,10 @@ Q.Sprite.extend("Monster", {
         }
         // else console.log("muy lejos, no me muevo");
       }
-
-      Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)] = 666;
+      if (Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] % 2 !== 0)
+        console.log("ERROR!!!!!!! Mi casilla es:", Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)]);
+      
+      Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 666;
 
       this.pass_turn();
       this.p.moved=false;

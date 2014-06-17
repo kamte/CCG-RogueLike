@@ -54,6 +54,8 @@ Q.UI.Text.extend("StatsHP",{
     Q.state.on("change.health",this,"hp");
   },
   hp: function(hitP) {
+    if (hitP < 0)
+      hitP = 0;
     this.p.label = "Health: " + hitP + "/" + CharSheet.maxHp;
     CharSheet.hpBar.hurt();
   }, 
@@ -156,7 +158,10 @@ Q.Sprite.extend("Health",{
   },
 
   hurt: function(){
-    this.p.w = (CharSheet.hitPoints/CharSheet.maxHp)*100;
+    if (this.p.w < 0)
+      this.p.w = 0;
+    else
+      this.p.w = (CharSheet.hitPoints/CharSheet.maxHp)*100;
   },
 
   draw: function(ctx) {
