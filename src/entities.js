@@ -1,30 +1,13 @@
 //Versión LightWeight del pathfinder
-var findNextLW = function(x,y) {
+var findNextLW = function(x,y, boss) {
   var next = new Array(2);
   next[0]=x; next[1]=y;
-  var player = findPlayer();
 
-  var fila=toMatrix(y);
-  var columna=toMatrix(x);
-
-  var posibles = [];
-
-  if(Dungeon.map[fila][columna+1] !== 666 && Dungeon.map[fila][columna+1]%2===0 && x < player.p.x){
-    posibles.push('derecha');
-  }
-  if(Dungeon.map[fila][columna-1] !== 666 && Dungeon.map[fila][columna-1]%2===0 && x > player.p.x){
-    posibles.push('izquierda');
-  }
-  if(Dungeon.map[fila+1][columna] !== 666 && Dungeon.map[fila+1][columna]%2===0 && y < player.p.y){
-    posibles.push('abajo');
-  }
-  if(Dungeon.map[fila-1][columna] !== 666 && Dungeon.map[fila-1][columna]%2===0 && y > player.p.y){
-    posibles.push('arriba');
-  }
+  var posibles = findPosibles(x, y, boss);
 
   var num = Math.floor(Math.random()*(posibles.length));
   var dir = posibles[num];
-  // console.log(num, dir);
+  //console.log(num, posibles);
   if(dir == 'derecha'){
     next[0] = x+32;
     next[1] = y;
@@ -42,8 +25,51 @@ var findNextLW = function(x,y) {
     next[1] = y-32;
     console.log("yendo hacia arriba");
   }
-  console.log("Proxima casilla:", Dungeon.map[toMatrix(next[1])][toMatrix(next[0])]);
+  //console.log("Proxima casilla:", Dungeon.map[toMatrix(next[1])][toMatrix(next[0])]);
   return next;
+};
+
+var findPosibles = function(x, y, boss){
+  var posibles = [];
+
+  var player = findPlayer();
+  var fila=toMatrix(y);
+  var columna=toMatrix(x);
+
+  //console.log("bicho", x, y, "/player", player.p.x, player.p.y)
+
+  if(boss == undefined){
+    if(Dungeon.map[fila][columna+1] !== 666 && Dungeon.map[fila][columna+1]%2===0 && x < player.p.x){
+      posibles.push('derecha');
+    }
+    if(Dungeon.map[fila][columna-1] !== 666 && Dungeon.map[fila][columna-1]%2===0 && x > player.p.x){
+      posibles.push('izquierda');
+    }
+    if(Dungeon.map[fila+1][columna] !== 666 && Dungeon.map[fila+1][columna]%2===0 && y < player.p.y){
+      posibles.push('abajo');
+    }
+    if(Dungeon.map[fila-1][columna] !== 666 && Dungeon.map[fila-1][columna]%2===0 && y > player.p.y){
+      posibles.push('arriba');
+    } else;
+  }else {
+    if(Dungeon.map[fila][columna+1] !== 666 && Dungeon.map[fila][columna+1]%2===0 && x < player.p.x){
+      if(Dungeon.map[fila-1][columna+1] !== 666 && Dungeon.map[fila-1][columna+1]%2===0)
+        posibles.push('derecha');
+    }
+    if(Dungeon.map[fila][columna-2] !== 666 && Dungeon.map[fila][columna-2]%2===0 && x > player.p.x){
+      if(Dungeon.map[fila-1][columna-2] !== 666 && Dungeon.map[fila-1][columna-2]%2===0)
+        posibles.push('izquierda');
+    }
+    if(Dungeon.map[fila+1][columna] !== 666 && Dungeon.map[fila+1][columna]%2===0 && y < player.p.y){
+      if(Dungeon.map[fila+1][columna-1] !== 666 && Dungeon.map[fila+1][columna-1]%2===0)
+        posibles.push('abajo');
+    }
+    if(Dungeon.map[fila-2][columna] !== 666 && Dungeon.map[fila-2][columna]%2===0 && y > player.p.y){
+      if(Dungeon.map[fila-2][columna-1] !== 666 && Dungeon.map[fila-2][columna-1]%2===0)
+        posibles.push('arriba');
+    }
+  }
+  return posibles;
 };
 
 //Jugador
@@ -115,7 +141,7 @@ Q.Sprite.extend("Player", {
           var n = Aux.newRandom(0,100);
           if (n > 98) {
             console.log("Spawning a new enemy!")
-            Spawner.spawn(Q.stage(0));
+            Q.stage(0).insert(Dungeon.insertAwayFromPlayer(monsterGenerator.spawn()));
           }
         }
       } 
@@ -163,7 +189,6 @@ Q.Sprite.extend("Monster", {
     this.add('2d, animation, character, turn_component');
 
     Q.state.inc("enemies", 1);
-    var floor = CharSheet.floor-1;
 
     this.turn_component.init_turn(Q.state.get("enemies"));
     this.play(this.p.sheet);  
@@ -175,11 +200,9 @@ Q.Sprite.extend("Monster", {
 
   step: function(dt) {
     if(this.dead()){
-
       // console.log("dead "+this.p.hitPoints+" "+this.dead());
       Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
       act_turnEnemies(this.p.position);
-      Spawner.monsters--;
 
       this.destroy();
 
@@ -306,3 +329,88 @@ Q.Monster.extend("Slime", {
     this.character.live(hp,atk,def,exp);
   }
 });  
+
+  Q.Sprite.extend("Boss1", {
+    init: function(props, defaultProps) {
+    this._super(Q._extend({  
+      x: 48+64*7, 
+      y: 48+64*5,  
+      moved: false,
+      type: Q.SPRITE_ENEMY,
+      sheet: "boss1",
+      sprite: "boss1Anim"
+    },props), defaultProps);
+
+    this.add('2d, animation, character, turn_component');
+
+    Q.state.inc("enemies", 1);
+
+    this.character.live(300,20,10,200);
+
+    this.turn_component.init_turn(Q.state.get("enemies"));
+    //sthis.play("BossStand");  
+    
+    this.on("hit", function(collision) {
+      // console.log("collision bola mala: "+collision.obj);
+    });
+  },
+
+  step: function(dt) {
+    if(this.dead()){
+      // console.log("dead "+this.p.hitPoints+" "+this.dead());
+      //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
+      act_turnEnemies(this.p.position);
+
+      this.destroy();
+
+    } else if (Q.state.get("nextMove") == this.p.position && !this.p.moved) {
+      this.p.moved = true;
+      // console.log("turno bicho!");
+      
+      //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
+
+      if((this.p.x-32)%64 != 0 || (this.p.y-32)%64 != 0 ){
+          this.p.x = fromMatrix(Math.round(toMatrix(this.p.x, "boss")), "boss");
+          this.p.y = fromMatrix(Math.round(toMatrix(this.p.y, "boss")), "boss");
+          // console.log(this.p.x, this.p.y);
+        }
+      if(nextToPlayer(this.p.x,this.p.y, "boss")){
+        this.attack();
+      } else {
+        // console.log(this.p.x, this.p.y);
+
+        if(this.distanceToPlayer() < 15) {
+          var nextMove = findNextLW(this.p.x,this.p.y, "boss");
+          this.p.x = nextMove[0];
+          this.p.y = nextMove[1];
+        }
+        // else console.log("muy lejos, no me muevo");
+      }
+      if (Dungeon.map[toMatrix(this.p.y, "boss")][toMatrix(this.p.x, "boss")] % 2 !== 0)
+        console.log("ERROR!!!!!!! Mi casilla es:", Dungeon.map[toMatrix(this.p.x, "boss")][toMatrix(this.p.y, "boss")]);
+      
+      //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 666;
+
+      this.pass_turn();
+      this.p.moved=false;
+    }
+  },
+
+  attack: function(){
+    player = findPlayer();
+    player.hit(this);
+    player.p.attacked = true;
+
+    Q.state.set("health",CharSheet.hitPoints);
+  },
+
+  distanceToPlayer: function(){
+    var p = findPlayer();
+
+    var xs = p.p.x - this.p.x;
+    xs = xs * xs;
+    var ys = p.p.y - this.p.y;
+    ys = ys * ys;
+    return toMatrix(Math.sqrt(xs + ys));
+  }
+  });

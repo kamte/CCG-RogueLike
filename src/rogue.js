@@ -27,12 +27,18 @@ var findPlayer = function() {
   return Q("Player").first();
 }
 
-var toMatrix = function(x) {
-  return Math.round((x-16)/32);
+var toMatrix = function(x, boss) {
+  if(boss == undefined)
+    return Math.round((x-16)/32);
+  else 
+    return Math.round((x-32)/32)
 };
 
-var fromMatrix = function(x) {
-  return ((x*32)+16);
+var fromMatrix = function(x, boss) {
+  if(boss == undefined)
+    return ((x*32)+16);
+  else 
+    return ((x*32)+32);
 };
 
 var muestraCoordenadas = function(x,y) {
@@ -40,21 +46,41 @@ var muestraCoordenadas = function(x,y) {
   console.log("tablero: ",toMatrix(x),toMatrix(y));
 };
 
-var nextToPlayer = function(x,y) {
+var nextToPlayer = function(x,y,boss) {
   var player = findPlayer();
-  xB = player.p.x;
-  yB = player.p.y;
+  xA = toMatrix(x);
+  yA = toMatrix(y);
+  xB = toMatrix(player.p.x);
+  yB = toMatrix(player.p.y);
 
-  var distX = Math.abs(x-xB);
-  var distY = Math.abs(y-yB);
-
-  if((distX == 32) && (distY == 32)) {
-    // console.log(distX, distY, "DISTANCIA");
-    return false;
-  } else if((distX <= 32) && (distY <= 32)) {
-    return true;
-  } else {
-    return false;
+  if(boss == undefined){
+    if(yA == yB && xA+1==xB){
+      return true;
+    }
+    if(yA == yB && xA-1==yB){
+      return true;
+    }
+    if(yA+1 == yB && xA==xB){
+      return true;
+    }
+    if(yA-1 == yB && xA==xB){
+      return true;
+    } else {
+      return false;
+    }
+  }else {
+    if(yA == yB && xA+1==xB || yA-1 == yB && xA+1==xB){
+      return true;
+    }
+    if(yA == yB && xA-1==yB || yA-1 == yB && xA-2==xB){
+      return true;
+    }
+    if(yA+1 == yB && xA==xB || yA+1 == yB && xA-1==xB){
+      return true;
+    }
+    if(yA-1 == yB && xA==xB || yA-2 == yB && xA-1==xB){
+      return true;
+    }
   }
 };
 
@@ -113,12 +139,6 @@ Q.scene('Credits',function(stage) {
 
 
 function setupLevel(stage) {
-    Dungeon.generate();
-
-    stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
-    stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
-    var p = stage.insert(Dungeon.insertEntity(new Q.Player()));
-
     Q.state.reset({ 
       enemies: 0,
       health: CharSheet.hitPoints,
@@ -127,17 +147,7 @@ function setupLevel(stage) {
       nextMove: 0,
       healed:0});
 
-
-    stage.insert(Dungeon.insertEntity(new Q.Escalera()));
-    
-    //Generar entre x e y objetos
-    objectGenerator.spawner(stage, 5, 14);
-    
-    //Spawn 4 to 6 enemies when a floor is entered
-    Spawner.initialSpawn(stage,4,6);
-
-    stage.add("viewport").centerOn(150, 368); 
-    stage.follow(p, { x: true, y: true });
+    Dungeon.generate(CharSheet.floor, stage);
   }
 
   Q.scene("level1",function(stage) {
@@ -146,7 +156,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("creditsView.png, instructions.png, play.png, credits.png, basura.png, equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
@@ -161,6 +171,7 @@ Q.load("creditsView.png, instructions.png, play.png, credits.png, basura.png, eq
   Q.compileSheets("comida.png","comida.json");
   Q.compileSheets("escudos.png","escudos.json");
   Q.compileSheets("pociones.png","pociones.json");
+  Q.compileSheets("boss1.png", "boss1.json");
 
 
   Q.animations("escAnim", {
@@ -168,23 +179,15 @@ Q.load("creditsView.png, instructions.png, play.png, credits.png, basura.png, eq
   });
 
   Q.animations("batAnim", {
-    bat: {frames: [0,1,2,3], rate: 1/4, loop: true},
-    //idleR: {frames: [0,1,2,3], rate: 1/4, loop: true},
-    //idleL: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"}
+    bat: {frames: [0,1,2,3], rate: 1/4, loop: true}
   });
 
   Q.animations("snakeAnim", {
-    snake: {frames: [0,1], rate: 1/4, loop: true},
-    //idleR: {frames: [0,1], rate: 1/4, loop: true},
-    //idleL: {frames: [0,1], rate: 1/4, loop: true, flip: "x"}
+    snake: {frames: [0,1], rate: 1/4, loop: true}
   });
 
   Q.animations("spiderAnim", {
-    spider: {frames: [0]},
-    //idleR: {frames: [0]},
-    //idleL: {frames: [0], flip: "x"},
-    //walkR: {frames: [0,1,2,3], rate: 1/4, loop: true},
-    //walkL: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"}
+    spider: {frames: [0]}
   });
   
   Q.animations("playerAnim", {
@@ -198,6 +201,10 @@ Q.load("creditsView.png, instructions.png, play.png, credits.png, basura.png, eq
 
   Q.animations("slimeAnim", {
     slime: {frames: [0,1,2,3,4,3,2,1], rate: 1/4, loop: true}
+  });
+
+  Q.animations("boss1Anim", {
+    bossStand: {frames: [0]}
   });
 
   Q.stageScene("Title", 0);

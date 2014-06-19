@@ -25,7 +25,7 @@
 
 
 
-var Spawner = {
+var monsterGenerator = {
 	monsterList: undefined,
 
 	initState: function() {
@@ -45,7 +45,7 @@ var Spawner = {
 		}
 	},
 
-	spawn: function(stage) {
+	spawn: function() {
 	    var sum = 0;
 	    for (var i=0; i < this.monsterList.length; i++)
 	    	sum += this.monsterList[i].currentChance;
@@ -67,23 +67,26 @@ var Spawner = {
 			monster = new Q.Slime();
 		}
 		console.log(monster.p.sheet, " atk: ", monster.p.attack, " def: ", monster.p.defense, " hp: ", monster.p.hitPoints);
-		stage.insert(Dungeon.insertAwayFromPlayer(monster));
-		this.monsters++;
-		
+
+		return monster;
 	},
 
-	initialSpawn: function(stage, min, max) {
+	spawner: function(stage, min, max, room) {
 		var n = Aux.newRandom(min,max);
+		var index;
 
 		if (CharSheet.floor === 1)
-			Spawner.initState();
+			this.initState();
 
 		for(var i=0; i < this.monsterList.length; i++)
 			this.monsterList[i].updateChance(CharSheet.floor);
 
 		console.log("Enemies to spawn:",n);
 	    for (var i = 0; i < n; ++i){
-	    	Spawner.spawn(stage);
+	    	index = (room==undefined ? i : room);
+	    	var monster = this.spawn();
+	    	stage.insert(Dungeon.insertEntityInRoom(monster, index));		
+
 	  	}
 	}
 
