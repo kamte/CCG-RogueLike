@@ -11,6 +11,7 @@ Q.Sprite.extend("Escalera", {
    			if(collision.isA("Player")) {
    				Q.clearStages();
           ++CharSheet.floor;
+          CharSheet.buffApplied = false;
           Q.stageScene("level1", 0);
           Q.stageScene("HUD-background",3);
           Q.stageScene("HUD-stats",4);
@@ -52,6 +53,7 @@ Q.Sprite.extend("Collectable", {
 Q.Collectable.extend("Card", {
   init: function(props,defaultProps) {
     this._super(Q._extend({
+      unlocked: false
     },props), defaultProps);
 
   }

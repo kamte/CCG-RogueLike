@@ -25,6 +25,20 @@ var CharSheet = {
 	expBar: new Q.Experience(),
   deleteOn: false,
   floor: 1,
+  buffApplied: false,
+
+  applyBuff: function(stat, value) {
+    switch (stat) {
+      case "atk":
+        CharSheet.attack=value;
+        break;
+      case "def":
+        CharSheet.defense=value;
+      case "hp":
+        CharSheet.hitPoints = CharSheet.maxHp;
+    }
+
+  },
 
 	updateHp: function(hp) {
 		if (hp > this.maxHp)
