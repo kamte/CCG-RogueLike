@@ -57,7 +57,7 @@ var nextToPlayer = function(x,y,boss) {
     if(yA == yB && xA+1==xB){
       return true;
     }
-    if(yA == yB && xA-1==yB){
+    if(yA == yB && xA-1==xB){
       return true;
     }
     if(yA+1 == yB && xA==xB){
@@ -72,7 +72,7 @@ var nextToPlayer = function(x,y,boss) {
     if(yA == yB && xA+1==xB || yA-1 == yB && xA+1==xB){
       return true;
     }
-    if(yA == yB && xA-1==yB || yA-1 == yB && xA-2==xB){
+    if(yA == yB && xA-1==xB || yA-1 == yB && xA-2==xB){
       return true;
     }
     if(yA+1 == yB && xA==xB || yA+1 == yB && xA-1==xB){
@@ -80,6 +80,8 @@ var nextToPlayer = function(x,y,boss) {
     }
     if(yA-1 == yB && xA==xB || yA-2 == yB && xA-1==xB){
       return true;
+    } else {
+      return false;
     }
   }
 };

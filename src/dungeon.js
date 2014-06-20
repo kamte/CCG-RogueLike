@@ -6,7 +6,7 @@ var Dungeon = {
         this.rooms = [];  
         this.map = [];
 
-        var floorFirstBoss = 1;
+        var floorFirstBoss = 5;
 
         var floor = Aux.newRandom(1, 14)*2;
         var wall = (Aux.newRandom(0, 9)*2)+1;
@@ -139,7 +139,7 @@ var Dungeon = {
         objectGenerator.spawner(stage, 2, 4, 1);
     
         //Spawn 4 to 6 enemies when a floor is entered
-        monsterGenerator.spawner(stage, 0, 0, 1);
+        monsterGenerator.spawner(stage, 3, 6, 1);
 
         stage.insert(this.insertEntityInRoom(new Q.Boss1(), 2));
 
