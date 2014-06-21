@@ -150,6 +150,10 @@ function setupLevel(stage) {
       healed:0});
 
     Dungeon.generate(CharSheet.floor, stage);
+    
+    stage.insert(enemyHP);
+    stage.insert(bossHP);
+
   }
 
   Q.scene("level1",function(stage) {

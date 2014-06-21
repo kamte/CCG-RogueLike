@@ -268,3 +268,82 @@ Q.scene('HUD-stats',function(stage) {
   container.insert(CharSheet.expBar);
   container.fit(20);
 });
+
+Q.Sprite.extend("EnemyHealth",{
+  init: function(p) {
+    this._super(p,{
+      color: "red",
+      w: 32,
+      h: 4,
+      x: 50,
+      y: 50,
+      enemy: undefined,
+      opacity: 0,
+      type: Q.SPRITE_UI
+    });
+  },
+
+  draw: function(ctx) {
+    if(this.p.enemy!=undefined){
+      this.p.x=this.p.enemy.p.x;
+      this.p.y=this.p.enemy.p.y+16;
+    }
+    ctx.fillStyle = this.p.color;
+    ctx.fillRect(-this.p.cx, -this.p.cy, this.p.w, this.p.h);
+  },
+
+  hit: function(enemy){
+    this.p.enemy = enemy;
+    if(enemy.p.hitPoints>=0){
+      this.p.x=enemy.p.x;
+      this.p.y=enemy.p.y+16;
+      this.p.opacity=1;
+      this.p.w=(enemy.p.hitPoints/enemy.p.maxHitPoints)*32;
+    } else {
+      this.p.enemy=undefined;
+      this.p.opacity=0;
+      this.p.w=0;
+    }
+  }
+});
+
+Q.Sprite.extend("BossHealth",{
+  init: function(p) {
+    this._super(p,{
+      color: "red",
+      w: 64,
+      h: 4,
+      x: 50,
+      y: 100,
+      opacity: 0,
+      boss: undefined,
+      type: Q.SPRITE_UI
+    });
+  },
+
+  draw: function(ctx) {
+    if(this.p.boss!=undefined){
+      this.p.x=this.p.boss.p.x;
+      this.p.y=this.p.boss.p.y+32;
+    }
+    ctx.fillStyle = this.p.color;
+    ctx.fillRect(-this.p.cx, -this.p.cy, this.p.w, this.p.h);
+  },
+
+  hit: function(boss){
+    this.p.boss=boss;
+    if(boss.p.hitPoints>=0){
+      this.p.x=boss.p.x;
+      this.p.y=boss.p.y+32;
+      this.p.opacity=1;
+      this.p.w=(boss.p.hitPoints/boss.p.maxHitPoints)*64;
+    } else {
+      this.p.boss==undefined;
+      this.p.opacity=0;
+      this.p.w=0;
+    }
+  }
+});
+
+var enemyHP = new Q.EnemyHealth();
+var bossHP = new Q.BossHealth();
