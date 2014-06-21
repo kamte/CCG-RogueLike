@@ -42,7 +42,6 @@ var objectGenerator = {
 		var index;
 		for(var i=0; i<max; i++){
 			index = (room==undefined ? i : room);
-			console.log(index);
 			item = this.spawn();
 			if(item!=null){
 				stage.insert(Dungeon.insertEntityInRoom(item, index));
@@ -75,7 +74,7 @@ var objectGenerator = {
 			var atk = Math.ceil(Math.random()*5*CharSheet.floor+CharSheet.floor);
 			if(Math.random()<0.3)
 				atk=-atk;
-			var def = Math.ceil(Math.random()*2*CharSheet.floor+CharSheet.floor);
+			var def = Math.ceil(Math.random()*1*CharSheet.floor+CharSheet.floor);
 			if(Math.random()<0.3)
 				def=-def;
 			var hp = Math.ceil(Math.random()*20*CharSheet.floor+CharSheet.floor*2);

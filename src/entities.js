@@ -11,19 +11,19 @@ var findNextLW = function(x,y, boss) {
   if(dir == 'derecha'){
     next[0] = x+32;
     next[1] = y;
-    console.log("yendo a la derecha");
+    //console.log("yendo a la derecha");
   } else if(dir == 'izquierda') {
     next[0] = x-32;
     next[1] = y;
-    console.log("yendo a la izquierda");
+    //console.log("yendo a la izquierda");
   } else if(dir == 'abajo') {
     next[0] = x;
     next[1] = y+32;
-    console.log("yendo hacia abajo");
+    //console.log("yendo hacia abajo");
   } else if(dir == 'arriba'){
     next[0] = x;
     next[1] = y-32;
-    console.log("yendo hacia arriba");
+    //console.log("yendo hacia arriba");
   }
   //console.log("Proxima casilla:", Dungeon.map[toMatrix(next[1])][toMatrix(next[0])]);
   return next;
@@ -165,8 +165,8 @@ Q.Sprite.extend("Player", {
   hit: function(aggressor) {
       var variation = Aux.newRandom(80, 100);
       var reduction = CharSheet.defense > 0 ? CharSheet.defense : 1;
-      var damage = Math.ceil(variation * 0.01 * (40 * aggressor.p.attack/(25*reduction)));
-      var hitPoints = CharSheet.hitPoints - damage;
+      var damage = Math.ceil(variation * 0.01 * (3 * aggressor.p.attack-(2*reduction)));
+      var hitPoints = CharSheet.hitPoints - (damage>0 ? damage : 1);
       console.log("damage",damage);
       CharSheet.updateHp(hitPoints);
       //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
@@ -267,9 +267,9 @@ Q.Monster.extend("Bat", {
     var hp, atk, def, exp;
     var floor = CharSheet.floor-1;
 
-    hp =  90 + 10 * floor;
+    hp =  60 + 10 * floor;
     atk = 4 + 2 * floor;
-    def = 1 + 1 * floor;
+    def = 2 + 1 * floor;
     exp = 15 + 5 * floor;
 
     this.character.live(hp,atk,def,exp);
@@ -285,9 +285,9 @@ Q.Monster.extend("Snake", {
     var hp, atk, def, exp;
     var floor = CharSheet.floor-1;
 
-    hp =  80 + 8 * floor;
-    atk = 6 + 3 * floor;
-    def = 1 + 1 * floor;
+    hp =  70 + 8 * floor;
+    atk = 7 + 3 * floor;
+    def = 2 + 1 * floor;
     exp = 20 + 5 * floor;
 
     this.character.live(hp,atk,def,exp);
@@ -305,7 +305,7 @@ Q.Monster.extend("Spider", {
 
     hp =  110 + 12 * floor;
     atk = 3 + 2 * floor;
-    def = 2 + 2 * floor;
+    def = 5 + 3 * floor;
     exp = 15 + 5 * floor;
 
     this.character.live(hp,atk,def,exp);
@@ -321,9 +321,9 @@ Q.Monster.extend("Slime", {
     var hp, atk, def, exp;
     var floor = CharSheet.floor-1;
 
-    hp =  100 + 10 * floor;
-    atk = 5 + 2 * floor;
-    def = 1 + 1 * floor;
+    hp =  90 + 10 * floor;
+    atk = 10 + 2 * floor;
+    def = 5 + 2 * floor;
     exp = 25 + 8 * floor;
 
     this.character.live(hp,atk,def,exp);
@@ -345,7 +345,7 @@ Q.Monster.extend("Slime", {
 
     Q.state.inc("enemies", 1);
 
-    this.character.live(300,20,10,200);
+    this.character.live(300,50,10,200);
 
     this.turn_component.init_turn(Q.state.get("enemies"));
     //sthis.play("BossStand");  
