@@ -229,8 +229,6 @@ Q.Sprite.extend("Monster", {
         }
         // else console.log("muy lejos, no me muevo");
       }
-      if (Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] % 2 !== 0)
-        console.log("ERROR!!!!!!! Mi casilla es:", Dungeon.map[toMatrix(this.p.x)][toMatrix(this.p.y)]);
       
       Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 666;
 
@@ -330,25 +328,27 @@ Q.Monster.extend("Slime", {
   }
 });  
 
-  Q.Sprite.extend("Boss1", {
+  Q.Sprite.extend("EkChuah", {
     init: function(props, defaultProps) {
     this._super(Q._extend({  
       x: 48+64*7, 
       y: 48+64*5,  
       moved: false,
       type: Q.SPRITE_ENEMY,
-      sheet: "boss1",
-      sprite: "boss1Anim"
+      sheet: "bossStand",
+      sprite: "boss1Anim",
+      frenzy: false,
+      frenzyTurn: 0,
     },props), defaultProps);
 
     this.add('2d, animation, character, turn_component');
 
     Q.state.inc("enemies", 1);
 
-    this.character.live(300,50,10,200);
+    this.character.live(500,45,25,500);
 
     this.turn_component.init_turn(Q.state.get("enemies"));
-    //sthis.play("BossStand");  
+    this.play("bossStand");  
     
     this.on("hit", function(collision) {
       // console.log("collision bola mala: "+collision.obj);
@@ -357,7 +357,6 @@ Q.Monster.extend("Slime", {
 
   step: function(dt) {
     if(this.dead()){
-      // console.log("dead "+this.p.hitPoints+" "+this.dead());
       //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
       act_turnEnemies(this.p.position);
 
@@ -365,7 +364,6 @@ Q.Monster.extend("Slime", {
 
     } else if (Q.state.get("nextMove") == this.p.position && !this.p.moved) {
       this.p.moved = true;
-      // console.log("turno bicho!");
       
       //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
 
@@ -373,21 +371,29 @@ Q.Monster.extend("Slime", {
           this.p.x = fromMatrix(Math.round(toMatrix(this.p.x, "boss")), "boss");
           this.p.y = fromMatrix(Math.round(toMatrix(this.p.y, "boss")), "boss");
           // console.log(this.p.x, this.p.y);
-        }
-      if(nextToPlayer(this.p.x,this.p.y, "boss")){
-        this.attack();
-      } else {
-        // console.log(this.p.x, this.p.y);
+      }
 
-        if(this.distanceToPlayer() < 15) {
+      r = Math.random();
+      if(r<0.2 && this.p.hitPoints<this.p.maxHitPoints/1.8 && !this.p.frenzy){
+          this.special();
+      } else if(nextToPlayer(this.p.x,this.p.y, "boss")){
+          this.attack();
+      } else {
+        if(this.distanceToPlayer() < 10) {
           var nextMove = findNextLW(this.p.x,this.p.y, "boss");
           this.p.x = nextMove[0];
           this.p.y = nextMove[1];
         }
-        // else console.log("muy lejos, no me muevo");
       }
-      if (Dungeon.map[toMatrix(this.p.y, "boss")][toMatrix(this.p.x, "boss")] % 2 !== 0)
-        console.log("ERROR!!!!!!! Mi casilla es:", Dungeon.map[toMatrix(this.p.x, "boss")][toMatrix(this.p.y, "boss")]);
+      if(this.p.frenzy){
+        this.healMe();
+        this.p.frenzyTurn--;
+        if(this.p.frenzyTurn==0){
+          this.play("bossStand"); 
+          this.p.defense+=10;
+          this.p.frenzy=false;
+        }
+      }
       
       //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 666;
 
@@ -398,10 +404,27 @@ Q.Monster.extend("Slime", {
 
   attack: function(){
     player = findPlayer();
+    if(this.p.frenzy){
+      player.hit(this);
+    }
     player.hit(this);
     player.p.attacked = true;
 
     Q.state.set("health",CharSheet.hitPoints);
+  },
+
+  special: function(){
+    this.play("bossFrenzy"); 
+    this.p.frenzy = true;
+    this.p.frenzyTurn = 4;
+    this.p.defense-=10;
+  },
+
+  healMe: function(){
+    if(this.p.hitPoints<this.p.maxHitPoints/4){
+      this.p.hitPoints+=0.1*this.p.maxHitPoints;
+      bossHP.hit(this);
+    }
   },
 
   distanceToPlayer: function(){

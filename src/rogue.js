@@ -210,7 +210,8 @@ Q.load("boss1.png, boss1.json, creditsView.png, instructions.png, play.png, cred
   });
 
   Q.animations("boss1Anim", {
-    bossStand: {frames: [0]}
+    bossStand: {frames: [0], rate: 1},
+    bossFrenzy: {frames: [1], rate: 1}
   });
 
   Q.stageScene("Title", 0);

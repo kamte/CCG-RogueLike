@@ -141,7 +141,7 @@ var Dungeon = {
         //Spawn 4 to 6 enemies when a floor is entered
         monsterGenerator.spawner(stage, 3, 6, 1);
 
-        stage.insert(this.insertEntityInRoom(new Q.Boss1(), 2));
+        stage.insert(this.insertEntityInRoom(new Q.EkChuah(), 2));
 
         stage.add("viewport").centerOn(150, 368); 
         stage.follow(p, { x: true, y: true });
