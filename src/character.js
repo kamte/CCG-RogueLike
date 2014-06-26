@@ -25,19 +25,25 @@ var CharSheet = {
 	expBar: new Q.Experience(),
   deleteOn: false,
   floor: 1,
-  buffApplied: false,
+  buff: "none",
+  buffCounter: 0,
 
-  applyBuff: function(stat, value) {
+  buffStat: function(stat, value, positive) {
     switch (stat) {
       case "atk":
         CharSheet.attack=value;
         break;
       case "def":
         CharSheet.defense=value;
-      case "hp":
-        CharSheet.hitPoints = CharSheet.maxHp;
+        break;
     }
-
+    var buff = "stat";
+    if (positive)
+      buff = buff + "Pos";
+    else
+      buff = buff + "Neg";
+    Buff.type = buff;
+    Buff.buffedStat = stat;
   },
 
 	updateHp: function(hp) {

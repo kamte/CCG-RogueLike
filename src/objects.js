@@ -34,8 +34,11 @@ Q.Sprite.extend("Collectable", {
   recoge: function(collision) {
     if(collision.isA("Player")) {
       if(this.isA("Card")) {
-        //add to card array, TODO
+        //add to unlocked cards
         var c = this;
+        console.log(c.p.ident);
+        Deck.isUnlocked[c.p.ident] = true;
+        Deck.unlocked++;
         CharSheet.cards.push(c);
       }
       else {
@@ -53,9 +56,14 @@ Q.Sprite.extend("Collectable", {
 Q.Collectable.extend("Card", {
   init: function(props,defaultProps) {
     this._super(Q._extend({
-      unlocked: false
+      sheet: "card",
+      sprite: "cardAnim",
+      ident: 0
     },props), defaultProps);
 
+  },
+  use: function() {
+    Deck.getSkill(this.ident);
   }
 });
 

@@ -139,7 +139,6 @@ Q.scene('Credits',function(stage) {
 
 });
 
-
 function setupLevel(stage) {
     Q.state.reset({ 
       enemies: 0,
@@ -148,12 +147,18 @@ function setupLevel(stage) {
       enemies_dead: 0,
       nextMove: 0,
       healed:0});
-
+    
     Dungeon.generate(CharSheet.floor, stage);
+
+    Deck.fetchCards();
     
     stage.insert(enemyHP);
     stage.insert(bossHP);
 
+    //roll a chance to spawn a card
+    var c = Deck.rollCard();
+    if(c != null)
+      stage.insert(c);
   }
 
   Q.scene("level1",function(stage) {
@@ -162,8 +167,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
-
+Q.load("card.png, card.json, fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
   Q.compileSheets("bat.png", "bat.json");
@@ -182,9 +186,14 @@ Q.load("fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, b
   Q.compileSheets("boss2.png", "boss2.json");
   Q.compileSheets("boss3.png", "boss3.json");
   Q.compileSheets("thunder.png", "thunder.json");
+  Q.compileSheets("card.png", "card.json");
 
 
   Q.animations("escAnim", {
+    base: {frames: [0]}
+  });
+
+  Q.animations("cardAnim", {
     base: {frames: [0]}
   });
 

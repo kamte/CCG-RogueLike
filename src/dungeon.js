@@ -375,7 +375,7 @@ var Dungeon = {
         var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
         var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
 
-        while (Dungeon.map[columna][fila] % 2 !== 0 || Dungeon.map[columna][fila] == 0) || Dungeon.map[columna][fila] == 666 {
+        while (Dungeon.map[columna][fila] % 2 !== 0 || Dungeon.map[columna][fila] == 0 || Dungeon.map[columna][fila] == 666) {
             columna = Aux.newRandom(r.x+1, r.x+r.w-1);
             fila = Aux.newRandom(r.y+1, r.y+r.h-1);
             if (fila === toMatrix(stairs.p.x) || columna === toMatrix(stairs.p.y))
@@ -425,7 +425,8 @@ var Dungeon = {
         var x = p.p.x; var y = p.p.y;
         var fila=toMatrix(y);
         var columna=toMatrix(x);
-        var pos, num, dir;
+        var pos = [];
+        var num, dir;
 
         if(Dungeon.map[fila][columna+1]%2==0 && Dungeon.map[fila][columna+1] !== 666){
             posibles.push('derecha');
@@ -459,6 +460,7 @@ var Dungeon = {
             entity.p.x = pos[0];
             entity.p.y = pos[1];
             Dungeon.map[toMatrix(pos[1])][toMatrix(pos[0])] = 666;
+            return entity;
         }
         else Dungeon.insertEntity(entity);
     },
