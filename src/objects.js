@@ -40,6 +40,8 @@ Q.Sprite.extend("Collectable", {
         Deck.isUnlocked[c.p.ident] = true;
         Deck.unlocked++;
         CharSheet.cards.push(c);
+        if(Dungeon.map[toMatrix(c.p.y)][toMatrix(c.p.x)] == 666)
+          Dungeon.map[toMatrix(c.p.y)][toMatrix(c.p.x)] = 0;
       }
       else {
         //add to item array
