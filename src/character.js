@@ -41,7 +41,7 @@ var CharSheet = {
 			this.experience = this.experience + exp - this.nextLevel;
 			this.level += 1;
       
-      this.upStats(2, 1, 'all', 0.2, 10, 2);
+      this.upStats(4, 1, 'all', 0.2, 20, 2);
       console.log(this.maxHp);
 			Q.state.set("experience",this.experience);
 			this.nextLevel = this.nextLevel * 2;

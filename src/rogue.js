@@ -162,7 +162,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
@@ -178,6 +178,7 @@ Q.load("boss1.png, boss1.json, creditsView.png, instructions.png, play.png, cred
   Q.compileSheets("escudos.png","escudos.json");
   Q.compileSheets("pociones.png","pociones.json");
   Q.compileSheets("boss1.png", "boss1.json");
+  Q.compileSheets("thunder.png", "thunder.json");
 
 
   Q.animations("escAnim", {
@@ -213,6 +214,11 @@ Q.load("boss1.png, boss1.json, creditsView.png, instructions.png, play.png, cred
     bossStand: {frames: [0], rate: 1},
     bossFrenzy: {frames: [1], rate: 1}
   });
+
+  Q.animations("thunderAnim", {
+    thunder: {frames: [0], rate: 1},
+  });
+
 
   Q.stageScene("Title", 0);
 });

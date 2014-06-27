@@ -266,7 +266,7 @@ Q.Monster.extend("Bat", {
     var floor = CharSheet.floor-1;
 
     hp =  60 + 10 * floor;
-    atk = 4 + 2 * floor;
+    atk = 4 + 3 * floor;
     def = 2 + 1 * floor;
     exp = 15 + 5 * floor;
 
@@ -284,8 +284,8 @@ Q.Monster.extend("Snake", {
     var floor = CharSheet.floor-1;
 
     hp =  70 + 8 * floor;
-    atk = 7 + 3 * floor;
-    def = 2 + 1 * floor;
+    atk = 10 + 5 * floor;
+    def = 5 + 1 * floor;
     exp = 20 + 5 * floor;
 
     this.character.live(hp,atk,def,exp);
@@ -301,9 +301,9 @@ Q.Monster.extend("Spider", {
     var hp, atk, def, exp;
     var floor = CharSheet.floor-1;
 
-    hp =  110 + 12 * floor;
-    atk = 3 + 2 * floor;
-    def = 5 + 3 * floor;
+    hp =  110 + 22 * floor;
+    atk = 7 + 4 * floor;
+    def = 10 + 3 * floor;
     exp = 15 + 5 * floor;
 
     this.character.live(hp,atk,def,exp);
@@ -319,14 +319,32 @@ Q.Monster.extend("Slime", {
     var hp, atk, def, exp;
     var floor = CharSheet.floor-1;
 
-    hp =  90 + 10 * floor;
-    atk = 10 + 2 * floor;
-    def = 5 + 2 * floor;
+    hp =  120 + 30 * floor;
+    atk = 20 + 4 * floor;
+    def = 7 + 2 * floor;
     exp = 25 + 8 * floor;
 
     this.character.live(hp,atk,def,exp);
   }
-});  
+});
+
+Q.Monster.extend("Skeleton", {
+  init: function(p) {
+    this._super(p, {
+      sheet: "slime",
+      sprite: "slimeAnim"
+    });
+    var hp, atk, def, exp;
+    var floor = CharSheet.floor-1;
+
+    hp =  70 + 10 * floor;
+    atk = 10 + 2 * floor;
+    def = 5 + 2 * floor;
+    exp = 1 + 8 * floor;
+
+    this.character.live(hp,atk,def,exp);
+  }
+});    
 
   Q.Sprite.extend("EkChuah", {
     init: function(props, defaultProps) {
@@ -345,7 +363,7 @@ Q.Monster.extend("Slime", {
 
     Q.state.inc("enemies", 1);
 
-    this.character.live(500,45,25,500);
+    this.character.live(1000, 35, 40, 500);
 
     this.turn_component.init_turn(Q.state.get("enemies"));
     this.play("bossStand");  
@@ -437,3 +455,228 @@ Q.Monster.extend("Slime", {
     return toMatrix(Math.sqrt(xs + ys));
   }
   });
+
+Q.Sprite.extend("AhPuch", {
+    init: function(props, defaultProps) {
+    this._super(Q._extend({  
+      x: 48+64*7, 
+      y: 48+64*5,  
+      moved: false,
+      type: Q.SPRITE_ENEMY,
+      sheet: "bossStand",
+      sprite: "boss1Anim",
+      hearts: 1,
+    },props), defaultProps);
+
+    this.add('2d, animation, character, turn_component');
+
+    Q.state.inc("enemies", 1);
+
+    this.character.live(2000, 35, 25, 1500);
+
+    this.turn_component.init_turn(Q.state.get("enemies"));
+    this.play("bossStand");  
+    
+    this.on("hit", function(collision) {
+      // console.log("collision bola mala: "+collision.obj);
+    });
+  },
+
+  step: function(dt) {
+    if(this.dead()){
+      if(this.p.hearts == 0){
+      //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
+        act_turnEnemies(this.p.position);
+        this.destroy();
+      } else {
+        this.p.hearts--;
+        this.p.hitPoints = this.p.maxHitPoints;
+        this.p.defense += 40;
+        this.p.attack += 50;
+      }
+    } else if (Q.state.get("nextMove") == this.p.position && !this.p.moved) {
+      this.p.moved = true;
+      
+      //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
+
+      if((this.p.x-32)%64 != 0 || (this.p.y-32)%64 != 0 ){
+          this.p.x = fromMatrix(Math.round(toMatrix(this.p.x, "boss")), "boss");
+          this.p.y = fromMatrix(Math.round(toMatrix(this.p.y, "boss")), "boss");
+          // console.log(this.p.x, this.p.y);
+      }
+
+      r = Math.random();
+      if(r<0.3 && this.p.hearts == 0){
+          this.special();
+      } else if(nextToPlayer(this.p.x,this.p.y, "boss")){
+          this.attack();
+      } else {
+        if(this.distanceToPlayer() < 10) {
+          var nextMove = findNextLW(this.p.x,this.p.y, "boss");
+          this.p.x = nextMove[0];
+          this.p.y = nextMove[1];
+        }
+      }      
+      //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 666;
+
+      this.pass_turn();
+      this.p.moved=false;
+    }
+  },
+
+  attack: function(){
+    player = findPlayer();
+    player.hit(this);
+    player.p.attacked = true;
+
+    Q.state.set("health",CharSheet.hitPoints);
+  },
+
+  special: function(){
+      for(var i = 0; i<5; i++)
+        Q.stage(0).insert(Dungeon.insertEntity(new Q.Skeleton()));
+  },
+
+  healMe: function(){
+  },
+
+  distanceToPlayer: function(){
+    var p = findPlayer();
+
+    var xs = p.p.x - this.p.x;
+    xs = xs * xs;
+    var ys = p.p.y - this.p.y;
+    ys = ys * ys;
+    return toMatrix(Math.sqrt(xs + ys));
+  }
+  });
+
+Q.Sprite.extend("Kukulkan", {
+    init: function(props, defaultProps) {
+    this._super(Q._extend({  
+      x: 48+64*7, 
+      y: 48+64*5,  
+      moved: false,
+      type: Q.SPRITE_ENEMY,
+      sheet: "bossStand",
+      sprite: "boss1Anim",
+      frenzyTurn: 0,
+    },props), defaultProps);
+
+    this.add('2d, animation, character, turn_component');
+
+    Q.state.inc("enemies", 1);
+
+    this.character.live(5000, 100, 60, 0);
+
+    this.turn_component.init_turn(Q.state.get("enemies"));
+    this.play("bossStand");  
+    
+    this.on("hit", function(collision) {
+      // console.log("collision bola mala: "+collision.obj);
+    });
+  },
+
+  step: function(dt) {
+    if(this.dead()){
+      //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
+      act_turnEnemies(this.p.position);
+
+      this.destroy();
+
+    } else if (Q.state.get("nextMove") == this.p.position && !this.p.moved) {
+      this.p.moved = true;
+      
+      //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
+
+      if((this.p.x-32)%64 != 0 || (this.p.y-32)%64 != 0 ){
+          this.p.x = fromMatrix(Math.round(toMatrix(this.p.x, "boss")), "boss");
+          this.p.y = fromMatrix(Math.round(toMatrix(this.p.y, "boss")), "boss");
+          // console.log(this.p.x, this.p.y);
+      }
+
+      r = Math.random();
+      if(r<0.9){
+          this.special();
+      } else if(nextToPlayer(this.p.x,this.p.y, "boss")){
+          this.attack();
+      } else {
+        if(this.distanceToPlayer() < 10) {
+          var nextMove = findNextLW(this.p.x,this.p.y, "boss");
+          this.p.x = nextMove[0];
+          this.p.y = nextMove[1];
+        }
+      }
+      
+      //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 666;
+
+      this.pass_turn();
+      this.p.moved=false;
+    }
+  },
+
+  attack: function(){
+    player = findPlayer();
+    player.hit(this);
+    player.p.attacked = true;
+
+    Q.state.set("health",CharSheet.hitPoints);
+  },
+
+  special: function(){
+      for(var i = 0; i<5; i++){
+        var thunder = new Q.Thunder();
+        Q.stage(0).insert(Dungeon.insertEntity(thunder));
+        thunder.generate();
+      }
+  },
+
+  distanceToPlayer: function(){
+    var p = findPlayer();
+
+    var xs = p.p.x - this.p.x;
+    xs = xs * xs;
+    var ys = p.p.y - this.p.y;
+    ys = ys * ys;
+    return toMatrix(Math.sqrt(xs + ys));
+  }
+  });
+
+Q.Sprite.extend("Thunder", {
+  init: function(p) {
+    this._super(p, {
+      sheet: "thunder",
+      sprite: "thunderAnim",
+      sensor: true,
+      attack: 0,
+      off: false,
+      timeOut: 1 //segundos
+    });
+
+    this.add('2d, animation');
+    this.on("sensor", this, "collision");
+    this.play(this.p.sheet); 
+  },
+
+  step: function(dt){
+      this.p.timeOut-=dt;
+      if(this.p.timeOut <= 0){
+        console.log("DESTROY");
+        this.destroy();
+      }
+  },
+
+  generate: function(attack){
+    this.p.attack = 4*attack
+  },
+
+  collision: function(collision) {
+    //animacion
+    if(collision.isA("Player") && !this.p.off) {
+        this.p.off=true;
+        player = findPlayer();
+        player.hit(this);
+    }    
+  }, 
+
+});
