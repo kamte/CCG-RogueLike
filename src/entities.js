@@ -331,8 +331,8 @@ Q.Monster.extend("Slime", {
 Q.Monster.extend("Skeleton", {
   init: function(p) {
     this._super(p, {
-      sheet: "slime",
-      sprite: "slimeAnim"
+      sheet: "skeleton",
+      sprite: "skeletonAnim"
     });
     var hp, atk, def, exp;
     var floor = CharSheet.floor-1;
