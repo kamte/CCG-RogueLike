@@ -126,13 +126,11 @@ var objectGenerator = {
 					maxHeal += 5;
 				}
 			}
-
-		//NO SPAWNEAR "20%"
 			item = new Q.Potion({tier: tier, sheet: ("potion"+(Aux.newRandom(1,7))), name: NamesGenerator.randomName(tier, 'potion')});
 
 			item.statear(atk, def, hp, heal, maxHeal);
 		}
-
+		//NO SPAWNEAR "20%"
 		return item;
 	}
 }

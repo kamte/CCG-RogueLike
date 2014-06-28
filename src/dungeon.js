@@ -380,6 +380,7 @@ var Dungeon = {
             fila = Aux.newRandom(r.y+1, r.y+r.h-1);
             if (fila === toMatrix(stairs.p.x) || columna === toMatrix(stairs.p.y))
                 continue;
+            console.log("insert");
         }
 
         entity.p.x=fromMatrix(fila);
@@ -409,6 +410,7 @@ var Dungeon = {
             fila = Aux.newRandom(r.y+1, r.y+r.h-1);
             distX = Math.abs(px - fila);
             distY = Math.abs(py - columna);
+            console.log("insertAwayPlayer");
         }
 
         entity.p.x=fromMatrix(fila);
@@ -432,6 +434,7 @@ var Dungeon = {
             fila = Aux.newRandom(r.y+1, r.y+r.h-1);
             if (fila === toMatrix(stairs.p.x) || columna === toMatrix(stairs.p.y))
                 continue;
+            console.log("insertInRoom");
         }
 
         entity.p.x=fromMatrix(fila);
