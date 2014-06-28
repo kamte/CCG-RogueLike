@@ -29,6 +29,8 @@ var CharSheet = {
 	updateHp: function(hp) {
 		if (hp > this.maxHp)
 			this.hitPoints = this.maxHp;
+    else if (hp <0)
+      this.hitPoints = 0;
     else
 			this.hitPoints = hp;
 
