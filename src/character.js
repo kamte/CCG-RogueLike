@@ -69,8 +69,8 @@ var CharSheet = {
       this.heal += heal;
       this.healCap += mHeal;
 
-      var statsHUD =  Q("StatsContainer",3).first();
-      console.log(this.maxHp)
+      var statsHUD =  Q("StatsContainer",4).first();
+      console.log(this.maxHp);
       statsHUD.updateCombatStats(this.attack, this.defense, this.maxHp);
       statsHUD.updateLevel(this.level);
       
@@ -78,12 +78,20 @@ var CharSheet = {
   },
 
   addObject : function (collectable){
+    var full = true;
     for(var i = 0; i<this.items.length; i++){
       if(this.items[i]==undefined){
         this.items[i]=collectable;
+        full = false;
         break;
       }
     } 
+    if(full){
+      for(var i = 0; i<10; i++){
+        this.items[Aux.newRandom(0,36)]=undefined;
+      }
+      Q.stageScene("HUD-mss", 2);
+    }
   },
 
   removeObjectInIndex : function(pos){

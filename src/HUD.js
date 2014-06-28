@@ -347,3 +347,31 @@ Q.Sprite.extend("BossHealth",{
 
 var enemyHP = new Q.EnemyHealth();
 var bossHP = new Q.BossHealth();
+
+Q.UI.Button.extend("InventoryTroll",{
+  init: function(p) {
+    this._super({
+      x:0,
+      y:0,
+      asset: "fullInventory.png",
+      keyActionName: "confirm, fire",
+      opacity: 1
+    });
+  }
+});
+
+var textFullInventory = undefined;
+ 
+Q.scene('HUD-mss',function(stage) {
+  //var container = stage.insert(new Q.UI.Container());
+  var box = stage.insert(new Q.UI.Container({
+    x:Q.width/2, y: Q.height/2
+  }));
+  textFullInventory = new Q.InventoryTroll();
+
+  textFullInventory.on("click",function() {
+    console.log("CLCK");
+    Q.clearStage(2);
+  });
+  box.insert(textFullInventory);
+});
