@@ -67,7 +67,7 @@ Q.Collectable.extend("Equipment", {
   },
 
   use: function(){
-    var statsHUD =  Q("StatsContainer",3).first();
+    var statsHUD =  Q("StatsContainer",4).first();
 
     var lostAttack = 0;
     var lostDefense = 0;
