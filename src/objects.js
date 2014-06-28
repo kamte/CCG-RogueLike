@@ -13,7 +13,7 @@ Q.Sprite.extend("Escalera", {
           ++CharSheet.floor;
           Q.stageScene("level1", 0);
           Q.stageScene("HUD-background",2);
-          Q.stageScene("HUD-stats",3);
+          Q.stageScene("HUD-stats",4);
    			}
    		});
    	}
