@@ -162,7 +162,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, equipamiento.png, inventario.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, sword.png, sword.json, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
 
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
@@ -178,6 +178,8 @@ Q.load("thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instr
   Q.compileSheets("escudos.png","escudos.json");
   Q.compileSheets("pociones.png","pociones.json");
   Q.compileSheets("boss1.png", "boss1.json");
+  Q.compileSheets("boss2.png", "boss2.json");
+  Q.compileSheets("boss3.png", "boss3.json");
   Q.compileSheets("thunder.png", "thunder.json");
 
 
@@ -211,12 +213,29 @@ Q.load("thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instr
   });
 
   Q.animations("boss1Anim", {
-    bossStand: {frames: [0], rate: 1},
-    bossFrenzy: {frames: [1], rate: 1}
+    boss1Stand: {frames: [0], rate: 1},
+    boss1Attack: {frames: [0,1,2,3], rate: 1/6, next:'boss1Stand'},
+    boss1Frenzy: {frames: [4], rate: 1},
+    boss1FrenzyAttack: {frames: [4,5,6,7], rate: 1/6, next: 'boss1Frenzy'}
+  });
+
+  Q.animations("boss2Anim", {
+    boss2Stand: {frames: [0], rate: 1},
+    boss2Attack: {frames: [0,3,0,3], rate: 1/6, next:'boss2Stand'},
+    boss2Walk: {frames: [0,1,2,1], rate: 1/6, next:'boss2Stand'},
+    boss2Summon: {frames: [4,5,4,5], rate: 1/6, next: 'boss2Stand'},
+    boss2Dead: {frames: [6], rate: 1/6}
+  });
+
+  Q.animations("boss3Anim", {
+    boss3Stand: {frames: [0], rate: 1},
+    boss3Attack: {frames: [0,1,2,3], rate: 1/6, next:'boss3Stand'},
+    boss3Frenzy: {frames: [4], rate: 1},
+    boss3FrenzyAttack: {frames: [4,5,6,7], rate: 1/6, next: 'boss3Frenzy'}
   });
 
   Q.animations("thunderAnim", {
-    thunder: {frames: [0], rate: 1},
+    thunder: {frames: [0,1,2,3,2,3], rate: 1/6},
   });
 
 
