@@ -229,9 +229,8 @@ Q.load("boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png,
 
   Q.animations("boss3Anim", {
     boss3Stand: {frames: [0], rate: 1},
-    boss3Attack: {frames: [0,1,2,3], rate: 1/6, next:'boss3Stand'},
-    boss3Frenzy: {frames: [4], rate: 1},
-    boss3FrenzyAttack: {frames: [4,5,6,7], rate: 1/6, next: 'boss3Frenzy'}
+    boss3Attack: {frames: [0,1,0,1], rate: 1/6, next:'boss3Stand'},
+    boss3Thunder: {frames: [0,2,0,2], rate: 1/6, next: 'boss3Stand'}
   });
 
   Q.animations("thunderAnim", {

@@ -573,10 +573,10 @@ Q.Sprite.extend("Kukulkan", {
 
     Q.state.inc("enemies", 1);
 
-    this.character.live(5000, 10, 60, 0);
+    this.character.live(5000, 100, 60, 0);
 
     this.turn_component.init_turn(Q.state.get("enemies"));
-    this.play("bossStand");  
+    this.play("boss3Stand");  
     
     this.on("hit", function(collision) {
       // console.log("collision bola mala: "+collision.obj);
@@ -623,6 +623,7 @@ Q.Sprite.extend("Kukulkan", {
   },
 
   attack: function(){
+    this.play('boss3Attack')
     player = findPlayer();
     player.hit(this);
     player.p.attacked = true;
@@ -631,6 +632,7 @@ Q.Sprite.extend("Kukulkan", {
   },
 
   special: function(){
+    this.play('boss3Thunder')
     player = findPlayer();
     var thunder = new Q.Thunder({x:player.p.x, y:player.p.y});
     
