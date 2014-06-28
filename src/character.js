@@ -4,7 +4,7 @@ var CharSheet = {
 	hitPoints: 100,
 	maxHp: 100,
 	attack: 20,
-	defense: 1,
+	defense: 2,
 	experience: 0,
 	nextLevel: 50,
 	heal: 1,
@@ -29,6 +29,8 @@ var CharSheet = {
 	updateHp: function(hp) {
 		if (hp > this.maxHp)
 			this.hitPoints = this.maxHp;
+    else if (hp <0)
+      this.hitPoints = 0;
     else
 			this.hitPoints = hp;
 
@@ -41,7 +43,7 @@ var CharSheet = {
 			this.experience = this.experience + exp - this.nextLevel;
 			this.level += 1;
       
-      this.upStats(2, 1, 'all', 0.2, 10, 2);
+      this.upStats(4, 1, 'all', 0.2, 20, 2);
       console.log(this.maxHp);
 			Q.state.set("experience",this.experience);
 			this.nextLevel = this.nextLevel * 2;
@@ -67,8 +69,8 @@ var CharSheet = {
       this.heal += heal;
       this.healCap += mHeal;
 
-      var statsHUD =  Q("StatsContainer",3).first();
-      console.log(this.maxHp)
+      var statsHUD =  Q("StatsContainer",4).first();
+      console.log(this.maxHp);
       statsHUD.updateCombatStats(this.attack, this.defense, this.maxHp);
       statsHUD.updateLevel(this.level);
       
@@ -76,12 +78,20 @@ var CharSheet = {
   },
 
   addObject : function (collectable){
+    var full = true;
     for(var i = 0; i<this.items.length; i++){
       if(this.items[i]==undefined){
         this.items[i]=collectable;
+        full = false;
         break;
       }
     } 
+    if(full){
+      for(var i = 0; i<10; i++){
+        this.items[Aux.newRandom(0,36)]=undefined;
+      }
+      Q.stageScene("HUD-mss", 2);
+    }
   },
 
   removeObjectInIndex : function(pos){

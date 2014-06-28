@@ -27,7 +27,6 @@ var NamesGenerator = {
 			var r = Aux.newRandom(0, this.DBpotions.length-1);
 			name = this.DBpotions[r] + " potion" + '\n' + "you don't know what" + '\n' + "it will do";
 		} else if (item=='food') {
-			console.log("tahaha")
 			var r = Aux.newRandom(0, this.DBfood.length-1);
 			name = this.DBfood[r];
 		}
@@ -37,14 +36,15 @@ var NamesGenerator = {
 
 var objectGenerator = {
 
-	spawner : function(stage, min, max){
+	spawner : function(stage, min, max, room){
 		var max = Aux.newRandom(min, max);
 		var item = null;
-		console.log(max);
+		var index;
 		for(var i=0; i<max; i++){
+			index = (room==undefined ? i : room);
 			item = this.spawn();
 			if(item!=null){
-				stage.insert(Dungeon.insertEntityInRoom(item, i));
+				stage.insert(Dungeon.insertEntityInRoom(item, index));
 			}
 		}
 	},
@@ -69,14 +69,15 @@ var objectGenerator = {
 		//EQUIPO 35%
 		if(r<0.35){
 			r = Math.random();
+
 			//TODO tener en cuenta el piso
-			var atk = Math.ceil(Math.random()*2);
+			var atk = Math.ceil(Math.random()*5*CharSheet.floor+CharSheet.floor);
 			if(Math.random()<0.3)
 				atk=-atk;
-			var def = Math.ceil(Math.random()*1);
+			var def = Math.ceil(Math.random()*1*CharSheet.floor+CharSheet.floor);
 			if(Math.random()<0.3)
 				def=-def;
-			var hp = Math.ceil(Math.random()*10);
+			var hp = Math.ceil(Math.random()*20*CharSheet.floor+CharSheet.floor*2);
 			if(Math.random()<0.3)
 				hp=-hp;
 			var sprite;
@@ -93,16 +94,16 @@ var objectGenerator = {
 			item.statear(atk,def,hp);
 
 		//COMIDA 30%
-		} else if(r<0.66){
-			var hp = Math.ceil(Math.random()*CharSheet.maxHp/2);
+		} else if(r<0.65){
+			var hp = Math.ceil(Math.random()*CharSheet.maxHp/2+CharSheet.floor*2);
 			var name = NamesGenerator.randomName(tier, 'food');
 
 			item = new Q.Food({tier: tier, sheet: name, name: (name + '\n' + "Eating it will" + '\n' + "heal a portion" + '\n' + "of your life")});
 
 			item.statear(hp);
 
-		//POCIONES 10%
-		} else if(r<0.76){
+		//POCIONES 15%
+		} else if(r<0.80){
 			var atk = 0;
 			var def = 0;
 			var hp = 0;
@@ -125,13 +126,11 @@ var objectGenerator = {
 					maxHeal += 5;
 				}
 			}
-
-		//NO SPAWNEAR "20%"
 			item = new Q.Potion({tier: tier, sheet: ("potion"+(Aux.newRandom(1,7))), name: NamesGenerator.randomName(tier, 'potion')});
 
 			item.statear(atk, def, hp, heal, maxHeal);
 		}
-
+		//NO SPAWNEAR "20%"
 		return item;
 	}
 }

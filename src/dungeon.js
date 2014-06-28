@@ -2,9 +2,13 @@ var Dungeon = {
     map: null, //mapa para los tiles: 0=nada, impares=paredes, pares=suelos
     map_size: 150,
     rooms: [],
-    generate: function () {
+    generate: function (level_floor, stage) {
         this.rooms = [];  
         this.map = [];
+
+        var floorFirstBoss = 5;
+        var floorSecondBoss = 10;
+        var floorThirdBoss = 15;
 
         var floor = Aux.newRandom(1, 14)*2;
         var wall = (Aux.newRandom(0, 9)*2)+1;
@@ -17,32 +21,21 @@ var Dungeon = {
         }
 
         var room_count = Aux.newRandom(8, 11);
-        var min_size = 6;
-        var max_size = 11;
 
-        //Genera las habitaciones
-        for (var i = 0; i < room_count; i++) {
-            var room = {};
-
-            room.x = Aux.newRandom(1, this.map_size - max_size - 1);
-            room.y = Aux.newRandom(1, this.map_size - max_size - 1);
-            room.w = Aux.newRandom(min_size, max_size);
-            room.h = Aux.newRandom(min_size, max_size);
-
-            if (this.collides(room)) {
-                i--;
-                continue;
-            }
-            room.w--;
-            room.h--;
-            this.rooms.push(room);
+        if(level_floor===floorFirstBoss){
+            room_count = 4;
+            this.createBoss1Room();
+        } else  if(level_floor===floorSecondBoss){
+            room_count = 5;
+            this.createBoss2Room();
+        } else if(level_floor===floorThirdBoss){
+            room_count = 5;
+            this.createBoss3Room();
+        } else {
+            this.createRandomRooms(room_count);
         }
 
-        this.joinRooms();
-
-
         //Crea los pasillos
-
         for (var i = 0; i < room_count-1; i++) {
             var roomA = this.rooms[i];
             var roomB = this.rooms[i+1];
@@ -91,6 +84,228 @@ var Dungeon = {
         }
 
         Q.assets['level_dungeon'] = this.map;
+
+        if(level_floor===floorFirstBoss){
+            this.generateBoss1Entities(stage);
+        } else if(level_floor===floorSecondBoss){
+            this.generateBoss2Entities(stage);
+        } else if(level_floor===floorThirdBoss){
+            this.generateBoss3Entities(stage);
+        } else {
+            this.generateRandomEntities(stage);
+        }
+    },
+
+    createRandomRooms: function(room_count){
+        var min_size = 6;
+        var max_size = 11;
+
+        //Genera las habitaciones
+        for (var i = 0; i < room_count; i++) {
+            var room = {};
+
+            room.x = Aux.newRandom(1, this.map_size - max_size - 1);
+            room.y = Aux.newRandom(1, this.map_size - max_size - 1);
+            room.w = Aux.newRandom(min_size, max_size);
+            room.h = Aux.newRandom(min_size, max_size);
+
+            if (this.collides(room)) {
+                i--;
+                continue;
+            }
+            room.w--;
+            room.h--;
+            this.rooms.push(room);
+        }
+
+        this.joinRooms();
+    },
+
+    generateRandomEntities: function(stage){
+        stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
+        stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
+
+        var p = stage.insert(this.insertEntity(new Q.Player()));
+    
+        stage.insert(this.insertEntity(new Q.Escalera()));
+    
+        //Generar entre x e y objetos
+        objectGenerator.spawner(stage, 5, 14);
+    
+        //Spawn 4 to 6 enemies when a floor is entered
+        monsterGenerator.spawner(stage, 8, 16);
+
+        stage.add("viewport").centerOn(150, 368); 
+        stage.follow(p, { x: true, y: true });
+    },
+
+    generateBoss1Entities: function(stage){
+        stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
+        stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
+
+        var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
+    
+        stage.insert(this.insertEntityInRoom(new Q.Escalera(), 3));
+    
+        //Generar entre x e y objetos
+        objectGenerator.spawner(stage, 2, 4, 1);
+    
+        //Spawn 4 to 6 enemies when a floor is entered
+        monsterGenerator.spawner(stage, 3, 6, 1);
+
+        stage.insert(this.insertEntityInRoom(new Q.EkChuah(), 2));
+
+        stage.add("viewport").centerOn(150, 368); 
+        stage.follow(p, { x: true, y: true });
+    },
+
+    generateBoss2Entities: function(stage){
+        stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
+        stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
+
+        var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
+    
+        stage.insert(this.insertEntityInRoom(new Q.Escalera(), 4));
+    
+        objectGenerator.spawner(stage, 3, 6, 3);
+
+        monsterGenerator.spawner(stage, 2, 4, 2);
+        monsterGenerator.spawner(stage, 3, 6, 1);
+
+        stage.insert(this.insertEntityInRoom(new Q.AhPuch(), 3));
+
+        stage.add("viewport").centerOn(150, 368); 
+        stage.follow(p, { x: true, y: true });
+    },
+
+    generateBoss3Entities: function(stage){
+        stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
+        stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
+
+        var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
+    
+        stage.insert(this.insertEntityInRoom(new Q.Escalera(), 4));
+    
+        //Generar entre x e y objetos
+        objectGenerator.spawner(stage, 2, 4, 2);
+    
+        //Spawn 4 to 6 enemies when a floor is entered
+        monsterGenerator.spawner(stage, 5, 8, 1);
+
+        stage.insert(this.insertEntityInRoom(new Q.Kukulkan(), 3));
+
+        stage.add("viewport").centerOn(150, 368); 
+        stage.follow(p, { x: true, y: true });
+    },
+
+    createBoss1Room: function(){
+
+        var roomInit = {};
+        roomInit.x = 10;
+        roomInit.y = 1;
+        roomInit.w = 5;
+        roomInit.h = 5;
+
+        var roomBats = {};
+        roomBats.x = 8;
+        roomBats.y = 14;
+        roomBats.w = 8;
+        roomBats.h = 8;
+
+        var roomBoss = {};
+        roomBoss.x = 1;
+        roomBoss.y = 25;
+        roomBoss.w = 20;
+        roomBoss.h = 20;
+
+        var roomStairs = {};
+        roomStairs.x = 18;
+        roomStairs.y = 52;
+        roomStairs.w = 6;
+        roomStairs.h = 6;
+
+        this.rooms.push(roomInit);
+        this.rooms.push(roomBats);
+        this.rooms.push(roomBoss);
+        this.rooms.push(roomStairs);
+    },
+
+     createBoss2Room: function(){
+
+        var roomInit = {};
+        roomInit.x = 5;
+        roomInit.y = 5;
+        roomInit.w = 6;
+        roomInit.h = 4;
+
+        var roomMobs1 = {};
+        roomMobs1.x = 33;
+        roomMobs1.y = 13;
+        roomMobs1.w = 10;
+        roomMobs1.h = 7;
+
+        var roomMobs2 = {};
+        roomMobs2.x = 20;
+        roomMobs2.y = 14;
+        roomMobs2.w = 8;
+        roomMobs2.h = 8;
+
+        var roomBoss = {};
+        roomBoss.x = 25;
+        roomBoss.y = 10;
+        roomBoss.w = 14;
+        roomBoss.h = 14;
+
+        var roomStairs = {};
+        roomStairs.x = 20;
+        roomStairs.y = 30;
+        roomStairs.w = 6;
+        roomStairs.h = 6;
+
+        this.rooms.push(roomInit);
+        this.rooms.push(roomMobs1);
+        this.rooms.push(roomMobs2);
+        this.rooms.push(roomBoss);
+        this.rooms.push(roomStairs);
+    },
+
+    createBoss3Room: function(){
+
+        var roomInit = {};
+        roomInit.x = 70;
+        roomInit.y = 20;
+        roomInit.w = 6;
+        roomInit.h = 3;
+
+        var roomMobs = {};
+        roomMobs.x = 50;
+        roomMobs.y = 19;
+        roomMobs.w = 8;
+        roomMobs.h = 6;
+
+        var roomItems = {};
+        roomItems.x = 30;
+        roomItems.y = 20;
+        roomItems.w = 6;
+        roomItems.h = 8;
+
+        var roomBoss = {};
+        roomBoss.x = 1;
+        roomBoss.y = 15;
+        roomBoss.w = 24;
+        roomBoss.h = 10;
+
+        var roomStairs = {};
+        roomStairs.x = 1;
+        roomStairs.y = 35;
+        roomStairs.w = 6;
+        roomStairs.h = 6;
+
+        this.rooms.push(roomInit);
+        this.rooms.push(roomMobs);
+        this.rooms.push(roomItems);
+        this.rooms.push(roomBoss);
+        this.rooms.push(roomStairs);
     },
 
     //Encuentra la habitación más cercana a la dada
@@ -155,12 +370,17 @@ var Dungeon = {
         var i = Aux.newRandom(0, this.rooms.length-1);
         var r = this.rooms[i];
 
+        var stairs = Q("Escalera").first();
+
         var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
         var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
 
         while (Dungeon.map[columna][fila] % 2 !== 0 || Dungeon.map[columna][fila] == 0) {
             columna = Aux.newRandom(r.x+1, r.x+r.w-1);
             fila = Aux.newRandom(r.y+1, r.y+r.h-1);
+            if (fila === toMatrix(stairs.p.x) || columna === toMatrix(stairs.p.y))
+                continue;
+            console.log("insert");
         }
 
         entity.p.x=fromMatrix(fila);
@@ -190,6 +410,7 @@ var Dungeon = {
             fila = Aux.newRandom(r.y+1, r.y+r.h-1);
             distX = Math.abs(px - fila);
             distY = Math.abs(py - columna);
+            console.log("insertAwayPlayer");
         }
 
         entity.p.x=fromMatrix(fila);
@@ -202,12 +423,18 @@ var Dungeon = {
         var i = room%this.rooms.length;
         var r = this.rooms[i];
 
+        var stairs = Q("Escalera").first();
+
+
         var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
         var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
 
         while (Dungeon.map[columna][fila] % 2 !== 0 || Dungeon.map[columna][fila] == 0) {
             columna = Aux.newRandom(r.x+1, r.x+r.w-1);
             fila = Aux.newRandom(r.y+1, r.y+r.h-1);
+            if (fila === toMatrix(stairs.p.x) || columna === toMatrix(stairs.p.y))
+                continue;
+            console.log("insertInRoom");
         }
 
         entity.p.x=fromMatrix(fila);

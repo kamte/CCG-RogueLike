@@ -25,7 +25,7 @@
 
 
 
-var Spawner = {
+var monsterGenerator = {
 	monsterList: undefined,
 
 	initState: function() {
@@ -45,7 +45,7 @@ var Spawner = {
 		}
 	},
 
-	spawn: function(stage) {
+	spawn: function() {
 	    var sum = 0;
 	    for (var i=0; i < this.monsterList.length; i++)
 	    	sum += this.monsterList[i].currentChance;
@@ -55,40 +55,38 @@ var Spawner = {
 		// console.log("rolled:", n);
 
 		if (n <= this.monsterList[1].currentChance) {
-			console.log("Snake");
 			monster = new Q.Snake();
 		}
 		else if (n <= this.monsterList[1].currentChance + this.monsterList[0].currentChance) {
-			console.log("Bat");
 			monster = new Q.Bat();
 		}
 		else if (n <= this.monsterList[1].currentChance + this.monsterList[0].currentChance + this.monsterList[2].currentChance) {
-			console.log("Spider");
 			monster = new Q.Spider();
 		}
 		else {
-			console.log("Slime");
 			monster = new Q.Slime();
 		}
-		console.log(monster.p.attack);
-		stage.insert(Dungeon.insertAwayFromPlayer(monster));
-		this.monsters++;
-		
+		console.log(monster.p.sheet, " atk: ", monster.p.attack, " def: ", monster.p.defense, " hp: ", monster.p.hitPoints);
+
+		return monster;
 	},
 
-	initialSpawn: function(stage, min, max) {
+	spawner: function(stage, min, max, room) {
 		var n = Aux.newRandom(min,max);
+		var index;
 
 		if (CharSheet.floor === 1)
-			Spawner.initState();
+			this.initState();
 
 		for(var i=0; i < this.monsterList.length; i++)
 			this.monsterList[i].updateChance(CharSheet.floor);
 
 		console.log("Enemies to spawn:",n);
 	    for (var i = 0; i < n; ++i){
-	    	console.log("llamada", i);
-	    	Spawner.spawn(stage);
+	    	index = (room==undefined ? i : room);
+	    	var monster = this.spawn();
+	    	stage.insert(Dungeon.insertEntityInRoom(monster, index));		
+
 	  	}
 	}
 

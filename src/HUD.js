@@ -27,6 +27,21 @@ Q.UI.ButtonOff = Q.UI.Button.extend("UI.ButtonOff", {
     }
   });
 
+Q.UI.Text.extend("FloorLabel",{
+  init: function(p) {
+    this._super({
+      label: "Floor: " + CharSheet.floor,
+      x: 185,
+      y: 44,
+      color: "white",
+      size: 12
+    });
+  },
+  act: function() {
+    this.p.label = "Floor: " + CharSheet.floor;
+  }
+});
+
 Q.UI.Text.extend("StatsHP",{
   init: function(p) {
     this._super({
@@ -39,6 +54,8 @@ Q.UI.Text.extend("StatsHP",{
     Q.state.on("change.health",this,"hp");
   },
   hp: function(hitP) {
+    if (hitP < 0)
+      hitP = 0;
     this.p.label = "Health: " + hitP + "/" + CharSheet.maxHp;
     CharSheet.hpBar.hurt();
   }, 
@@ -141,7 +158,10 @@ Q.Sprite.extend("Health",{
   },
 
   hurt: function(){
-    this.p.w = (CharSheet.hitPoints/CharSheet.maxHp)*100;
+    if (this.p.w < 0)
+      this.p.w = 0;
+    else
+      this.p.w = (CharSheet.hitPoints/CharSheet.maxHp)*100;
   },
 
   draw: function(ctx) {
@@ -213,7 +233,8 @@ Q.UI.Container.extend("StatsContainer",{
       EXPlabel: new Q.StatsExp(),
       ATKlabel: new Q.StatsAtk(),
       DEFlabel: new Q.StatsDef(),
-      LVLlabel: new Q.StatsLvl()
+      LVLlabel: new Q.StatsLvl(),
+      FloorLabel: new Q.FloorLabel()
     });
   },
 
@@ -233,6 +254,7 @@ Q.UI.Container.extend("StatsContainer",{
     this.insert(this.p.ATKlabel);
     this.insert(this.p.DEFlabel);
     this.insert(this.p.LVLlabel);
+    this.insert(this.p.FloorLabel);
   }
 });
 
@@ -245,4 +267,111 @@ Q.scene('HUD-stats',function(stage) {
   container.insert(CharSheet.hpBar);
   container.insert(CharSheet.expBar);
   container.fit(20);
+});
+
+Q.Sprite.extend("EnemyHealth",{
+  init: function(p) {
+    this._super(p,{
+      color: "red",
+      w: 32,
+      h: 4,
+      x: 50,
+      y: 50,
+      enemy: undefined,
+      opacity: 0,
+      type: Q.SPRITE_UI
+    });
+  },
+
+  draw: function(ctx) {
+    if(this.p.enemy!=undefined){
+      this.p.x=this.p.enemy.p.x;
+      this.p.y=this.p.enemy.p.y+16;
+    }
+    ctx.fillStyle = this.p.color;
+    ctx.fillRect(-this.p.cx, -this.p.cy, this.p.w, this.p.h);
+  },
+
+  hit: function(enemy){
+    this.p.enemy = enemy;
+    if(enemy.p.hitPoints>=0){
+      this.p.x=enemy.p.x;
+      this.p.y=enemy.p.y+16;
+      this.p.opacity=1;
+      this.p.w=(enemy.p.hitPoints/enemy.p.maxHitPoints)*32;
+    } else {
+      this.p.enemy=undefined;
+      this.p.opacity=0;
+      this.p.w=0;
+    }
+  }
+});
+
+Q.Sprite.extend("BossHealth",{
+  init: function(p) {
+    this._super(p,{
+      color: "red",
+      w: 64,
+      h: 4,
+      x: 50,
+      y: 100,
+      opacity: 0,
+      boss: undefined,
+      type: Q.SPRITE_UI
+    });
+  },
+
+  draw: function(ctx) {
+    if(this.p.boss!=undefined){
+      this.p.x=this.p.boss.p.x;
+      this.p.y=this.p.boss.p.y+32;
+    }
+    ctx.fillStyle = this.p.color;
+    ctx.fillRect(-this.p.cx, -this.p.cy, this.p.w, this.p.h);
+  },
+
+  hit: function(boss){
+    this.p.boss=boss;
+    if(boss.p.hitPoints>=0){
+      this.p.x=boss.p.x;
+      this.p.y=boss.p.y+32;
+      this.p.opacity=1;
+      this.p.w=(boss.p.hitPoints/boss.p.maxHitPoints)*64;
+    } else {
+      this.p.boss==undefined;
+      this.p.opacity=0;
+      this.p.w=0;
+    }
+  }
+});
+
+var enemyHP = new Q.EnemyHealth();
+var bossHP = new Q.BossHealth();
+
+Q.UI.Button.extend("InventoryTroll",{
+  init: function(p) {
+    this._super({
+      x:0,
+      y:0,
+      asset: "fullInventory.png",
+      keyActionName: "confirm, fire",
+      opacity: 1
+    });
+  }
+});
+
+var textFullInventory = undefined;
+ 
+Q.scene('HUD-mss',function(stage) {
+  //var container = stage.insert(new Q.UI.Container());
+  var box = stage.insert(new Q.UI.Container({
+    x:Q.width/2, y: Q.height/2
+  }));
+  textFullInventory = new Q.InventoryTroll();
+
+  textFullInventory.on("click",function() {
+    console.log("CLCK");
+    Q.clearStage(2);
+  });
+  box.insert(textFullInventory);
 });

@@ -106,6 +106,7 @@ Q.component("character", {
     EXP=Math.floor(mod*EXP);
     
     // console.log(HP, ATK, DEF, EXP);
+    this.entity.p.maxHitPoints = HP;
     this.entity.p.hitPoints = HP;
     this.entity.p.attack = ATK;
     this.entity.p.defense = DEF;
@@ -124,7 +125,17 @@ Q.component("character", {
     },
 
     hit: function(aggressor) {
-      this.p.hitPoints -= CharSheet.attack-this.p.defense;
+      var variation = Aux.newRandom(80, 100);
+      var reduction = this.p.defense > 0 ? this.p.defense : 1;
+      var damage = Math.ceil(variation * 0.01 * (3 * CharSheet.attack-(2*reduction)));
+      this.p.hitPoints -= (damage>0 ? damage : 1);
+      if(this.p.w==32){
+        enemyHP.hit(this);
+      }
+      else{
+        bossHP.hit(this);
+      }
+      console.log("player pega", damage)
       //console.log("COORDENADAS: ",aggressor.p.x, aggressor.p.y);
       // console.log(this.p.x, this.p.y, "vida defensor "+this.p.hitPoints);
     }

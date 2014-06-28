@@ -12,8 +12,8 @@ Q.Sprite.extend("Escalera", {
    				Q.clearStages();
           ++CharSheet.floor;
           Q.stageScene("level1", 0);
-          Q.stageScene("HUD-background",2);
-          Q.stageScene("HUD-stats",3);
+          Q.stageScene("HUD-background",3);
+          Q.stageScene("HUD-stats",4);
    			}
    		});
    	}
@@ -67,7 +67,7 @@ Q.Collectable.extend("Equipment", {
   },
 
   use: function(){
-    var statsHUD =  Q("StatsContainer",3).first();
+    var statsHUD =  Q("StatsContainer",4).first();
 
     var lostAttack = 0;
     var lostDefense = 0;
