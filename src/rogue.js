@@ -270,6 +270,8 @@ function setupLevel(stage) {
       nextMove: 0,
       healed:0});
     
+    enemyHP.p.opacity=0;
+    bossHP.p.opacity=0;
     Dungeon.generate(CharSheet.floor, stage);
     
     stage.insert(enemyHP);
