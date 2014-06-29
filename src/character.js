@@ -46,6 +46,9 @@ var CharSheet = {
       case "def":
         CharSheet.defense=value;
         break;
+      case "hp":
+        CharSheet.maxHp=value;
+        break;
     }
     var buff = "stat";
     if (positive)

@@ -1,7 +1,7 @@
 var Deck = {
 
 	isUnlocked: [],
-	total: 6,
+	total: 7,
 	unlocked: 0,
 	
 	fetchCards: function() {
@@ -80,7 +80,12 @@ var Deck = {
 				v = (n == 0) ? 4*floor : -4*floor;
 				CharSheet.buffStat("def", CharSheet.attack+v, 10, (v > 0));
 				break;
-			case 2: //Spawnea 4 objetos en torno al personaje o 4 arañas con un 30% de probabilidad.
+			case 2: //Aumenta o disminuye la vida del jugador en un valor de 15 veces el piso actual durante un piso.
+				n = Math.round(Math.random());
+				v = (n == 0) ? 15*floor : -15*floor;
+				CharSheet.buffStat("hp", CharSheet.attack+v, 10, (v > 0));
+				break;
+			case 3: //Spawnea 4 objetos en torno al personaje o 4 arañas con un 30% de probabilidad.
 				n = Aux.newRandom(0,10);
 				if (n >= 7) {
 					for (var j=0; j<4; ++j)
@@ -90,7 +95,7 @@ var Deck = {
 					for (var j=0; j<4; ++j)
 						Q.stage(0).insert(Dungeon.insertNextToPlayer(objectGenerator.spawn()));
 				break;
-			case 3: //Reduce a la mitad el daño recibido, o lo duplica con un 30% de probabilidad durante 5 ataques.
+			case 4: //Reduce a la mitad el daño recibido, o lo duplica con un 30% de probabilidad durante 5 ataques.
 				n = Aux.newRandom(0,10);
 				Buff.type = "dmgMultiplier";
 				if (n >= 7)
@@ -98,14 +103,14 @@ var Deck = {
 				else 
 					Buff.buffCounter = 5;
 				break;
-			case 4: //Cura completamente al jugador o le quita la mitad de su vida actual:
+			case 5: //Cura completamente al jugador o le quita la mitad de su vida actual:
 				n = Aux.newRandom(0,10);
 				if (n >=3)
 					CharSheet.updateHp(Math.floor(CharSheet.hitPoints / 2));
 				else
 					CharSheet.updateHp(Math.floor(CharSheet.maxHp));
 				break;
-			case 5: //Mejora el porcentaje crecimiento stats
+			case 6: //Mejora el porcentaje crecimiento stats
 				n = Aux.newRandom(0,10);
 				if (n >=4) {
 					CharSheet.atkG+=3;
