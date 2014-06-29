@@ -1,6 +1,6 @@
 //Versión LightWeight del pathfinder
 var findNextLW = function(x,y, boss) {
-  var next = new Array(2);
+  var next = new Array(3);
   next[0]=x; next[1]=y;
 
   var posibles = findPosibles(x, y, boss);
@@ -11,18 +11,22 @@ var findNextLW = function(x,y, boss) {
   if(dir == 'derecha'){
     next[0] = x+32;
     next[1] = y;
+    next[2] = 'derecha';
     //console.log("yendo a la derecha");
   } else if(dir == 'izquierda') {
     next[0] = x-32;
     next[1] = y;
+    next[2] = 'izquierda';
     //console.log("yendo a la izquierda");
   } else if(dir == 'abajo') {
     next[0] = x;
     next[1] = y+32;
+    next[2] = 'abajo';
     //console.log("yendo hacia abajo");
   } else if(dir == 'arriba'){
     next[0] = x;
     next[1] = y-32;
+    next[2] = 'arriba';
     //console.log("yendo hacia arriba");
   }
   //console.log("Proxima casilla:", Dungeon.map[toMatrix(next[1])][toMatrix(next[0])]);
@@ -205,7 +209,8 @@ Q.Sprite.extend("Monster", {
       moved: false,
       type: Q.SPRITE_ENEMY,
       // sensor: true,
-      experience: 10  
+      experience: 10,
+      direction: 'I'  
     },props), defaultProps);
 
     this.add('2d, animation, character, turn_component');
@@ -240,6 +245,8 @@ Q.Sprite.extend("Monster", {
           // console.log(this.p.x, this.p.y);
         }
       if(nextToPlayer(this.p.x,this.p.y)){
+      	if (this.p.direction == "I") this.play(this.p.sheet + "Atk");
+      	else this.play(this.p.sheet + "DAtk");
         this.attack();
       } else {
         // console.log(this.p.x, this.p.y);
@@ -248,6 +255,9 @@ Q.Sprite.extend("Monster", {
           var nextMove = findNextLW(this.p.x,this.p.y);
           this.p.x = nextMove[0];
           this.p.y = nextMove[1];
+
+          if (nextMove[2]== "derecha"){ this.play(this.p.sheet + "D"); this.p.direction="D";}
+          else if (nextMove[2]== "izquierda"){ this.play(this.p.sheet); this.p.direction="I";}
         }
         // else console.log("muy lejos, no me muevo");
       }
@@ -379,6 +389,7 @@ Q.Monster.extend("Skeleton", {
       sprite: "boss1Anim",
       frenzy: false,
       frenzyTurn: 0,
+      direction: "I"
     },props), defaultProps);
 
     this.add('2d, animation, character, turn_component');
@@ -424,13 +435,18 @@ Q.Monster.extend("Skeleton", {
           var nextMove = findNextLW(this.p.x,this.p.y, "boss");
           this.p.x = nextMove[0];
           this.p.y = nextMove[1];
+          if (nextMove[2]== "derecha"){ this.play(this.p.sheet + "D"); this.p.direction="D";}
+          else if (nextMove[2]== "izquierda"){ this.play(this.p.sheet); this.p.direction="I";}
         }
       }
       if(this.p.frenzy){
         this.healMe();
         this.p.frenzyTurn--;
         if(this.p.frenzyTurn==0){
-          this.play("boss1Stand"); 
+        	if (this.p.direction == "I")
+         		this.play("boss1Stand");
+         	else
+         		this.play("boss1StandD");
           this.p.defense+=10;
           this.p.frenzy=false;
         }
@@ -446,10 +462,16 @@ Q.Monster.extend("Skeleton", {
   attack: function(){
     player = findPlayer();
     if(this.p.frenzy){
-      this.play("boss1FrenzyAttack")
+    	if (this.p.direction == "I")
+      	this.play("boss1FrenzyAttack");
+      else
+      	this.play("boss1FrenzyAttackD");
       player.hit(this);
     } else {
-      this.play("boss1Attack")
+    	if (this.p.direction == "I")
+      	this.play("boss1Attack");
+      else
+      	this.play("boss1AttackD");
     }
     player.hit(this);
     player.p.attacked = true;
@@ -458,7 +480,10 @@ Q.Monster.extend("Skeleton", {
   },
 
   special: function(){
-    this.play("boss1Frenzy"); 
+  	if (this.p.direction == "I")
+    	this.play("boss1Frenzy"); 
+    else
+    	this.play("boss1FrenzyD");
     this.p.frenzy = true;
     this.p.frenzyTurn = 4;
     this.p.defense-=10;
@@ -492,6 +517,7 @@ Q.Sprite.extend("AhPuch", {
       sheet: "boss2Stand",
       sprite: "boss2Anim",
       hearts: 1,
+      direction: "I"
     },props), defaultProps);
 
     this.add('2d, animation, character, turn_component');
@@ -510,7 +536,7 @@ Q.Sprite.extend("AhPuch", {
 
   step: function(dt) {
     if(this.dead()){
-      this.play('boss2Dead')
+      this.play('boss2Dead');
       if(this.p.hearts == 0){
       //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
         act_turnEnemies(this.p.position);
@@ -543,6 +569,8 @@ Q.Sprite.extend("AhPuch", {
           var nextMove = findNextLW(this.p.x,this.p.y, "boss");
           this.p.x = nextMove[0];
           this.p.y = nextMove[1];
+          if (nextMove[2]== "derecha"){ this.play(this.p.sheet + "D"); this.p.direction="D";}
+          else if (nextMove[2]== "izquierda"){ this.play(this.p.sheet); this.p.direction="I";}
         }
       }      
       //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 666;
@@ -553,7 +581,10 @@ Q.Sprite.extend("AhPuch", {
   },
 
   attack: function(){
-    this.play('boss2Attack')
+  	if (this.p.direction == "I")
+    	this.play('boss2Attack');
+    else
+    	this.play('boss2AttackD');
     player = findPlayer();
     player.hit(this);
     player.p.attacked = true;
@@ -562,7 +593,10 @@ Q.Sprite.extend("AhPuch", {
   },
 
   special: function(){
-    this.play('boss2Summon')
+  	if (this.p.direction == "I")
+    	this.play('boss2Summon')
+    else
+    	this.play('boss2SummonD');
     for(var i = 0; i<5; i++)
       Q.stage(0).insert(Dungeon.insertEntity(new Q.Skeleton()));
   },
@@ -591,6 +625,7 @@ Q.Sprite.extend("Kukulkan", {
       sheet: "boss3Stand",
       sprite: "boss3Anim",
       frenzyTurn: 0,
+      direction: "I"
     },props), defaultProps);
 
     this.add('2d, animation, character, turn_component');
@@ -600,7 +635,10 @@ Q.Sprite.extend("Kukulkan", {
     this.character.live(5000, 100, 60, 0);
 
     this.turn_component.init_turn(Q.state.get("enemies"));
-    this.play("boss3Stand");  
+    if (this.p.direction == "I")
+   		this.play("boss3Stand");  
+   	else
+   		this.play("boss3StandD");
     
     this.on("hit", function(collision) {
       // console.log("collision bola mala: "+collision.obj);
@@ -637,6 +675,8 @@ Q.Sprite.extend("Kukulkan", {
           var nextMove = findNextLW(this.p.x,this.p.y, "boss");
           this.p.x = nextMove[0];
           this.p.y = nextMove[1];
+          if (nextMove[2]== "derecha"){ this.play(this.p.sheet + "D"); this.p.direction="D";}
+          else if (nextMove[2]== "izquierda"){ this.play(this.p.sheet); this.p.direction="I";}
         }
       }
       
@@ -648,7 +688,10 @@ Q.Sprite.extend("Kukulkan", {
   },
 
   attack: function(){
-    this.play('boss3Attack')
+  	if (this.p.direction == "I")
+    	this.play('boss3Attack');
+    else
+    	this.play('boss3AttackD');
     player = findPlayer();
     player.hit(this);
     player.p.attacked = true;
@@ -657,7 +700,10 @@ Q.Sprite.extend("Kukulkan", {
   },
 
   special: function(){
-    this.play('boss3Thunder')
+  	if (this.p.direction == "I")
+    	this.play('boss3Thunder');
+    else
+    	this.play('boss3ThunderD');
     player = findPlayer();
     var thunder = new Q.Thunder({x:player.p.x, y:player.p.y});
     
