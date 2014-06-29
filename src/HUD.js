@@ -284,6 +284,8 @@ Q.scene('HUD-stats',function(stage) {
   container.fit(20);
   gState = new Q.Gstate();
   container.insert(gState);
+  if (Deck.cardUsed)
+    gState.used();
 });
 
 Q.Sprite.extend("EnemyHealth",{

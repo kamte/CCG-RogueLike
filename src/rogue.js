@@ -103,6 +103,7 @@ Q.scene('Title',function(stage) {
 
   playButton.on("click",function() {
       Q.clearStages();
+      Deck.fetchCards();
       Q.stageScene("CardsView", 0);
   });
 
@@ -123,11 +124,11 @@ Q.scene('Title',function(stage) {
 Q.UI.Text.extend("DescGliph",{
   init: function(p) {
     this._super({
-      label: "Seleccionado:",
+      label: " WARNING, gliphs \n  are powerful, \n but unpredictable. \n Their effect could \n  be negative if \n the gods are not \n on your side.",
       x: 100,
       y: -170,
-      color: "white",
-      size: 10
+      color: "black",
+      size: 12
     });
   },
   set: function(des) {
@@ -143,16 +144,22 @@ Q.scene('CardsView',function(stage) {
   }));
 
   var descG = box.insert(new Q.DescGliph());
-  //TODO XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  //Meter en el contenerdos las cartas con listener que modifiquen una variable que indique la carta seleccionada
-  //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
   var gliphs = new Array(10);
   var fila=0;
   var columna=0;
   for(var i = 1; i<11;i++){
-    gliphs[i] = box.insert(new Q.UI.Button({
-        x: -90+columna*96, y: -175+fila*119, asset: "gliph"+i+".png", num: i, des: "soy gliph "+i
-    }));
+    if (Deck.isUnlocked[i-1]) {
+      // console.log("Glifo", i-1, "desbloqueado");
+      gliphs[i] = box.insert(new Q.UI.Button({
+          x: -90+columna*96, y: -175+fila*119, asset: "gliph"+i+".png", num: i, des: Deck.description[i-1]
+      }));
+    }
+    else {
+      gliphs[i] = box.insert(new Q.UI.Button({
+          x: -90+columna*96, y: -175+fila*119, asset: "gliph"+0+".png", num: i, des: " You have not found \n this gliph yet"
+      }));
+    }
     if(columna==1 && fila == 0){
       columna++;
     }
@@ -163,8 +170,10 @@ Q.scene('CardsView',function(stage) {
     }
 
     gliphs[i].on("click",function() {
-      console.log(this.p.des)
-      descG.set("Seleccionado \n" + this.p.des)
+      console.log(this.p.des);
+      Deck.selected = this.p.num - 1;
+      console.log(Deck.selected);
+      descG.set("Selected: \n" + this.p.des + "\n Level: " + Deck.level[this.p.num - 1]);
     });
   }
 
@@ -208,11 +217,10 @@ function setupLevel(stage) {
       healed:0});
     
     Dungeon.generate(CharSheet.floor, stage);
-
-    Deck.fetchCards();
     
     stage.insert(enemyHP);
     stage.insert(bossHP);
+
 
     //roll a chance to spawn a card
     var c = Deck.rollCard();
