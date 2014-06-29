@@ -51,7 +51,7 @@ var Deck = {
 
 	rollCard: function() {
 		var chance = Aux.newRandom(1,100);
-		if (chance > 70 && Deck.unlocked < Deck.total) {
+		if (chance > 90 && Deck.unlocked < Deck.total) {
 			console.log("spawning card!");
 			var c = Deck.newCard();
 			return Dungeon.insertEntity(c);
