@@ -132,6 +132,13 @@ Q.component("character", {
       var variation = Aux.newRandom(80, 100);
       var reduction = this.p.defense > 0 ? this.p.defense : 1;
       var damage = Math.ceil(variation * 0.01 * (3 * CharSheet.attack-(2*reduction)));
+      if (Buff.buffCounter < 0) {
+        if (Buff.type == "invencible") {
+          console.log("reduciendo daño hecho a 1");
+          Buff.buffCounter++;
+          damage = 0;
+        }
+      }
       this.p.hitPoints -= (damage>0 ? damage : 1);
       if(this.p.w==32){
         enemyHP.hit(this);

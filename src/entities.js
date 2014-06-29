@@ -166,6 +166,25 @@ Q.Sprite.extend("Player", {
       var variation = Aux.newRandom(80, 100);
       var reduction = CharSheet.defense > 0 ? CharSheet.defense : 1;
       var damage = Math.ceil(variation * 0.01 * (3 * aggressor.p.attack-(2*reduction)));
+      if (Buff.buffCounter > 0) {
+        if (Buff.type == "invencible") {
+          console.log("reduciendo daño a 1");
+          Buff.buffCounter--;
+          damage = 0;
+        }
+        else  {
+          console.log("reduciendo daño a la mitad");
+          Buff.buffCounter--;
+          damage = Math.round(damage / 2);
+        }
+      }
+      else if (Buff.buffCounter < 0) {
+        if (Buff.type == "dmgMultiplier") {
+          console.log("duplicando daño");
+          Buff.buffCounter++;
+          damage = Math.round(damage * 2);
+        }
+      }
       var hitPoints = CharSheet.hitPoints - (damage>0 ? damage : 1);
       console.log("damage",damage);
       CharSheet.updateHp(hitPoints);

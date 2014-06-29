@@ -9,6 +9,7 @@ Q.Sprite.extend("Escalera", {
 
    		this.on("sensor",this,function(collision){
    			if(collision.isA("Player")) {
+          Buff.reset();
    				Q.clearStages();
           ++CharSheet.floor;
           CharSheet.buffApplied = false;

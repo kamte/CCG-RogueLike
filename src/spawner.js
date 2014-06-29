@@ -66,7 +66,7 @@ var monsterGenerator = {
 		else {
 			monster = new Q.Slime();
 		}
-		console.log(monster.p.sheet, " atk: ", monster.p.attack, " def: ", monster.p.defense, " hp: ", monster.p.hitPoints);
+		// console.log(monster.p.sheet, " atk: ", monster.p.attack, " def: ", monster.p.defense, " hp: ", monster.p.hitPoints);
 
 		return monster;
 	},

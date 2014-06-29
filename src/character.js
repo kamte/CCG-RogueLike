@@ -10,6 +10,16 @@ var CharSheet = {
 	heal: 1,
 	healCap: 30,
 
+  //Crecimiento stats:
+  // this.upStats(4, 1, 'all', 0.2, 20, 2);
+  atkG: 4,
+  defG: 1,
+  healthOnLevelUp: 'all',
+  healG: 0.2,
+  hpG: 20,
+  mHealG: 2,
+
+
   //INVENTARIO
 	cards: [],
 	items: new Array(36),
@@ -36,6 +46,9 @@ var CharSheet = {
       case "def":
         CharSheet.defense=value;
         break;
+      case "hp":
+        CharSheet.maxHp=value;
+        break;
     }
     var buff = "stat";
     if (positive)
@@ -44,12 +57,15 @@ var CharSheet = {
       buff = buff + "Neg";
     Buff.type = buff;
     Buff.buffedStat = stat;
+
+     var statsHUD =  Q("StatsContainer",4).first();
+     statsHUD.updateCombatStats(this.attack, this.defense, this.maxHp);
   },
 
 	updateHp: function(hp) {
 		if (hp > this.maxHp)
 			this.hitPoints = this.maxHp;
-    else if (hp <0)
+    else if (hp < 0)
       this.hitPoints = 0;
     else
 			this.hitPoints = hp;
@@ -59,11 +75,11 @@ var CharSheet = {
 
 	updateExp : function(exp) {
     //Si sube de nivel se actualizan las estadísticas
-		if (this.experience + exp > this.nextLevel) {
+		if (this.experience + exp >= this.nextLevel) {
 			this.experience = this.experience + exp - this.nextLevel;
 			this.level += 1;
       
-      this.upStats(4, 1, 'all', 0.2, 20, 2);
+      this.upStats(this.atkG, this.defG, this.healthOnLevelUp, this.healG, this.hpG, this.mHealG);
       console.log(this.maxHp);
 			Q.state.set("experience",this.experience);
 			this.nextLevel = this.nextLevel * 2;
@@ -82,9 +98,11 @@ var CharSheet = {
 
       if(hp == 'all'){
         hp = this.maxHp; 
-      } 
+      }
+      else
+        hp = this.hitPoints; 
 
-      this.updateHp(hp+this.hitPoints);
+      this.updateHp(hp);
 
       this.heal += heal;
       this.healCap += mHeal;
