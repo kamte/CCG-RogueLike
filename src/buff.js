@@ -3,6 +3,9 @@ var Buff = {
 	buffCounter: 0,
 	buffedStat: "none",
 
+	restart: function(){
+		this.type = "none"; this.buffCounter = 0; this.buffedStat = "none";
+	},
 	reset: function() {
 		// console.log("Tipo de buff quitado:", this.type);
 		if (this.type == "statPos") {

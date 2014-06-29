@@ -182,6 +182,8 @@ Q.scene('CardsView',function(stage) {
   }));
 
   playButton.on("click",function() {
+      CharSheet.restart();
+      Buff.restart();
       Q.clearStages();
       Q.stageScene("level1", 0);
       Q.stageScene("HUD-background",3);

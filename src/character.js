@@ -37,6 +37,22 @@ var CharSheet = {
   buff: "none",
   buffCounter: 0,
 
+  restart: function(){
+    this.level = 1; this.hitPoints = 100; this.maxHp = 100; this.attack = 20; this.defense = 2; this.experience = 0; 
+    this.nextLevel = 50; this.heal = 1; this.healCap = 30;
+
+    //Crecimiento stats:
+    // this.upStats(4, 1, 'all', 0.2, 20, 2);
+    this.atkG = 4; this.defG = 1; this.healthOnLevelUp = 'all'; this.healG = 0.2; this.hpG = 20; this.mHealG = 2;
+
+    //INVENTARIO
+    this.items = new Array(36); this.helmet = undefined; this.armor = undefined; this.shield = undefined; this.weapon = undefined;
+
+    //AUXILIARES
+    this.selectItem = -1; this.currentButton = undefined; this.hpBar = new Q.Health(); this.expBar = new Q.Experience(); 
+    this.deleteOn = false; this.floor = 1; this.buff =  "none"; this.buffCounter = 0;
+  },
+
   buffStat: function(stat, value, positive) {
     switch (stat) {
       case "atk":

@@ -8,8 +8,10 @@ Q.Sprite.extend("Escalera", {
    		});
 
    		this.on("sensor",this,function(collision){
-   			if(collision.isA("Player") && !notPass) {
-          if(CharSheet.floor == 15){
+   			if(collision.isA("Player")) {
+          if(notPass){
+            Q.stageScene("HUD-chicken",2);
+          } else if(CharSheet.floor == 15){
             Q.clearStages();
             Q.stageScene("WinView", 0);
           }else {
@@ -22,9 +24,6 @@ Q.Sprite.extend("Escalera", {
             Q.stageScene("HUD-stats",4);
           }
    			}
-        else {
-          Q.stageScene("HUD-chicken",2);
-        }
    		});
    	}
 });

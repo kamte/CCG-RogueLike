@@ -96,14 +96,14 @@ var Deck = {
 				CharSheet.buffStat("hp", CharSheet.maxHp+v, (v > 0));
 				break;
 			case 3: //Spawnea 4 objetos en torno al personaje o 4 arañas con un 30% de probabilidad.
-				n = 2;//Aux.newRandom(0,10);
+				n = Aux.newRandom(0,10);
 				if (n >= (7 + this.level[cardNumber] -1)) {
 					for (var j=0; j<4; ++j)
 						Q.stage(0).insert(Dungeon.insertNextToPlayer(new Q.Spider()));
 				}
 				else {
 					console.log("Spawneando 4 objetos");
-					for (var j=0; j<4; ++j) {
+					for (var j=0; j<this.level[cardNumber]+1; ++j) {
 						item = itemGenerator.spawn();
 						while (item == null)
 							item = itemGenerator.spawn();
@@ -130,7 +130,7 @@ var Deck = {
 				else
 					CharSheet.updateHp(Math.floor(CharSheet.maxHp));
 				break;
-			case 6: //Mejora el porcentaje crecimiento stats
+			case 6: //Mejora el porcentaje de crecimiento de stats
 				n = Aux.newRandom(0,10);
 				var t = this.level[cardNumber] > 2 ? 1 : 0;
 				if (n >=4-t) {
