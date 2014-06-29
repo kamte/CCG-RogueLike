@@ -1,7 +1,7 @@
 var Deck = {
 
 	isUnlocked: [],
-	total: 5,
+	total: 6,
 	unlocked: 0,
 	
 	fetchCards: function() {
@@ -64,19 +64,21 @@ var Deck = {
 		return new Q.Card({ident: index});
 	},
 
+	//niveles de cartas (hasta 3)
+	//mejorar vida
 	getSkill: function(cardNumber) {
-		var lvl = CharSheet.level;
+		var floor = CharSheet.floor;
 		var n, v;
 		switch (cardNumber) {
 			case 0: //Aumenta o disminuye el ataque del jugador en un valor de 5 veces el piso actual durante un piso.
 				n = Math.round(Math.random());
-				v = (n == 0) ? 5*lvl : -5*lvl;
+				v = (n == 0) ? 5*floor : -5*floor;
 				CharSheet.buffStat("atk", CharSheet.attack+v, 10, (v > 0));
 				break;
 			case 1: //Aumenta o disminuye la defensa del jugador en un valor de 4 veces el piso actual durante un piso.
 				n = Math.round(Math.random());
-				v = (n == 0) ? 4*lvl : -4*lvl;
-				CharSheet.buffStat("def", CharSheet.attack+v, 10, v > 0);
+				v = (n == 0) ? 4*floor : -4*floor;
+				CharSheet.buffStat("def", CharSheet.attack+v, 10, (v > 0));
 				break;
 			case 2: //Spawnea 4 objetos en torno al personaje o 4 arañas con un 30% de probabilidad.
 				n = Aux.newRandom(0,10);
@@ -98,10 +100,22 @@ var Deck = {
 				break;
 			case 4: //Cura completamente al jugador o le quita la mitad de su vida actual:
 				n = Aux.newRandom(0,10);
-				if (n >=7)
+				if (n >=3)
 					CharSheet.updateHp(Math.floor(CharSheet.hitPoints / 2));
 				else
 					CharSheet.updateHp(Math.floor(CharSheet.maxHp));
+				break;
+			case 5: //Mejora el porcentaje crecimiento stats
+				n = Aux.newRandom(0,10);
+				if (n >=4) {
+					CharSheet.atkG+=3;
+					CharSheet.defG+=2;
+					CharSheet.healG+=0.1;
+					CharSheet.hpG+=20;
+					CharSheet.mHealG+=2;
+				}
+				else
+					CharSheet.healthOnLevelUp = 'same';
 				break;
 		}
 	}

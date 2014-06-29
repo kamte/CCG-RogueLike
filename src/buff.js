@@ -5,10 +5,16 @@ var Buff = {
 
 	reset: function() {
 		if (this.type == "statPos") {
-			Charsheet.attack-= 5 * Charsheet.floor;
+			if (this.buffedStat == "attack")
+				Charsheet.attack-= 5 * Charsheet.floor;
+			else if (this.buffedStat "defense")
+				Charsheet.defense-= 4 * Charsheet.floor;
 		}
 		else if (this.type == "statNeg") {
-			Charsheet.attack+= 5 * Charsheet.floor;
+			if (this.buffedStat == "attack")
+				Charsheet.attack+= 5 * Charsheet.floor;
+			else if (this.buffedStat == "defense")
+				Charsheet.defense+= 4 * Charsheet.floor;
 		}
 
 		this.type = "none";

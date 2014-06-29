@@ -10,6 +10,16 @@ var CharSheet = {
 	heal: 1,
 	healCap: 30,
 
+  //Crecimiento stats:
+  // this.upStats(4, 1, 'all', 0.2, 20, 2);
+  atkG: 4,
+  defG: 1,
+  healthOnLevelUp: 'all',
+  healG: 0.2,
+  hpG: 20,
+  mHealG: 2,
+
+
   //INVENTARIO
 	cards: [],
 	items: new Array(36),
@@ -49,7 +59,7 @@ var CharSheet = {
 	updateHp: function(hp) {
 		if (hp > this.maxHp)
 			this.hitPoints = this.maxHp;
-    else if (hp <0)
+    else if (hp < 0)
       this.hitPoints = 0;
     else
 			this.hitPoints = hp;
@@ -63,7 +73,7 @@ var CharSheet = {
 			this.experience = this.experience + exp - this.nextLevel;
 			this.level += 1;
       
-      this.upStats(4, 1, 'all', 0.2, 20, 2);
+      this.upStats(this.atkG, this.defG, this.healthOnLevelUp, this.healG, this.hpG, this.mHealG);
       console.log(this.maxHp);
 			Q.state.set("experience",this.experience);
 			this.nextLevel = this.nextLevel * 2;
