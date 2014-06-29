@@ -111,6 +111,11 @@ Q.scene('Title',function(stage) {
     x: 0, y: 90, asset: "instructions.png"
   }));
 
+  instructionButton.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("Instructions", 0);
+  });
+
   var creditsButton = box.insert(new Q.UI.Button({
     x: 0, y: 170, asset: "credits.png", shadow: true
   }));
@@ -125,7 +130,7 @@ Q.UI.Text.extend("DescGliph",{
   init: function(p) {
     this._super({
       label: " WARNING, gliphs \n  are powerful, \n but unpredictable. \n Their effect could \n  be negative if \n the gods are not \n on your side.",
-      x: 100,
+      x: 103,
       y: -170,
       color: "black",
       size: 12
@@ -195,11 +200,28 @@ Q.scene('CardsView',function(stage) {
 Q.scene('Credits',function(stage) {
 
   var box = stage.insert(new Q.UI.Container({
-    x: Q.width/2, y: Q.height/2, asset: "temploMaya.png"
+    x: Q.width/2, y: Q.height/2
   }));
 
   var playButton = box.insert(new Q.UI.Button({
     x: 0, y: 0, asset: "creditsView.png", keyActionName: "confirm"
+  }));
+
+  playButton.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("Title", 0);
+  });
+
+});
+
+Q.scene('Instructions',function(stage) {
+
+  var box = stage.insert(new Q.UI.Container({
+    x: Q.width/2, y: Q.height/2
+  }));
+
+  var playButton = box.insert(new Q.UI.Button({
+    x: 0, y: 0, asset: "instructionsView.png", keyActionName: "confirm"
   }));
 
   playButton.on("click",function() {
@@ -266,7 +288,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("gameOver.png, goHome.png, final.png, Chicken.png, gliph0.png, gliph1.png, gliph2.png, gliph3.png, gliph4.png, gliph5.png, gliph6.png, gliph7.png, gliph8.png, gliph9.png, gliph10.png, GUsed.png, GnotUsed.png, cardsView.png, play2.png, card.png, card.json, fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, peach.png, peach.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("instructionsView.png, gameOver.png, goHome.png, final.png, Chicken.png, gliph0.png, gliph1.png, gliph2.png, gliph3.png, gliph4.png, gliph5.png, gliph6.png, gliph7.png, gliph8.png, gliph9.png, gliph10.png, GUsed.png, GnotUsed.png, cardsView.png, play2.png, card.png, card.json, fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, peach.png, peach.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
   Q.compileSheets("bat.png", "bat.json");
