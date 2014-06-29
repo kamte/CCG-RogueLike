@@ -46,9 +46,13 @@ Q.Sprite.extend("Collectable", {
         //add to unlocked cards
         var c = this;
         console.log(c.p.ident);
-        Deck.isUnlocked[c.p.ident] = true;
-        Deck.unlocked++;
-        CharSheet.cards.push(c);
+        if (!Deck.isUnlocked[c.p.ident]) {
+          Deck.isUnlocked[c.p.ident] = true;
+          Deck.unlocked++;
+        }
+        else if (Deck.level[c.p.ident] < 3) {
+          Deck.level[c.p.ident]++;
+        }
         if(Dungeon.map[toMatrix(c.p.y)][toMatrix(c.p.x)] == 666)
           Dungeon.map[toMatrix(c.p.y)][toMatrix(c.p.x)] = 0;
       }

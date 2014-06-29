@@ -21,7 +21,6 @@ var CharSheet = {
 
 
   //INVENTARIO
-	cards: [],
 	items: new Array(36),
   helmet: undefined,
   armor: undefined,

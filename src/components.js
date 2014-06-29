@@ -80,10 +80,13 @@ Q.component("customControls", {
         }
       } else if (Q.inputs['action'] && p.timer > 10) {
         p.timer = 0;
-        //if (/*carta no usada*/) {
+        if (!Deck.cardUsed && Deck.selected !== null) {
           //usar carta
-          //ya no se pueden usar mas cartas
-        //}
+          Deck.getSkill(Deck.selected);
+          gState.used();
+          //ya no se pueden usar mas cartas en la partida
+          Deck.cardUsed = true;
+        }
       }
 
       if(p.diffY || p.diffX ) { 

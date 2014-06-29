@@ -148,6 +148,8 @@ Q.Sprite.extend("Player", {
 
     } else if(this.dead()){
       // console.log("dead "+this.p.hitPoints+" "+this.dead());
+      Deck.clearCards();
+      Deck.saveCards();
       this.destroy();
       Q.stageScene("GameOver", 1);
     } else if(Q.state.get("nextMove")>Q.state.get("enemies")) {
