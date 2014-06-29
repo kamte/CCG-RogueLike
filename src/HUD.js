@@ -224,6 +224,19 @@ Q.scene('HUD-background', function(stage){
     box.insert(new Q.HUDbg());
 });
 
+Q.Sprite.extend("Gstate", {
+    init: function(p) {
+        this._super(p, {   
+            asset: "GnotUsed.png", x: 120, y: 40
+        });
+        this.add('2d');
+    },
+
+    used: function(){
+      this.p.asset = "GUsed.png";
+    }
+});
+
 Q.UI.Container.extend("StatsContainer",{
   init: function(p) {
     this._super({
@@ -258,6 +271,8 @@ Q.UI.Container.extend("StatsContainer",{
   }
 });
 
+var gState;
+
 Q.scene('HUD-stats',function(stage) {
   var container = stage.insert(new Q.StatsContainer());
 
@@ -267,6 +282,8 @@ Q.scene('HUD-stats',function(stage) {
   container.insert(CharSheet.hpBar);
   container.insert(CharSheet.expBar);
   container.fit(20);
+  gState = new Q.Gstate();
+  container.insert(gState);
 });
 
 Q.Sprite.extend("EnemyHealth",{

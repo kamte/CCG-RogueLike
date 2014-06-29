@@ -103,9 +103,7 @@ Q.scene('Title',function(stage) {
 
   playButton.on("click",function() {
       Q.clearStages();
-      Q.stageScene("level1", 0);
-      Q.stageScene("HUD-background",3);
-      Q.stageScene("HUD-stats",4);
+      Q.stageScene("CardsView", 0);
   });
 
   var instructionButton = box.insert(new Q.UI.Button({
@@ -121,6 +119,67 @@ Q.scene('Title',function(stage) {
       Q.stageScene("Credits", 0);
   });
 });
+
+Q.UI.Text.extend("DescGliph",{
+  init: function(p) {
+    this._super({
+      label: "Seleccionado:",
+      x: 100,
+      y: -170,
+      color: "white",
+      size: 10
+    });
+  },
+  set: function(des) {
+    this.p.label = des;
+  }
+});
+
+Q.scene('CardsView',function(stage) {
+  stage.insert(new Q.Sprite({asset: "cardsView.png", x: Q.width/2, y: Q.height/2}));
+
+  var box = stage.insert(new Q.UI.Container({
+    x: Q.width/2, y: Q.height/2
+  }));
+
+  var descG = box.insert(new Q.DescGliph());
+  //TODO XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  //Meter en el contenerdos las cartas con listener que modifiquen una variable que indique la carta seleccionada
+  //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  var gliphs = new Array(10);
+  var fila=0;
+  var columna=0;
+  for(var i = 1; i<11;i++){
+    gliphs[i] = box.insert(new Q.UI.Button({
+        x: -90+columna*96, y: -175+fila*119, asset: "gliph"+i+".png", num: i, des: "soy gliph "+i
+    }));
+    if(columna==1 && fila == 0){
+      columna++;
+    }
+    columna++;
+    if(columna==3){
+      columna=0;
+      fila++;
+    }
+
+    gliphs[i].on("click",function() {
+      console.log(this.p.des)
+      descG.set("Seleccionado \n" + this.p.des)
+    });
+  }
+
+  var playButton = box.insert(new Q.UI.Button({
+    x: 102, y: 179, asset: "play2.png", keyActionName: "confirm"
+  }));
+
+  playButton.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("level1", 0);
+      Q.stageScene("HUD-background",3);
+      Q.stageScene("HUD-stats",4);
+  });
+});
+
 
 Q.scene('Credits',function(stage) {
 
@@ -167,7 +226,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("card.png, card.json, fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("gliph0.png, gliph1.png, gliph2.png, gliph3.png, gliph4.png, gliph5.png, gliph6.png, gliph7.png, gliph8.png, gliph9.png, gliph10.png, GUsed.png, GnotUsed.png, cardsView.png, play2.png, card.png, card.json, fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
   Q.compileSheets("bat.png", "bat.json");

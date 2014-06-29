@@ -73,13 +73,17 @@ Q.component("customControls", {
       } else if(Q.inputs['fire'] && p.timer > 10) {
         p.timer = 0;
         if (Q.stage(1) != undefined) {
-          console.log("inventario abierto, cerrando");
           Q.clearStage(1);
         }
         else {
-          console.log("abriendo inventario");
           Q.stageScene("inventory", 1);
         }
+      } else if (Q.inputs['action'] && p.timer > 10) {
+        p.timer = 0;
+        //if (/*carta no usada*/) {
+          //usar carta
+          //ya no se pueden usar mas cartas
+        //}
       }
 
       if(p.diffY || p.diffX ) { 
