@@ -320,19 +320,38 @@ Q.load("instructionsView.png, gameOver.png, goHome.png, final.png, Chicken.png, 
   });
 
   Q.animations("batAnim", {
-    bat: {frames: [0,1,2,3], rate: 1/4, loop: true}
+    bat: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: false},
+    batD: {frames: [0,1,2,3], rate: 1/4, loop: true, flip: "x"},
+    batAtk: {frames: [3,4,3,4], rate: 1/6, loop: true, flip: false, next: "bat"},
+    batDAtk: {frames: [3,4,3,4], rate: 1/6, loop: true, flip: "x", next: "batD"}
   });
 
   Q.animations("snakeAnim", {
-    snake: {frames: [0,1], rate: 1/4, loop: true}
+    snake: {frames: [0,1], rate: 1/4, loop: true, flip: false},
+    snakeD: {frames: [0,1], rate: 1/4, loop: true, flip: "x"},
+    snakeAtk: {frames: [2,3,2,3], rate: 1/4, loop: true, flip: false, next: "snake"},
+    snakeDAtk: {frames: [2,3,2,3], rate: 1/4, loop: true, flip: "x", next: "snakeD"}
   });
 
   Q.animations("spiderAnim", {
-    spider: {frames: [0]}
+    spider: {frames: [0], flip: false},
+    spiderD: {frames: [0], flip: "x"},
+    spiderAtk: {frames: [4,5,6,7], rate: 1/4, flip: false, next: "spider"},
+    spiderDAtk: {frames: [4,5,6,7], rate: 1/4, flip: "x", next: "spiderD"}
+  });
+
+  Q.animations("slimeAnim", {
+    slime: {frames: [0,1,2,3,4,3,2,1], rate: 1/4, loop: true, flip: false},
+    slimeD: {frames: [0,1,2,3,4,3,2,1], rate: 1/4, loop: true, flip: "x"},
+    slimeAtk: {frames: [2,5,2,5], rate: 1/4, loop: true, flip: false, next: "slime"},
+    slimeDAtk: {frames: [2,5,2,5], rate: 1/4, loop: true, flip: "x", next: "slimeD"}
   });
 
   Q.animations("skeletonAnim", {
-    skeleton: {frames: [0]}
+    skeleton: {frames: [0], flip: false},
+    skeletonD: {frames: [0], flip: "x"},
+    skeletonAtk: {frames: [1,2], flip: false, next: "skeleton"},
+    skeletonDAtk: {frames: [1,2], flip: false, next: "skeletonD"}
   });
   
   Q.animations("playerAnim", {
@@ -344,29 +363,37 @@ Q.load("instructionsView.png, gameOver.png, goHome.png, final.png, Chicken.png, 
     hurtL: {frames: [0,3], rate: 1/2, loop: false, flip: "x"}
   });
 
-  Q.animations("slimeAnim", {
-    slime: {frames: [0,1,2,3,4,3,2,1], rate: 1/4, loop: true}
-  });
-
   Q.animations("boss1Anim", {
-    boss1Stand: {frames: [0], rate: 1},
-    boss1Attack: {frames: [0,1,2,3], rate: 1/6, next:'boss1Stand'},
-    boss1Frenzy: {frames: [4], rate: 1},
-    boss1FrenzyAttack: {frames: [4,5,6,7], rate: 1/6, next: 'boss1Frenzy'}
+    boss1Stand: {frames: [0], rate: 1, flip: false},
+    boss1StandD: {frames: [0], rate: 1, flip: "x"},
+    boss1Attack: {frames: [0,1,2,3], rate: 1/6, next:'boss1Stand', flip: false},
+    boss1AttackD: {frames: [0,1,2,3], rate: 1/6, next:'boss1StandD', flip: "x"},
+    boss1Frenzy: {frames: [4], rate: 1, flip: false},
+    boss1FrenzyD: {frames: [4], rate: 1, flip: "x"},
+    boss1FrenzyAttack: {frames: [4,5,6,7], rate: 1/6, next: 'boss1Frenzy', flip: false},
+    boss1FrenzyAttackD: {frames: [4,5,6,7], rate: 1/6, next: 'boss1FrenzyD', flip: "x"}
   });
 
   Q.animations("boss2Anim", {
-    boss2Stand: {frames: [0], rate: 1},
-    boss2Attack: {frames: [0,3,0,3], rate: 1/6, next:'boss2Stand'},
-    boss2Walk: {frames: [0,1,2,1], rate: 1/6, next:'boss2Stand'},
+    boss2Stand: {frames: [0], rate: 1, flip: false},
+    boss2StandD: {frames: [0], rate: 1, flip: "x"},
+    boss2Attack: {frames: [0,3,0,3], rate: 1/6, flip: false, next:'boss2Stand'},
+    boss2AttackD: {frames: [0,3,0,3], rate: 1/6, flip: "x", next:'boss2StandD'},
+    boss2Walk: {frames: [0,1,2,1], rate: 1/6, flip: false, next:'boss2Stand'},
+    boss2WalkD: {frames: [0,1,2,1], rate: 1/6, flip: "x", next:'boss2StandD'},
     boss2Summon: {frames: [4,5,4,5], rate: 1/6, next: 'boss2Stand'},
-    boss2Dead: {frames: [6], rate: 1/6}
+    boss2SummonD: {frames: [4,5,4,5], rate: 1/6, next: 'boss2StandD'},
+    boss2Dead: {frames: [6], rate: 1/6, flip: false},
+    boss2Dead: {frames: [6], rate: 1/6, flip: "x"},
   });
 
   Q.animations("boss3Anim", {
-    boss3Stand: {frames: [0], rate: 1},
-    boss3Attack: {frames: [0,1,0,1], rate: 1/6, next:'boss3Stand'},
-    boss3Thunder: {frames: [0,2,0,2], rate: 1/6, next: 'boss3Stand'}
+    boss3Stand: {frames: [0], rate: 1, flip: false},
+    boss3StandD: {frames: [0], rate: 1, flip: "x"},
+    boss3Attack: {frames: [0,1,0,1], rate: 1/6, next:'boss3Stand', flip: false},
+    boss3AttackD: {frames: [0,1,0,1], rate: 1/6, next:'boss3StandD', flip: "x"},
+    boss3Thunder: {frames: [0,2,0,2], rate: 1/6, next: 'boss3Stand', flip: false},
+    boss3ThunderD: {frames: [0,2,0,2], rate: 1/6, next: 'boss3StandD', flip: "x"}
   });
 
   Q.animations("peachAnim", {
