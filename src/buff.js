@@ -4,25 +4,29 @@ var Buff = {
 	buffedStat: "none",
 
 	reset: function() {
+		// console.log("Tipo de buff quitado:", this.type);
 		if (this.type == "statPos") {
 			if (this.buffedStat == "atk")
-				Charsheet.attack-= 5 * Charsheet.floor;
+				CharSheet.attack-= 5 * CharSheet.floor;
 			else if (this.buffedStat == "def")
-				Charsheet.defense-= 4 * Charsheet.floor;
+				CharSheet.defense-= 4 * CharSheet.floor;
 			else
-				Charsheet.maxH-=15 * Charsheet.floor;
+				CharSheet.maxHp-=15 * CharSheet.floor;
 		}
 		else if (this.type == "statNeg") {
 			if (this.buffedStat == "atk")
-				Charsheet.attack+= 5 * Charsheet.floor;
+				CharSheet.attack+= 5 * CharSheet.floor;
 			else if (this.buffedStat == "def")
-				Charsheet.defense+= 4 * Charsheet.floor;
+				CharSheet.defense+= 4 * CharSheet.floor;
 			else
-				Charsheet.maxH+=15 * Charsheet.floor;
+				CharSheet.maxHp+=15 * CharSheet.floor;
 		}
 
 		this.type = "none";
 		this.buffCounter = 0;
 		this.buffedStat = "none";
+
+		var statsHUD =  Q("StatsContainer",4).first();
+     	statsHUD.updateCombatStats(CharSheet.attack, CharSheet.defense, CharSheet.maxHp);
 	}
 };

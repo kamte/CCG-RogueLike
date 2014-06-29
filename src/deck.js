@@ -1,7 +1,7 @@
 var Deck = {
 
 	isUnlocked: [],
-	total: 7,
+	total: 10,
 	unlocked: 0,
 	
 	fetchCards: function() {
@@ -68,32 +68,41 @@ var Deck = {
 	//mejorar vida
 	getSkill: function(cardNumber) {
 		var floor = CharSheet.floor;
-		var n, v;
+		var n, v, p, item;
 		switch (cardNumber) {
 			case 0: //Aumenta o disminuye el ataque del jugador en un valor de 5 veces el piso actual durante un piso.
-				n = Math.round(Math.random());
-				v = (n == 0) ? 5*floor : -5*floor;
-				CharSheet.buffStat("atk", CharSheet.attack+v, 10, (v > 0));
+				n = Aux.newRandom(0,10);
+				v = (n >= 4) ? 5*floor : -5*floor;
+				CharSheet.buffStat("atk", CharSheet.attack+v, (v > 0));
 				break;
 			case 1: //Aumenta o disminuye la defensa del jugador en un valor de 4 veces el piso actual durante un piso.
-				n = Math.round(Math.random());
-				v = (n == 0) ? 4*floor : -4*floor;
-				CharSheet.buffStat("def", CharSheet.attack+v, 10, (v > 0));
+				n = Aux.newRandom(0,10);
+				v = (n >= 4) ? 4*floor : -4*floor;
+				CharSheet.buffStat("def", CharSheet.defense+v, (v > 0));
 				break;
 			case 2: //Aumenta o disminuye la vida del jugador en un valor de 15 veces el piso actual durante un piso.
-				n = Math.round(Math.random());
-				v = (n == 0) ? 15*floor : -15*floor;
-				CharSheet.buffStat("hp", CharSheet.attack+v, 10, (v > 0));
+				n = Aux.newRandom(0,10);
+				v = (n >= 4) ? 15*floor : -15*floor;
+				console.log("Valor de v:", v > 0);
+				CharSheet.buffStat("hp", CharSheet.maxHp+v, (v > 0));
 				break;
 			case 3: //Spawnea 4 objetos en torno al personaje o 4 arañas con un 30% de probabilidad.
-				n = Aux.newRandom(0,10);
+				n = 2;//Aux.newRandom(0,10);
 				if (n >= 7) {
 					for (var j=0; j<4; ++j)
 						Q.stage(0).insert(Dungeon.insertNextToPlayer(new Q.Spider()));
 				}
-				else
-					for (var j=0; j<4; ++j)
-						Q.stage(0).insert(Dungeon.insertNextToPlayer(objectGenerator.spawn()));
+				else {
+					console.log("Spawneando 4 objetos");
+					for (var j=0; j<4; ++j) {
+						item = itemGenerator.spawn();
+						while (item == null)
+							item = itemGenerator.spawn();
+						console.log(item);
+						Dungeon.insertNextToPlayer(item);
+						Q.stage(0).insert(item);
+					}
+				}
 				break;
 			case 4: //Reduce a la mitad el daño recibido, o lo duplica con un 30% de probabilidad durante 5 ataques.
 				n = Aux.newRandom(0,10);
@@ -121,6 +130,54 @@ var Deck = {
 				}
 				else
 					CharSheet.healthOnLevelUp = 'same';
+				break;
+			case 7: //Incrementa o decrementa el nivel del jugador
+				n = Aux.newRandom(0,10);
+				if (n >=4) {
+					console.log("leveling up");
+					CharSheet.updateExp(CharSheet.nextLevel - CharSheet.experience);
+				}
+				else {
+					console.log("leveling down");
+					if (CharSheet.level > 1)
+						CharSheet.level--;
+					CharSheet.experience = 0;
+					CharSheet.expBar.train();
+					Q("StatsContainer",4).first().updateLevel(CharSheet.level);
+					Q("StatsContainer",4).first().p.EXPlabel.train(0);
+				}
+				break;
+			case 8: //REduce el daño recibido o hecho a 1
+				n = Aux.newRandom(0,10);
+				Buff.type = "invencible";
+				if (n >= -7) {
+					console.log("pifia");
+					Buff.buffCounter = -5;
+				}
+				else 
+					Buff.buffCounter = 5;
+				break;
+			case 9: //Transporta al jugador al piso siguiente o un piso atrás
+				n = Aux.newRandom(0,10);
+				if (n >= 4) {
+					Buff.reset();
+   					Q.clearStages();
+			        ++CharSheet.floor;
+			        CharSheet.buffApplied = false;
+			        Q.stageScene("level1", 0);
+			        Q.stageScene("HUD-background",3);
+			        Q.stageScene("HUD-stats",4);
+				}
+				else{
+					Buff.reset();
+   					Q.clearStages();
+   					if (CharSheet.floor > 1)
+			        	--CharSheet.floor;
+			        CharSheet.buffApplied = false;
+			        Q.stageScene("level1", 0);
+			        Q.stageScene("HUD-background",3);
+			        Q.stageScene("HUD-stats",4);
+				}
 				break;
 		}
 	}

@@ -130,7 +130,7 @@ var Dungeon = {
         stage.insert(this.insertEntity(new Q.Escalera()));
     
         //Generar entre x e y objetos
-        objectGenerator.spawner(stage, 5, 14);
+        itemGenerator.spawner(stage, 5, 14);
     
         //Spawn 4 to 6 enemies when a floor is entered
         monsterGenerator.spawner(stage, 8, 16);
@@ -148,7 +148,7 @@ var Dungeon = {
         stage.insert(this.insertEntityInRoom(new Q.Escalera(), 3));
     
         //Generar entre x e y objetos
-        objectGenerator.spawner(stage, 2, 4, 1);
+        itemGenerator.spawner(stage, 2, 4, 1);
     
         //Spawn 4 to 6 enemies when a floor is entered
         monsterGenerator.spawner(stage, 3, 6, 1);
@@ -167,7 +167,7 @@ var Dungeon = {
     
         stage.insert(this.insertEntityInRoom(new Q.Escalera(), 4));
     
-        objectGenerator.spawner(stage, 3, 6, 3);
+        itemGenerator.spawner(stage, 3, 6, 3);
 
         monsterGenerator.spawner(stage, 2, 4, 2);
         monsterGenerator.spawner(stage, 3, 6, 1);
@@ -187,7 +187,7 @@ var Dungeon = {
         stage.insert(this.insertEntityInRoom(new Q.Escalera(), 4));
     
         //Generar entre x e y objetos
-        objectGenerator.spawner(stage, 2, 4, 2);
+        itemGenerator.spawner(stage, 2, 4, 2);
     
         //Spawn 4 to 6 enemies when a floor is entered
         monsterGenerator.spawner(stage, 5, 8, 1);

@@ -57,6 +57,9 @@ var CharSheet = {
       buff = buff + "Neg";
     Buff.type = buff;
     Buff.buffedStat = stat;
+
+     var statsHUD =  Q("StatsContainer",4).first();
+     statsHUD.updateCombatStats(this.attack, this.defense, this.maxHp);
   },
 
 	updateHp: function(hp) {
@@ -72,7 +75,7 @@ var CharSheet = {
 
 	updateExp : function(exp) {
     //Si sube de nivel se actualizan las estadísticas
-		if (this.experience + exp > this.nextLevel) {
+		if (this.experience + exp >= this.nextLevel) {
 			this.experience = this.experience + exp - this.nextLevel;
 			this.level += 1;
       
@@ -95,9 +98,11 @@ var CharSheet = {
 
       if(hp == 'all'){
         hp = this.maxHp; 
-      } 
+      }
+      else
+        hp = this.hitPoints; 
 
-      this.updateHp(hp+this.hitPoints);
+      this.updateHp(hp);
 
       this.heal += heal;
       this.healCap += mHeal;
