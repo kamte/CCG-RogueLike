@@ -1,3 +1,5 @@
+var notPass = false;
+
 var Dungeon = {
     map: null, //mapa para los tiles: 0=nada, impares=paredes, pares=suelos
     map_size: 150,
@@ -87,10 +89,13 @@ var Dungeon = {
 
         if(level_floor===floorFirstBoss){
             this.generateBoss1Entities(stage);
+            notPass = true;
         } else if(level_floor===floorSecondBoss){
             this.generateBoss2Entities(stage);
+            notPass = true;
         } else if(level_floor===floorThirdBoss){
             this.generateBoss3Entities(stage);
+            notPass = true;
         } else {
             this.generateRandomEntities(stage);
         }
@@ -125,12 +130,12 @@ var Dungeon = {
         stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
         stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
 
+        stage.insert(this.insertEntity(new Q.Escalera()));
+        
         var p = stage.insert(this.insertEntity(new Q.Player()));
     
-        stage.insert(this.insertEntity(new Q.Escalera()));
-    
         //Generar entre x e y objetos
-        objectGenerator.spawner(stage, 5, 14);
+        itemGenerator.spawner(stage, 5, 14);
     
         //Spawn 4 to 6 enemies when a floor is entered
         monsterGenerator.spawner(stage, 8, 16);
@@ -142,13 +147,13 @@ var Dungeon = {
     generateBoss1Entities: function(stage){
         stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
         stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
+    
+        stage.insert(this.insertEntityInRoom(new Q.Escalera(), 3));
 
         var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
     
-        stage.insert(this.insertEntityInRoom(new Q.Escalera(), 3));
-    
         //Generar entre x e y objetos
-        objectGenerator.spawner(stage, 2, 4, 1);
+        itemGenerator.spawner(stage, 2, 4, 1);
     
         //Spawn 4 to 6 enemies when a floor is entered
         monsterGenerator.spawner(stage, 3, 6, 1);
@@ -163,11 +168,11 @@ var Dungeon = {
         stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
         stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
 
+        stage.insert(this.insertEntityInRoom(new Q.Escalera(), 4));
+
         var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
     
-        stage.insert(this.insertEntityInRoom(new Q.Escalera(), 4));
-    
-        objectGenerator.spawner(stage, 3, 6, 3);
+        itemGenerator.spawner(stage, 3, 6, 3);
 
         monsterGenerator.spawner(stage, 2, 4, 2);
         monsterGenerator.spawner(stage, 3, 6, 1);
@@ -181,13 +186,13 @@ var Dungeon = {
     generateBoss3Entities: function(stage){
         stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
         stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
+    
+        stage.insert(this.insertEntityInRoom(new Q.Escalera(), 4));
 
         var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
     
-        stage.insert(this.insertEntityInRoom(new Q.Escalera(), 4));
-    
         //Generar entre x e y objetos
-        objectGenerator.spawner(stage, 2, 4, 2);
+        itemGenerator.spawner(stage, 2, 4, 2);
     
         //Spawn 4 to 6 enemies when a floor is entered
         monsterGenerator.spawner(stage, 5, 8, 1);
@@ -375,7 +380,7 @@ var Dungeon = {
         var columna = Aux.newRandom(r.x+1, r.x+r.w-1);
         var fila = Aux.newRandom(r.y+1, r.y+r.h-1);
 
-        while (Dungeon.map[columna][fila] % 2 !== 0 || Dungeon.map[columna][fila] == 0) {
+        while (Dungeon.map[columna][fila] % 2 !== 0 || Dungeon.map[columna][fila] == 0 || Dungeon.map[columna][fila] == 666) {
             columna = Aux.newRandom(r.x+1, r.x+r.w-1);
             fila = Aux.newRandom(r.y+1, r.y+r.h-1);
             if (fila === toMatrix(stairs.p.x) || columna === toMatrix(stairs.p.y))
@@ -417,6 +422,52 @@ var Dungeon = {
         entity.p.y=fromMatrix(columna);  
         //console.log(Dungeon.map[columna][fila]);
         return entity;
+    },
+
+    insertNextToPlayer: function(entity) {
+        var p = findPlayer();
+        var posibles = [];
+        var x = p.p.x; var y = p.p.y;
+        var fila=toMatrix(y);
+        var columna=toMatrix(x);
+        var pos = [];
+        var num, dir;
+
+        if(Dungeon.map[fila][columna+1]%2==0 && Dungeon.map[fila][columna+1] !== 666){
+            posibles.push('derecha');
+        }
+        if(Dungeon.map[fila][columna-1]%2==0 && Dungeon.map[fila][columna-1] !== 666){
+            posibles.push('izquierda');
+        }
+        if(Dungeon.map[fila+1][columna]%2==0 && Dungeon.map[fila+1][columna] !== 666){
+            posibles.push('abajo');
+        }
+        if(Dungeon.map[fila-1][columna]%2==0 && Dungeon.map[fila-1][columna] !== 666){
+            posibles.push('arriba');
+        }
+        if (posibles.length > 0) {
+            num = Math.floor(Math.random()*(posibles.length));
+            dir = posibles[num];
+
+              if(dir == 'derecha'){
+                pos[0] = x+32;
+                pos[1] = y;
+              } else if(dir == 'izquierda') {
+                pos[0] = x-32;
+                pos[1] = y;
+              } else if(dir == 'abajo') {
+                pos[0] = x;
+                pos[1] = y+32;
+              } else if(dir == 'arriba'){
+                pos[0] = x;
+                pos[1] = y-32;
+              }
+            entity.p.x = pos[0];
+            entity.p.y = pos[1];
+            Dungeon.map[toMatrix(pos[1])][toMatrix(pos[0])] = 666;
+            return entity;
+        }
+        else Dungeon.insertEntity(entity);
     },
 
     insertEntityInRoom: function (entity, room) {

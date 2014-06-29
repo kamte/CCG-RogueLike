@@ -224,6 +224,19 @@ Q.scene('HUD-background', function(stage){
     box.insert(new Q.HUDbg());
 });
 
+Q.Sprite.extend("Gstate", {
+    init: function(p) {
+        this._super(p, {   
+            asset: "GnotUsed.png", x: 120, y: 40
+        });
+        this.add('2d');
+    },
+
+    used: function(){
+      this.p.asset = "GUsed.png";
+    }
+});
+
 Q.UI.Container.extend("StatsContainer",{
   init: function(p) {
     this._super({
@@ -258,6 +271,8 @@ Q.UI.Container.extend("StatsContainer",{
   }
 });
 
+var gState;
+
 Q.scene('HUD-stats',function(stage) {
   var container = stage.insert(new Q.StatsContainer());
 
@@ -267,6 +282,10 @@ Q.scene('HUD-stats',function(stage) {
   container.insert(CharSheet.hpBar);
   container.insert(CharSheet.expBar);
   container.fit(20);
+  gState = new Q.Gstate();
+  container.insert(gState);
+  if (Deck.cardUsed)
+    gState.used();
 });
 
 Q.Sprite.extend("EnemyHealth",{
@@ -370,7 +389,31 @@ Q.scene('HUD-mss',function(stage) {
   textFullInventory = new Q.InventoryTroll();
 
   textFullInventory.on("click",function() {
-    console.log("CLCK");
+    Q.clearStage(2);
+  });
+  box.insert(textFullInventory);
+});
+
+Q.UI.Button.extend("Troll",{
+  init: function(p) {
+    this._super({
+      x:0,
+      y:0,
+      asset: "Chicken.png",
+      keyActionName: "confirm, fire",
+      opacity: 1
+    });
+  }
+});
+
+Q.scene('HUD-chicken',function(stage) {
+  //var container = stage.insert(new Q.UI.Container());
+  var box = stage.insert(new Q.UI.Container({
+    x:Q.width/2, y: Q.height/2
+  }));
+  textFullInventory = new Q.Troll();
+
+  textFullInventory.on("click",function() {
     Q.clearStage(2);
   });
   box.insert(textFullInventory);

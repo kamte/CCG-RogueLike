@@ -148,7 +148,10 @@ Q.Sprite.extend("Player", {
 
     } else if(this.dead()){
       // console.log("dead "+this.p.hitPoints+" "+this.dead());
+      Deck.clearCards();
+      Deck.saveCards();
       this.destroy();
+      Q.stageScene("GameOver", 1);
     } else if(Q.state.get("nextMove")>Q.state.get("enemies")) {
       Q.state.set("nextMove", 0);
     }
@@ -166,6 +169,25 @@ Q.Sprite.extend("Player", {
       var variation = Aux.newRandom(80, 100);
       var reduction = CharSheet.defense > 0 ? CharSheet.defense : 1;
       var damage = Math.ceil(variation * 0.01 * (3 * aggressor.p.attack-(2*reduction)));
+      if (Buff.buffCounter > 0) {
+        if (Buff.type == "invencible") {
+          console.log("reduciendo daño a 1");
+          Buff.buffCounter--;
+          damage = 0;
+        }
+        else  {
+          console.log("reduciendo daño a la mitad");
+          Buff.buffCounter--;
+          damage = Math.round(damage / 2);
+        }
+      }
+      else if (Buff.buffCounter < 0) {
+        if (Buff.type == "dmgMultiplier") {
+          console.log("duplicando daño");
+          Buff.buffCounter++;
+          damage = Math.round(damage * 2);
+        }
+      }
       var hitPoints = CharSheet.hitPoints - (damage>0 ? damage : 1);
       console.log("damage",damage);
       CharSheet.updateHp(hitPoints);
@@ -379,6 +401,7 @@ Q.Monster.extend("Skeleton", {
       act_turnEnemies(this.p.position);
 
       this.destroy();
+      notPass = false;
 
     } else if (Q.state.get("nextMove") == this.p.position && !this.p.moved) {
       this.p.moved = true;
@@ -492,6 +515,7 @@ Q.Sprite.extend("AhPuch", {
       //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
         act_turnEnemies(this.p.position);
         this.destroy();
+        notPass = false;
       } else {
         this.p.hearts--;
         this.p.hitPoints = this.p.maxHitPoints;
@@ -589,6 +613,7 @@ Q.Sprite.extend("Kukulkan", {
       act_turnEnemies(this.p.position);
 
       this.destroy();
+      notPass = false;
 
     } else if (Q.state.get("nextMove") == this.p.position && !this.p.moved) {
       this.p.moved = true;
@@ -674,5 +699,25 @@ Q.Sprite.extend("Thunder", {
       if(this.p.timeOut <= 0){
         this.destroy();
       }
+  }
+});
+
+Q.Sprite.extend("Peach", {
+  init: function(p) {
+    this._super(p, {
+      x:Q.width/2,
+      y:Q.height/2,
+      sheet: "peach",
+      sprite: "peachAnim",
+      sensor: true,
+      collisionMask: Q.SPRITE_NONE,
+      type: Q.SPRITE_NONE,
+    });
+
+    this.add('2d, animation');
+    this.play("peach"); 
+  },
+
+  step: function(dt){
   }
 });

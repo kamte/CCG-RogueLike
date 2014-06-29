@@ -34,7 +34,7 @@ var NamesGenerator = {
 	} 
 };
 
-var objectGenerator = {
+var itemGenerator = {
 
 	spawner : function(stage, min, max, room){
 		var max = Aux.newRandom(min, max);

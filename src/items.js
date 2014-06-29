@@ -9,11 +9,20 @@ Q.Sprite.extend("Escalera", {
 
    		this.on("sensor",this,function(collision){
    			if(collision.isA("Player")) {
-   				Q.clearStages();
-          ++CharSheet.floor;
-          Q.stageScene("level1", 0);
-          Q.stageScene("HUD-background",3);
-          Q.stageScene("HUD-stats",4);
+          if(notPass){
+            Q.stageScene("HUD-chicken",2);
+          } else if(CharSheet.floor == 15){
+            Q.clearStages();
+            Q.stageScene("WinView", 0);
+          }else {
+            Buff.reset();
+     				Q.clearStages();
+            ++CharSheet.floor;
+            CharSheet.buffApplied = false;
+            Q.stageScene("level1", 0);
+            Q.stageScene("HUD-background",3);
+            Q.stageScene("HUD-stats",4);
+          }
    			}
    		});
    	}
@@ -33,9 +42,18 @@ Q.Sprite.extend("Collectable", {
   recoge: function(collision) {
     if(collision.isA("Player")) {
       if(this.isA("Card")) {
-        //add to card array, TODO
+        //add to unlocked cards
         var c = this;
-        CharSheet.cards.push(c);
+        console.log(c.p.ident);
+        if (!Deck.isUnlocked[c.p.ident]) {
+          Deck.isUnlocked[c.p.ident] = true;
+          Deck.unlocked++;
+        }
+        else if (Deck.level[c.p.ident] < 3) {
+          Deck.level[c.p.ident]++;
+        }
+        if(Dungeon.map[toMatrix(c.p.y)][toMatrix(c.p.x)] == 666)
+          Dungeon.map[toMatrix(c.p.y)][toMatrix(c.p.x)] = 0;
       }
       else {
         //add to item array
@@ -52,8 +70,14 @@ Q.Sprite.extend("Collectable", {
 Q.Collectable.extend("Card", {
   init: function(props,defaultProps) {
     this._super(Q._extend({
+      sheet: "card",
+      sprite: "cardAnim",
+      ident: 0
     },props), defaultProps);
 
+  },
+  use: function() {
+    Deck.getSkill(this.ident);
   }
 });
 

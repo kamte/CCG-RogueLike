@@ -103,17 +103,21 @@ Q.scene('Title',function(stage) {
 
   playButton.on("click",function() {
       Q.clearStages();
-      Q.stageScene("level1", 0);
-      Q.stageScene("HUD-background",3);
-      Q.stageScene("HUD-stats",4);
+      Deck.fetchCards();
+      Q.stageScene("CardsView", 0);
   });
 
   var instructionButton = box.insert(new Q.UI.Button({
-    x: 0, y: 90, asset: "instructions.png", keyActionName: "confirm"
+    x: 0, y: 90, asset: "instructions.png"
   }));
 
+  instructionButton.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("Instructions", 0);
+  });
+
   var creditsButton = box.insert(new Q.UI.Button({
-    x: 0, y: 170, asset: "credits.png", keyActionName: "confirm", shadow: true
+    x: 0, y: 170, asset: "credits.png", shadow: true
   }));
 
   creditsButton.on("click",function() {
@@ -122,10 +126,81 @@ Q.scene('Title',function(stage) {
   });
 });
 
+Q.UI.Text.extend("DescGliph",{
+  init: function(p) {
+    this._super({
+      label: " WARNING, gliphs \n  are powerful, \n but unpredictable. \n Their effect could \n  be negative if \n the gods are not \n on your side.",
+      x: 103,
+      y: -170,
+      color: "black",
+      size: 12
+    });
+  },
+  set: function(des) {
+    this.p.label = des;
+  }
+});
+
+Q.scene('CardsView',function(stage) {
+  stage.insert(new Q.Sprite({asset: "cardsView.png", x: Q.width/2, y: Q.height/2}));
+
+  var box = stage.insert(new Q.UI.Container({
+    x: Q.width/2, y: Q.height/2
+  }));
+
+  var descG = box.insert(new Q.DescGliph());
+
+  var gliphs = new Array(10);
+  var fila=0;
+  var columna=0;
+  for(var i = 1; i<11;i++){
+    if (Deck.isUnlocked[i-1]) {
+      // console.log("Glifo", i-1, "desbloqueado");
+      gliphs[i] = box.insert(new Q.UI.Button({
+          x: -90+columna*96, y: -175+fila*119, asset: "gliph"+i+".png", num: i, des: Deck.description[i-1]
+      }));
+    }
+    else {
+      gliphs[i] = box.insert(new Q.UI.Button({
+          x: -90+columna*96, y: -175+fila*119, asset: "gliph"+0+".png", num: i, des: " You have not found \n this gliph yet"
+      }));
+    }
+    if(columna==1 && fila == 0){
+      columna++;
+    }
+    columna++;
+    if(columna==3){
+      columna=0;
+      fila++;
+    }
+
+    gliphs[i].on("click",function() {
+      console.log(this.p.des);
+      Deck.selected = this.p.num - 1;
+      console.log(Deck.selected);
+      descG.set("Selected: \n" + this.p.des + "\n Level: " + Deck.level[this.p.num - 1]);
+    });
+  }
+
+  var playButton = box.insert(new Q.UI.Button({
+    x: 102, y: 179, asset: "play2.png", keyActionName: "confirm"
+  }));
+
+  playButton.on("click",function() {
+      CharSheet.restart();
+      Buff.restart();
+      Q.clearStages();
+      Q.stageScene("level1", 0);
+      Q.stageScene("HUD-background",3);
+      Q.stageScene("HUD-stats",4);
+  });
+});
+
+
 Q.scene('Credits',function(stage) {
 
   var box = stage.insert(new Q.UI.Container({
-    x: Q.width/2, y: Q.height/2, asset: "temploMaya.png"
+    x: Q.width/2, y: Q.height/2
   }));
 
   var playButton = box.insert(new Q.UI.Button({
@@ -139,6 +214,52 @@ Q.scene('Credits',function(stage) {
 
 });
 
+Q.scene('Instructions',function(stage) {
+
+  var box = stage.insert(new Q.UI.Container({
+    x: Q.width/2, y: Q.height/2
+  }));
+
+  var playButton = box.insert(new Q.UI.Button({
+    x: 0, y: 0, asset: "instructionsView.png", keyActionName: "confirm"
+  }));
+
+  playButton.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("Title", 0);
+  });
+
+});
+
+Q.scene('WinView',function(stage) {
+
+  back = stage.insert(new Q.UI.Button({
+    x: Q.width/2, y: Q.height/2, asset: "final.png", keyActionName: "confirm"
+  }));
+  
+  stage.insert(new Q.Peach());
+
+  back.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("Title",0);
+  });
+
+});
+
+Q.scene('GameOver',function(stage) {
+
+  //stage.insert(new Q.Sprite({asset: "gameOver.png", x: Q.width/2, y: Q.height/2}));
+
+  back = stage.insert(new Q.UI.Button({
+    x: Q.width/2, y: Q.height/2, asset: "gameOver.png", keyActionName: "confirm"
+  }));
+
+  back.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("Title",0);
+  });
+
+});
 
 function setupLevel(stage) {
     Q.state.reset({ 
@@ -148,12 +269,17 @@ function setupLevel(stage) {
       enemies_dead: 0,
       nextMove: 0,
       healed:0});
-
+    
     Dungeon.generate(CharSheet.floor, stage);
     
     stage.insert(enemyHP);
     stage.insert(bossHP);
 
+
+    //roll a chance to spawn a card
+    var c = Deck.rollCard();
+    if(c != null)
+      stage.insert(c);
   }
 
   Q.scene("level1",function(stage) {
@@ -162,8 +288,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
-
+Q.load("instructionsView.png, gameOver.png, goHome.png, final.png, Chicken.png, gliph0.png, gliph1.png, gliph2.png, gliph3.png, gliph4.png, gliph5.png, gliph6.png, gliph7.png, gliph8.png, gliph9.png, gliph10.png, GUsed.png, GnotUsed.png, cardsView.png, play2.png, card.png, card.json, fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, peach.png, peach.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
   Q.compileSheets("bat.png", "bat.json");
@@ -182,9 +307,15 @@ Q.load("fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, b
   Q.compileSheets("boss2.png", "boss2.json");
   Q.compileSheets("boss3.png", "boss3.json");
   Q.compileSheets("thunder.png", "thunder.json");
+  Q.compileSheets("peach.png", "peach.json");
+  Q.compileSheets("card.png", "card.json");
 
 
   Q.animations("escAnim", {
+    base: {frames: [0]}
+  });
+
+  Q.animations("cardAnim", {
     base: {frames: [0]}
   });
 
@@ -236,6 +367,10 @@ Q.load("fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, b
     boss3Stand: {frames: [0], rate: 1},
     boss3Attack: {frames: [0,1,0,1], rate: 1/6, next:'boss3Stand'},
     boss3Thunder: {frames: [0,2,0,2], rate: 1/6, next: 'boss3Stand'}
+  });
+
+  Q.animations("peachAnim", {
+    peach: {frames: [0,1,2,3,4,5,6,7,8], rate: 1/6, loop: true}
   });
 
   Q.animations("thunderAnim", {

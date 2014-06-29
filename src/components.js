@@ -73,12 +73,19 @@ Q.component("customControls", {
       } else if(Q.inputs['fire'] && p.timer > 10) {
         p.timer = 0;
         if (Q.stage(1) != undefined) {
-          console.log("inventario abierto, cerrando");
           Q.clearStage(1);
         }
         else {
-          console.log("abriendo inventario");
           Q.stageScene("inventory", 1);
+        }
+      } else if (Q.inputs['action'] && p.timer > 10) {
+        p.timer = 0;
+        if (!Deck.cardUsed && Deck.selected !== null) {
+          //usar carta
+          Deck.getSkill(Deck.selected);
+          gState.used();
+          //ya no se pueden usar mas cartas en la partida
+          Deck.cardUsed = true;
         }
       }
 
@@ -128,6 +135,13 @@ Q.component("character", {
       var variation = Aux.newRandom(80, 100);
       var reduction = this.p.defense > 0 ? this.p.defense : 1;
       var damage = Math.ceil(variation * 0.01 * (3 * CharSheet.attack-(2*reduction)));
+      if (Buff.buffCounter < 0) {
+        if (Buff.type == "invencible") {
+          console.log("reduciendo daño hecho a 1");
+          Buff.buffCounter++;
+          damage = 0;
+        }
+      }
       this.p.hitPoints -= (damage>0 ? damage : 1);
       if(this.p.w==32){
         enemyHP.hit(this);

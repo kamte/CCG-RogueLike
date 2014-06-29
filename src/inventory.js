@@ -52,7 +52,7 @@ Q.UI.Text.extend("HpDesc",{
   init: function(p) {
     this._super({
       label: "",
-      x: -45,
+      x: -40,
       y: 10,
       color: "black",
       size: 10
@@ -78,7 +78,7 @@ Q.UI.Text.extend("AtkDesc",{
   init: function(p) {
     this._super({
       label: "",
-      x: -45,
+      x: -40,
       y: 22,
       color: "black",
       size: 10
@@ -104,7 +104,7 @@ Q.UI.Text.extend("DefDesc",{
   init: function(p) {
     this._super({
       label: "",
-      x: -45,
+      x: -40,
       y: 34,
       color: "black",
       size: 10
