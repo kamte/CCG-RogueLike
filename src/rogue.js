@@ -107,11 +107,11 @@ Q.scene('Title',function(stage) {
   });
 
   var instructionButton = box.insert(new Q.UI.Button({
-    x: 0, y: 90, asset: "instructions.png", keyActionName: "confirm"
+    x: 0, y: 90, asset: "instructions.png"
   }));
 
   var creditsButton = box.insert(new Q.UI.Button({
-    x: 0, y: 170, asset: "credits.png", keyActionName: "confirm", shadow: true
+    x: 0, y: 170, asset: "credits.png", shadow: true
   }));
 
   creditsButton.on("click",function() {
@@ -198,6 +198,36 @@ Q.scene('Credits',function(stage) {
 
 });
 
+Q.scene('WinView',function(stage) {
+
+  back = stage.insert(new Q.UI.Button({
+    x: Q.width/2, y: Q.height/2, asset: "final.png", keyActionName: "confirm"
+  }));
+  
+  stage.insert(new Q.Peach());
+
+  back.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("Title",0);
+  });
+
+});
+
+Q.scene('GameOver',function(stage) {
+
+  //stage.insert(new Q.Sprite({asset: "gameOver.png", x: Q.width/2, y: Q.height/2}));
+
+  back = stage.insert(new Q.UI.Button({
+    x: Q.width/2, y: Q.height/2, asset: "gameOver.png", keyActionName: "confirm"
+  }));
+
+  back.on("click",function() {
+      Q.clearStages();
+      Q.stageScene("Title",0);
+  });
+
+});
+
 function setupLevel(stage) {
     Q.state.reset({ 
       enemies: 0,
@@ -226,7 +256,7 @@ function setupLevel(stage) {
 
 
 //Carga de recursos
-Q.load("gliph0.png, gliph1.png, gliph2.png, gliph3.png, gliph4.png, gliph5.png, gliph6.png, gliph7.png, gliph8.png, gliph9.png, gliph10.png, GUsed.png, GnotUsed.png, cardsView.png, play2.png, card.png, card.json, fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
+Q.load("gameOver.png, goHome.png, final.png, Chicken.png, gliph0.png, gliph1.png, gliph2.png, gliph3.png, gliph4.png, gliph5.png, gliph6.png, gliph7.png, gliph8.png, gliph9.png, gliph10.png, GUsed.png, GnotUsed.png, cardsView.png, play2.png, card.png, card.json, fullInventory.png, skeleton.png, skeleton.json, boss3.png, boss3.json, boss2.png, boss2.json, thunder.json, thunder.png, boss1.png, boss1.json, creditsView.png, instructions.png, play.png, credits.png, basura.png, armaduras.png, armaduras.json, armas.png, armas.json, cascos.png, cascos.json, comida.png, comida.json, escudos.png, escudos.json, pociones.png, pociones.json, qucumatz.png, temploMaya.png, black.png, bat.png, bat.json, snake.png, snake.json, spider.png, spider.json, player.png, player.json, HUD-maya.png, escalera.png, escalera.json, peach.png, peach.json, texturas.png, texturas.json, slime.png, slime.json, azteca.png", function() {
   Q.compileSheets("player.png", "player.json");
   Q.compileSheets("slime.png", "slime.json");
   Q.compileSheets("bat.png", "bat.json");
@@ -245,6 +275,7 @@ Q.load("gliph0.png, gliph1.png, gliph2.png, gliph3.png, gliph4.png, gliph5.png, 
   Q.compileSheets("boss2.png", "boss2.json");
   Q.compileSheets("boss3.png", "boss3.json");
   Q.compileSheets("thunder.png", "thunder.json");
+  Q.compileSheets("peach.png", "peach.json");
   Q.compileSheets("card.png", "card.json");
 
 
@@ -304,6 +335,10 @@ Q.load("gliph0.png, gliph1.png, gliph2.png, gliph3.png, gliph4.png, gliph5.png, 
     boss3Stand: {frames: [0], rate: 1},
     boss3Attack: {frames: [0,1,0,1], rate: 1/6, next:'boss3Stand'},
     boss3Thunder: {frames: [0,2,0,2], rate: 1/6, next: 'boss3Stand'}
+  });
+
+  Q.animations("peachAnim", {
+    peach: {frames: [0,1,2,3,4,5,6,7,8], rate: 1/6, loop: true}
   });
 
   Q.animations("thunderAnim", {

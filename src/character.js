@@ -100,7 +100,7 @@ var CharSheet = {
         hp = this.maxHp; 
       }
       else
-        hp = this.hitPoints; 
+        hp += this.hitPoints; 
 
       this.updateHp(hp);
 
@@ -126,7 +126,7 @@ var CharSheet = {
     } 
     if(full){
       for(var i = 0; i<10; i++){
-        this.items[Aux.newRandom(0,36)]=undefined;
+        this.items[Aux.newRandom(0,35)]=undefined;
       }
       Q.stageScene("HUD-mss", 2);
     }

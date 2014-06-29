@@ -1,3 +1,5 @@
+var notPass = false;
+
 var Dungeon = {
     map: null, //mapa para los tiles: 0=nada, impares=paredes, pares=suelos
     map_size: 150,
@@ -87,10 +89,13 @@ var Dungeon = {
 
         if(level_floor===floorFirstBoss){
             this.generateBoss1Entities(stage);
+            notPass = true;
         } else if(level_floor===floorSecondBoss){
             this.generateBoss2Entities(stage);
+            notPass = true;
         } else if(level_floor===floorThirdBoss){
             this.generateBoss3Entities(stage);
+            notPass = true;
         } else {
             this.generateRandomEntities(stage);
         }
@@ -125,9 +130,9 @@ var Dungeon = {
         stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
         stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
 
-        var p = stage.insert(this.insertEntity(new Q.Player()));
-    
         stage.insert(this.insertEntity(new Q.Escalera()));
+        
+        var p = stage.insert(this.insertEntity(new Q.Player()));
     
         //Generar entre x e y objetos
         itemGenerator.spawner(stage, 5, 14);
@@ -142,10 +147,10 @@ var Dungeon = {
     generateBoss1Entities: function(stage){
         stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
         stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
-
-        var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
     
         stage.insert(this.insertEntityInRoom(new Q.Escalera(), 3));
+
+        var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
     
         //Generar entre x e y objetos
         itemGenerator.spawner(stage, 2, 4, 1);
@@ -163,9 +168,9 @@ var Dungeon = {
         stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
         stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
 
-        var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
-    
         stage.insert(this.insertEntityInRoom(new Q.Escalera(), 4));
+
+        var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
     
         itemGenerator.spawner(stage, 3, 6, 3);
 
@@ -181,10 +186,10 @@ var Dungeon = {
     generateBoss3Entities: function(stage){
         stage.insert(new Q.Repeater({ asset: "black.png", speedX: 0.5, speedY: 0.5 }));
         stage.insert(new Q.DungeonTracker({ data: Q.asset('level_dungeon') }));
-
-        var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
     
         stage.insert(this.insertEntityInRoom(new Q.Escalera(), 4));
+
+        var p = stage.insert(this.insertEntityInRoom(new Q.Player(), 0));
     
         //Generar entre x e y objetos
         itemGenerator.spawner(stage, 2, 4, 2);

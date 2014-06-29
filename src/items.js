@@ -8,15 +8,23 @@ Q.Sprite.extend("Escalera", {
    		});
 
    		this.on("sensor",this,function(collision){
-   			if(collision.isA("Player")) {
-          Buff.reset();
-   				Q.clearStages();
-          ++CharSheet.floor;
-          CharSheet.buffApplied = false;
-          Q.stageScene("level1", 0);
-          Q.stageScene("HUD-background",3);
-          Q.stageScene("HUD-stats",4);
+   			if(collision.isA("Player") && !notPass) {
+          if(CharSheet.floor == 15){
+            Q.clearStages();
+            Q.stageScene("WinView", 0);
+          }else {
+            Buff.reset();
+     				Q.clearStages();
+            ++CharSheet.floor;
+            CharSheet.buffApplied = false;
+            Q.stageScene("level1", 0);
+            Q.stageScene("HUD-background",3);
+            Q.stageScene("HUD-stats",4);
+          }
    			}
+        else {
+          Q.stageScene("HUD-chicken",2);
+        }
    		});
    	}
 });

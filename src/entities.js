@@ -149,6 +149,7 @@ Q.Sprite.extend("Player", {
     } else if(this.dead()){
       // console.log("dead "+this.p.hitPoints+" "+this.dead());
       this.destroy();
+      Q.stageScene("GameOver", 1);
     } else if(Q.state.get("nextMove")>Q.state.get("enemies")) {
       Q.state.set("nextMove", 0);
     }
@@ -398,6 +399,7 @@ Q.Monster.extend("Skeleton", {
       act_turnEnemies(this.p.position);
 
       this.destroy();
+      notPass = false;
 
     } else if (Q.state.get("nextMove") == this.p.position && !this.p.moved) {
       this.p.moved = true;
@@ -511,6 +513,7 @@ Q.Sprite.extend("AhPuch", {
       //Dungeon.map[toMatrix(this.p.y)][toMatrix(this.p.x)] = 2;
         act_turnEnemies(this.p.position);
         this.destroy();
+        notPass = false;
       } else {
         this.p.hearts--;
         this.p.hitPoints = this.p.maxHitPoints;
@@ -608,6 +611,7 @@ Q.Sprite.extend("Kukulkan", {
       act_turnEnemies(this.p.position);
 
       this.destroy();
+      notPass = false;
 
     } else if (Q.state.get("nextMove") == this.p.position && !this.p.moved) {
       this.p.moved = true;
@@ -693,5 +697,25 @@ Q.Sprite.extend("Thunder", {
       if(this.p.timeOut <= 0){
         this.destroy();
       }
+  }
+});
+
+Q.Sprite.extend("Peach", {
+  init: function(p) {
+    this._super(p, {
+      x:Q.width/2,
+      y:Q.height/2,
+      sheet: "peach",
+      sprite: "peachAnim",
+      sensor: true,
+      collisionMask: Q.SPRITE_NONE,
+      type: Q.SPRITE_NONE,
+    });
+
+    this.add('2d, animation');
+    this.play("peach"); 
+  },
+
+  step: function(dt){
   }
 });

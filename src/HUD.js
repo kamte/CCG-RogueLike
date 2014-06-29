@@ -387,7 +387,31 @@ Q.scene('HUD-mss',function(stage) {
   textFullInventory = new Q.InventoryTroll();
 
   textFullInventory.on("click",function() {
-    console.log("CLCK");
+    Q.clearStage(2);
+  });
+  box.insert(textFullInventory);
+});
+
+Q.UI.Button.extend("Troll",{
+  init: function(p) {
+    this._super({
+      x:0,
+      y:0,
+      asset: "Chicken.png",
+      keyActionName: "confirm, fire",
+      opacity: 1
+    });
+  }
+});
+
+Q.scene('HUD-chicken',function(stage) {
+  //var container = stage.insert(new Q.UI.Container());
+  var box = stage.insert(new Q.UI.Container({
+    x:Q.width/2, y: Q.height/2
+  }));
+  textFullInventory = new Q.Troll();
+
+  textFullInventory.on("click",function() {
     Q.clearStage(2);
   });
   box.insert(textFullInventory);
