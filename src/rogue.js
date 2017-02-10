@@ -6,6 +6,8 @@ Q = Quintus({development: true, audioSupported: ['mp3', 'ogg'] })
 .touch()
 .enableSound();
 
+Q.input.keyboardControls();
+Q.input.touchControls();
 Q.input.joypadControls();
 
 Q.gravityX = 0;
