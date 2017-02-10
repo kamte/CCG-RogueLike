@@ -3,7 +3,6 @@ var Q = Quintus();
 Q = Quintus({development: true, audioSupported: ['mp3', 'ogg'] })
 .include("Sprites, Scenes, Input, 2D, Anim, Touch, UI, TMX, Audio")
 .setup("canvas")
-.touch()
 .enableSound();
 
 Q.input.keyboardControls();
